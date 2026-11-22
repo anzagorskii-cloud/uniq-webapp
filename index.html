@@ -495,6 +495,44 @@
 
     .preview-word.active { transform: scale(1.09); }
 
+    .hook-mini {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      width: 84%;
+      text-align: center;
+      padding: 3px 4px;
+      border-radius: 6px;
+      pointer-events: none;
+      transition: all .18s ease;
+      font-weight: 800;
+    }
+
+    .hook-mini .badge {
+      display: inline-block;
+      background: #EF4444;
+      color: #FFFFFF;
+      font-size: 6px;
+      padding: 1px 3px;
+      border-radius: 3px;
+      margin-bottom: 1px;
+      letter-spacing: .4px;
+    }
+
+    .hook-mini .title { display: block; line-height: 1.1; }
+
+    .hook-mini.top { top: 6px; transform: translateX(-50%); }
+    .hook-mini.joint { top: 50%; transform: translate(-50%, -50%); }
+    .hook-mini.bottom { bottom: 20px; transform: translateX(-50%); }
+
+    .hook-mini.white { background: #FFFFFF; color: #000000; }
+    .hook-mini.dark { background: rgba(0,0,0,.72); color: #FFFFFF; }
+    .hook-mini.none {
+      background: transparent;
+      color: #FFFFFF;
+      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+    }
+
     .preview-grid {
       position: absolute;
       inset: 6px;
@@ -903,6 +941,10 @@
     <div class="preview-wrap">
       <div class="preview">
         <div class="preview-grid" id="previewGrid"></div>
+        <div class="hook-mini top white" id="hookMini">
+          <span class="badge">СТРИМ</span>
+          <span class="title">ЗАГОЛОВОК ХУКА</span>
+        </div>
         <div class="preview-phrase" id="previewPhrase"></div>
       </div>
     </div>
@@ -986,6 +1028,33 @@
   <div class="color-row">
     <div class="color-label">Отступ от края — <span id="marginValue">50% (стык)</span></div>
     <input type="range" id="marginRange" min="5" max="45" value="18" disabled style="width:100%;accent-color:#8B5CF6">
+  </div>
+
+  <div class="section-title">НАСТРОЙКА ХУКА</div>
+  <div class="toggle-row">
+    <div class="tile-title">Показывать хук всё видео</div>
+    <label class="switch"><input type="checkbox" id="hookEnabled" checked><span class="slider"></span></label>
+  </div>
+
+  <div class="color-label">ПОЛОЖЕНИЕ ХУКА</div>
+  <div class="chip-row" id="hookPositionRow">
+    <div class="chip active" data-hook-pos="top">Сверху</div>
+    <div class="chip" data-hook-pos="joint">На стыке (50/50)</div>
+    <div class="chip" data-hook-pos="bottom">Снизу</div>
+  </div>
+
+  <div class="color-label">СТИЛЬ ПЛАШКИ</div>
+  <div class="chip-row" id="hookStyleRow">
+    <div class="chip active" data-hook-style="white">Белая карточка</div>
+    <div class="chip" data-hook-style="dark">Темная капсула</div>
+    <div class="chip" data-hook-style="none">Без плашки</div>
+  </div>
+
+  <div class="color-label">РАЗМЕР ХУКА</div>
+  <div class="chip-row" id="hookSizeRow">
+    <div class="chip" data-hook-size="34">S</div>
+    <div class="chip active" data-hook-size="42">M</div>
+    <div class="chip" data-hook-size="50">L</div>
   </div>
 
   <button class="secondary-btn" id="saveSubStyleBtn">⭐ Сохранить как мой стиль</button>
@@ -1223,6 +1292,7 @@
 
     let subSettings = loadSubStyle();
   if (!subSettings.grid) subSettings.grid = "50";
+  if (!subSettings.hook) subSettings.hook = { enabled: true, position: "top", style: "white", size: 42 };
   let lastMargin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
   const PREVIEW_WORDS =
  "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
@@ -1324,6 +1394,34 @@
       row.appendChild(swatches);
       box.appendChild(row);
     });
+  }
+
+  function renderHookMini() {
+    const mini = document.getElementById("hookMini");
+    const hook = subSettings.hook;
+
+    if (!hook.enabled) {
+      mini.style.display = "none";
+      return;
+    }
+
+    mini.style.display = "";
+    mini.className = "hook-mini " + hook.position + " " + hook.style;
+
+    const fontMap = { 34: 7, 42: 8, 50: 9 };
+    const px = fontMap[hook.size] || 8;
+    mini.querySelector(".title").style.fontSize = px + "px";
+
+    document.querySelectorAll("[data-hook-pos]").forEach(el => {
+      el.classList.toggle("active", el.dataset.hookPos === hook.position);
+    });
+    document.querySelectorAll("[data-hook-style]").forEach(el => {
+      el.classList.toggle("active", el.dataset.hookStyle === hook.style);
+    });
+    document.querySelectorAll("[data-hook-size]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.hookSize) === hook.size);
+    });
+    document.getElementById("hookEnabled").checked = hook.enabled;
   }
 
   function updateSubPreview() {
@@ -1431,6 +1529,7 @@
     syncSubControls();
     renderColorRows();
     renderGrid();
+    renderHookMini();
     updateSubPreview();
   }
 
@@ -1621,6 +1720,32 @@
     refreshSubtitles();
   });
 
+  document.getElementById("hookEnabled").addEventListener("change", e => {
+    subSettings.hook.enabled = e.target.checked;
+    renderHookMini();
+  });
+
+  document.querySelectorAll("[data-hook-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.hook.position = el.dataset.hookPos;
+      renderHookMini();
+    });
+  });
+
+  document.querySelectorAll("[data-hook-style]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.hook.style = el.dataset.hookStyle;
+      renderHookMini();
+    });
+  });
+
+  document.querySelectorAll("[data-hook-size]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.hook.size = Number(el.dataset.hookSize);
+      renderHookMini();
+    });
+  });
+
   document.getElementById("saveSubStyleBtn").addEventListener("click", () => {
     localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
     toast("Мой стиль сохранён");
@@ -1629,7 +1754,7 @@
   document.getElementById("subDoneBtn").addEventListener("click", () => {
     localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
     if (tg) {
-      tg.sendData(JSON.stringify({ action: "sub_settings", settings: subSettings }));
+      tg.sendData(JSON.stringify({ action: "sub_settings", settings: subSettings, hook: subSettings.hook }));
       addHistory(MODE_NAMES.subs_only, selectedCount);
       tg.close();
     }
