@@ -1249,6 +1249,14 @@
     <div class="arrow">→</div>
   </div>
 
+  <div class="section-title" style="margin-top:16px">СИНХРОНИЗАЦИЯ</div>
+  <div class="proc-card">
+    <div class="color-label">🔑 Токен синхронизации GitHub (для запуска без закрытия окна)</div>
+    <input class="ap-input" id="githubPatInput" type="password" placeholder="github_pat_... или ghp_..." autocomplete="off">
+    <div class="hint">Токен сохраняется только в этом браузере (localStorage) и никуда не отправляется, кроме GitHub API. Без токена задача уйдёт через Telegram — окно закроется, но рендер запустится гарантированно.</div>
+    <button class="secondary-btn" id="saveGithubPatBtn">💾 Сохранить токен</button>
+  </div>
+
 </div>
 
 <div id="tab-autopilot" class="screen">
@@ -1862,6 +1870,8 @@
   const LAUNCH_ACTIVE_KEY = "clipper_launch_active_mode";
   const LAUNCH_MODE_KEY = "clipper_launch_mode";
   const TASK_ENDPOINT_KEY = "clipper_task_endpoint";
+  const GITHUB_PAT_KEY = "github_pat";
+  const GITHUB_REPO = "anzagorskii-cloud/uniq-webapp";
   const TASK_QUEUE_KEY = "clipper_pending_tasks";
   const AI_CONTENT_KEY = "clipper_ai_content_type";
   const UNIQ_FULL_KEY = "clipper_uniq_full";
@@ -2240,7 +2250,7 @@
     toast("🤖 Рекомендация ИИ готова");
   }
 
-  function launchAutopilot() {
+  async function launchAutopilot() {
     const cfg = autopilotConfig;
     if (!cfg.url) {
       toast("Сначала проанализируйте ссылку");
@@ -2276,6 +2286,8 @@
       created_at: new Date().toISOString()
     }, {
       action: "start_pipeline",
+      mode: "Стримеры 50/50",
+      mode_key: "split_50_50",
       active_mode: "split_50_50",
       autopilot: true,
       video_url: cfg.url,
@@ -2285,11 +2297,15 @@
       sub_settings: subSettings,
       hook_settings: hook
     });
-    submitTask(task);
-    addHistory("Автопилот ИИ", cfg.clipCount);
+    const delivered = await submitTask(task);
+    addHistory("Стримеры 50/50", cfg.clipCount, "В очереди");
     document.getElementById("apUrl").value = "";
     showTab("process");
-    toast("🚀 Рендер запущен");
+    toast(delivered === "telegram"
+      ? "🚀 Задача отправлена в бот"
+      : delivered === "github"
+        ? "🚀 Задача в GitHub — бот заберёт её через 2 с"
+        : "⏳ Задача сохранена локально");
   }
 
   function renderDownloadControls() {
@@ -2612,13 +2628,14 @@
     setTimeout(() => el.classList.remove("show"), 1400);
   }
 
-  function addHistory(name, clipCount) {
+  function addHistory(name, clipCount, status) {
     try {
       const list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
       list.unshift({
         name: name,
         clip_count: clipCount || selectedCount,
-        status: "Готово",
+        status: status || "В очереди",
+        percent: 0,
         date: new Date().toLocaleString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
       });
       localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 20)));
@@ -2660,11 +2677,11 @@
       .map(item => ({
         task_id: item.task_id || ("local_" + (item.date || "")),
         title: item.name || "Задача",
-        mode: "",
+        mode: item.mode || "",
         clip_count: item.clip_count || 0,
-        status: "done",
-        percent: 100,
-        current_step: item.status || "Готово",
+        status: item.status === "Готово" ? "done" : "running",
+        percent: item.percent || 0,
+        current_step: item.status || "В очереди",
         updated_at: item.date || ""
       }))
       .filter(item => !hiddenIds.includes(String(item.task_id)));
@@ -2814,7 +2831,8 @@
   }
 
   function renderLaunchSummary() {
-    const mode = localStorage.getItem(LAUNCH_ACTIVE_KEY) || "—";
+    const modeKey = localStorage.getItem(LAUNCH_MODE_KEY) || "split_50_50";
+    const mode = MODE_NAMES[modeKey] || "Стримеры 50/50";
     const clips = localStorage.getItem(CLIP_COUNT_KEY) || "5";
     const sub = readJson(SUB_STYLE_KEY, {});
     const uniq = readJson(UNIQ_FULL_KEY, {});
@@ -3320,23 +3338,50 @@
   });
 
   async function submitTask(task) {
-    const endpoint = localStorage.getItem(TASK_ENDPOINT_KEY) || "pipeline_task.json";
     const stored = readJson(TASK_QUEUE_KEY, []);
     const queue = Array.isArray(stored) ? stored : [];
-    queue.push(task);
+    queue.push(Object.assign({}, task, { status: "queued" }));
     localStorage.setItem(TASK_QUEUE_KEY, JSON.stringify(queue.slice(-20)));
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(task),
-        cache: "no-store"
-      });
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      return true;
-    } catch (e) {
-      return false;
+
+    const pat = (localStorage.getItem(GITHUB_PAT_KEY) || "").trim();
+    if (pat) {
+      try {
+        const api = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/pipeline_task.json";
+        const headers = {
+          "Authorization": "Bearer " + pat,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json"
+        };
+        let sha = null;
+        const current = await fetch(api + "?t=" + Date.now(), {
+          headers: headers,
+          cache: "no-store"
+        });
+        if (current.ok) sha = (await current.json()).sha;
+        const body = {
+          message: "pipeline task " + (task.task_id || ""),
+          content: btoa(unescape(encodeURIComponent(JSON.stringify(task)))),
+          branch: "main"
+        };
+        if (sha) body.sha = sha;
+        const response = await fetch(api, {
+          method: "PUT",
+          headers: headers,
+          body: JSON.stringify(body),
+          cache: "no-store"
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return "github";
+      } catch (e) {
+        toast("⚠️ GitHub недоступен — отправляю через Telegram");
+      }
     }
+
+    if (tg) {
+      tg.sendData(JSON.stringify(task));
+      return "telegram";
+    }
+    return "none";
   }
 
   document.getElementById("launchStartBtn").addEventListener("click", async () => {
@@ -3349,9 +3394,13 @@
     }
 
     const sub = readJson(SUB_STYLE_KEY, {});
+    const modeKey = localStorage.getItem(LAUNCH_MODE_KEY) || "split_50_50";
+    const modeLabel = MODE_NAMES[modeKey] || "Стримеры 50/50";
     const packet = {
       action: "start_pipeline",
-      active_mode: localStorage.getItem(LAUNCH_MODE_KEY) || "split_50_50",
+      mode: modeLabel,
+      mode_key: modeKey,
+      active_mode: modeKey,
       clip_count: Number(localStorage.getItem(CLIP_COUNT_KEY) || 5),
       video_url: url,
       ai_content_type: aiContentType,
@@ -3373,9 +3422,13 @@
 
     input.value = "";
     const delivered = await submitTask(task);
-    addHistory("Запуск задачи", packet.clip_count);
+    addHistory(modeLabel, packet.clip_count, "В очереди");
     showTab("process");
-    toast(delivered ? "🚀 Задача запущена" : "⏳ Задача в очереди — ожидаю соединение");
+    toast(delivered === "telegram"
+      ? "🚀 Задача отправлена в бот"
+      : delivered === "github"
+        ? "🚀 Задача в GitHub — бот заберёт её через 2 с"
+        : "⏳ Задача сохранена локально");
   });
 
   document.getElementById("downloadStartBtn").addEventListener("click", async () => {
@@ -3391,7 +3444,8 @@
     const chatId = (init.chat && init.chat.id) || (init.user && init.user.id) || null;
     const packet = {
       action: "start_pipeline",
-      mode: "download",
+      mode: "Скачивание",
+      mode_key: "download",
       active_mode: "download",
       video_url: url,
       quality: downloadQuality,
@@ -3405,9 +3459,25 @@
 
     input.value = "";
     const delivered = await submitTask(task);
-    addHistory("Скачать видео", 0);
+    addHistory("Скачивание", 0, "В очереди");
     showTab("process");
-    toast(delivered ? "⬇️ Скачивание запущено" : "⏳ Задача в очереди — ожидаю соединение");
+    toast(delivered === "telegram"
+      ? "⬇️ Задача отправлена в бот"
+      : delivered === "github"
+        ? "⬇️ Задача в GitHub — бот заберёт её через 2 с"
+        : "⏳ Задача сохранена локально");
+  });
+
+  document.getElementById("githubPatInput").value = localStorage.getItem(GITHUB_PAT_KEY) || "";
+  document.getElementById("saveGithubPatBtn").addEventListener("click", () => {
+    const value = document.getElementById("githubPatInput").value.trim();
+    if (value) {
+      localStorage.setItem(GITHUB_PAT_KEY, value);
+      toast("💾 Токен сохранён в этом браузере");
+    } else {
+      localStorage.removeItem(GITHUB_PAT_KEY);
+      toast("🗑 Токен удалён — запуск через Telegram");
+    }
   });
 
   function clearUrlInputs() {
