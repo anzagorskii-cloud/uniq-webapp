@@ -1,8 +1,8 @@
 {
   "status": "running",
-  "percent": 35,
-  "current_step": "Распознавание речи завершено",
-  "detail": "Слов с таймкодами: 6859",
+  "percent": 55,
+  "current_step": "Моменты найдены",
+  "detail": "Найдено клипов: 3",
   "clip_progress": "",
   "steps": [
     {
@@ -18,12 +18,12 @@
     {
       "id": "whisper",
       "title": "3. Распознавание речи (Whisper)",
-      "state": "active"
+      "state": "done"
     },
     {
       "id": "gfx",
       "title": "4. Генерация хука и субтитров (.ass / PNG)",
-      "state": "pending"
+      "state": "active"
     },
     {
       "id": "render",
@@ -37,7 +37,7 @@
     }
   ],
   "error_log": "",
-  "updated_at": "19:28:51",
+  "updated_at": "19:29:10",
   "active_tasks": [
     {
       "task_id": "chat_718716596_1795364850",
@@ -45,9 +45,9 @@
       "mode": "split_50_50",
       "clip_count": 3,
       "status": "running",
-      "percent": 20,
-      "current_step": "Возобновлено",
-      "updated_at": "19:28:04"
+      "percent": 35,
+      "current_step": "Распознавание речи завершено",
+      "updated_at": "19:28:51"
     }
   ],
   "history_tasks": []
