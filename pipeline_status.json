@@ -37,7 +37,6 @@
     }
   ],
   "error_log": "",
-  "updated_at": "19:27:32",
   "active_tasks": [
     {
       "task_id": "chat_718716596_1795364850",
@@ -47,8 +46,9 @@
       "status": "running",
       "percent": 0,
       "current_step": "Запуск задачи...",
-      "updated_at": "19:27:32"
+      "updated_at": "19:27:34"
     }
   ],
-  "history_tasks": []
+  "history_tasks": [],
+  "updated_at": "19:27:34"
 }
