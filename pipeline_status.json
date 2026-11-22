@@ -1,8 +1,8 @@
 {
   "status": "running",
   "percent": 5,
-  "current_step": "Задача принята ботом...",
-  "detail": "Задача из чата принята",
+  "current_step": "Старт",
+  "detail": "Задача принята",
   "clip_progress": "",
   "steps": [
     {
@@ -37,7 +37,7 @@
     }
   ],
   "error_log": "",
-  "updated_at": "18:57:00",
+  "updated_at": "18:57:01",
   "active_tasks": [],
   "history_tasks": []
 }
