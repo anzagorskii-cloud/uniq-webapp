@@ -2795,19 +2795,58 @@
     return base + "?t=" + Date.now();
   }
 
+  let displayPercent = 0;
+  let lastServerPercent = null;
+  let lastTaskKey = null;
+  let lastLiveTick = 0;
+  function displayDelay(percent) {
+    if (percent >= 95) return 90000;
+    if (percent >= 80) return 45000;
+    if (percent >= 60) return 20000;
+    if (percent >= 30) return 10000;
+    return 5000;
+  }
+
   function renderProcess(data) {
     if (!data) return;
     lastStatus = data;
 
-    document.getElementById("procPercent").textContent = (data.percent || 0) + "%";
-    document.getElementById("procFill").style.width = (data.percent || 0) + "%";
+    const serverPercent = Math.max(0, Math.min(100, Number(data.percent) || 0));
+    const firstActive = (Array.isArray(data.active_tasks) && data.active_tasks[0]) || null;
+    const taskKey = firstActive ? String(firstActive.task_id || "") : "";
+    if (taskKey !== lastTaskKey) {
+      displayPercent = serverPercent;
+      lastTaskKey = taskKey;
+      lastServerPercent = serverPercent;
+      lastLiveTick = Date.now();
+    } else if (serverPercent !== lastServerPercent) {
+      displayPercent = Math.max(displayPercent, serverPercent);
+      lastServerPercent = serverPercent;
+      lastLiveTick = Date.now();
+    }
+
+    const steps = Array.isArray(data.steps) ? data.steps : [];
+    const paused = (Array.isArray(data.active_tasks) ? data.active_tasks : [])
+      .some(task => task.status === "paused");
+    if (data.status === "done") {
+      displayPercent = 100;
+    } else if (data.status === "running" && !paused) {
+      if (Date.now() - lastLiveTick >= displayDelay(displayPercent) && displayPercent < 99) {
+        displayPercent = Math.min(99, displayPercent + 1);
+        lastLiveTick = Date.now();
+      }
+    }
+    displayPercent = Math.max(0, Math.min(100, displayPercent));
+    const shownPercent = Math.round(displayPercent);
+
+    document.getElementById("procPercent").textContent = shownPercent + "%";
+    document.getElementById("procFill").style.width = shownPercent + "%";
     document.getElementById("procStep").textContent = data.current_step || "Ожидание задачи";
     document.getElementById("procClip").textContent =
       data.clip_progress ? "Клип " + data.clip_progress : "Клип —";
     document.getElementById("procTime").textContent =
       "Обновлено: " + (data.updated_at || "—");
 
-    const steps = Array.isArray(data.steps) ? data.steps : [];
     const icons = { done: "✅", active: "⏳", error: "❌", pending: "○" };
     document.getElementById("procSteps").innerHTML = steps.map(item =>
       '<div class="proc-step ' + item.state + '">' +
@@ -2824,7 +2863,7 @@
 
     const home = document.getElementById("homeProgress");
     home.style.display = isRunning ? "" : "none";
-    home.textContent = "⚡ Идёт сборка: " + (data.percent || 0) + "% (Открыть процесс)";
+    home.textContent = "⚡ Идёт сборка: " + shownPercent + "% (Открыть процесс)";
   }
 
   function applyStatus(data, subtitle, sourceLabel) {
