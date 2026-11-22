@@ -1,14 +1,14 @@
 {
-  "status": "idle",
-  "percent": 0,
-  "current_step": "Ожидание задачи",
-  "detail": "",
+  "status": "running",
+  "percent": 5,
+  "current_step": "Старт",
+  "detail": "Задача принята",
   "clip_progress": "",
   "steps": [
     {
       "id": "download",
       "title": "1. Скачивание исходника (yt-dlp)",
-      "state": "pending"
+      "state": "active"
     },
     {
       "id": "analyze",
@@ -37,5 +37,5 @@
     }
   ],
   "error_log": "",
-  "updated_at": "17:14:50"
+  "updated_at": "17:27:44"
 }
