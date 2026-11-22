@@ -506,6 +506,13 @@
       margin-top: 10px;
     }
 
+    .primary-btn:disabled {
+      opacity: .45;
+      filter: grayscale(.4);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
     .secondary-btn {
       width: 100%;
       border: 1px solid rgba(139,92,246,.5);
@@ -1269,8 +1276,12 @@
 
   <div id="apStepOne">
     <div class="section-title">ШАГ 1 — ССЫЛКА</div>
-    <input class="ap-input" id="apUrl" placeholder="Вставьте ссылку на YouTube, TikTok, Reels или Shorts...">
-    <button class="primary-btn" id="apAnalyzeBtn">🔍 Проанализировать ссылку</button>
+    <div class="launch-input-row">
+      <input class="launch-input" id="apUrl" placeholder="Вставьте ссылку на YouTube, TikTok, Reels или Shorts...">
+      <button class="launch-paste" id="apPasteBtn">📋 Вставить</button>
+    </div>
+    <div class="hint" id="apUrlStatus" style="display:none;color:#86EFAC"></div>
+    <button class="primary-btn" id="apAnalyzeBtn" disabled>🔍 Проанализировать ссылку</button>
   </div>
 
   <div id="apResult" style="display:none">
@@ -1781,6 +1792,7 @@
     <button class="launch-paste" id="downloadPasteBtn">📋 Вставить</button>
   </div>
   <div class="hint" id="downloadHint" style="display:none;color:#FCA5A5">Вставьте ссылку на видео</div>
+  <div class="hint" id="downloadUrlStatus" style="display:none;color:#86EFAC"></div>
 
   <div class="section-title">ФОРМАТ И КАЧЕСТВО</div>
   <div class="chip-row" id="downloadQualityRow">
@@ -1797,7 +1809,7 @@
     <label class="switch"><input type="checkbox" id="downloadClean" checked><span class="slider"></span></label>
   </div>
 
-  <button class="primary-btn sub-done" id="downloadStartBtn">⬇️ СКАЧАТЬ ВИДЕО</button>
+  <button class="primary-btn sub-done" id="downloadStartBtn" disabled>⬇️ СКАЧАТЬ ВИДЕО</button>
 </div>
 
 <div id="tab-launch" class="screen">
@@ -1821,6 +1833,7 @@
   </div>
 
   <div class="hint" id="launchHint" style="display:none;color:#FCA5A5">Вставьте ссылку на видео</div>
+  <div class="hint" id="launchUrlStatus" style="display:none;color:#86EFAC"></div>
 
   <div class="section-title">ИЛИ ФАЙЛ</div>
   <div class="proc-card">
@@ -1828,7 +1841,7 @@
     <button class="secondary-btn" id="launchFileBtn">📎 Отправить файл в чат</button>
   </div>
 
-  <button class="primary-btn sub-done" id="launchStartBtn">🚀 ЗАПУСТИТЬ НАРЕЗКУ</button>
+  <button class="primary-btn sub-done" id="launchStartBtn" disabled>🚀 ЗАПУСТИТЬ НАРЕЗКУ</button>
 </div>
 
 <div class="bottom-nav">
@@ -2203,9 +2216,10 @@
   function analyzeAutopilotUrl() {
     const input = document.getElementById("apUrl");
     const url = input.value.trim();
-    if (!/^https?:\/\//i.test(url)) {
+    if (!isValidUrl(url)) {
       input.classList.add("error");
-      toast("Вставьте ссылку, начинающуюся с http://");
+      updateUrlState("apUrl", "apUrlStatus", "apAnalyzeBtn");
+      toast("Вставьте корректную ссылку http:// или https://");
       return;
     }
     input.classList.remove("error");
@@ -2868,8 +2882,14 @@
     document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
     const target = document.getElementById("tab-" + tab);
     if (target) target.classList.add("active");
-    if (tab === "launch") document.getElementById("launchUrl").value = "";
-    if (tab === "download") document.getElementById("downloadUrl").value = "";
+    if (tab === "launch") {
+      document.getElementById("launchUrl").value = "";
+      updateUrlState("launchUrl", "launchUrlStatus", "launchStartBtn");
+    }
+    if (tab === "download") {
+      document.getElementById("downloadUrl").value = "";
+      updateUrlState("downloadUrl", "downloadUrlStatus", "downloadStartBtn");
+    }
     if (tab === "process") fetchStatus();
     if (tab === "history") {
       renderHistory();
@@ -3300,35 +3320,97 @@
   document.getElementById("launchBackBtn").addEventListener("click", () => showTab("home"));
   document.getElementById("launchEditBtn").addEventListener("click", () => showTab("home"));
 
-  document.getElementById("launchUrl").addEventListener("input", e => {
-    e.target.classList.remove("error");
-    document.getElementById("launchHint").style.display = "none";
-  });
-
-  document.getElementById("downloadUrl").addEventListener("input", e => {
-    e.target.classList.remove("error");
-    document.getElementById("downloadHint").style.display = "none";
-  });
-
-  async function pasteInto(inputId, hintId) {
-    const input = document.getElementById(inputId);
-    input.focus();
-    try {
-      if (!navigator.clipboard || !navigator.clipboard.readText) {
-        throw new Error("clipboard unavailable");
-      }
-      const text = await navigator.clipboard.readText();
-      input.value = (text || "").trim();
-      input.classList.remove("error");
-      document.getElementById(hintId).style.display = "none";
-    } catch (e) {
-      input.focus();
-      toast("Нажмите на поле и выберите Вставить");
-    }
+  function isValidUrl(value) {
+    return /^https?:\/\/[^\s]+\.[^\s]+/i.test(String(value || "").trim());
   }
 
-  document.getElementById("launchPasteBtn").addEventListener("click", () => pasteInto("launchUrl", "launchHint"));
-  document.getElementById("downloadPasteBtn").addEventListener("click", () => pasteInto("downloadUrl", "downloadHint"));
+  function updateUrlState(inputId, statusId, buttonId) {
+    const input = document.getElementById(inputId);
+    const status = document.getElementById(statusId);
+    const button = document.getElementById(buttonId);
+    const url = input ? input.value.trim() : "";
+    const valid = isValidUrl(url);
+    if (status) {
+      status.textContent = valid ? "✅ Ссылка готова к запуску" : "";
+      status.style.display = valid ? "" : "none";
+    }
+    if (button) button.disabled = !valid;
+    if (input && url) input.classList.remove("error");
+    return valid;
+  }
+
+  function bindUrlField(inputId, statusId, buttonId, hintId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener("input", () => {
+      if (hintId) document.getElementById(hintId).style.display = "none";
+      updateUrlState(inputId, statusId, buttonId);
+    });
+    updateUrlState(inputId, statusId, buttonId);
+  }
+
+  bindUrlField("launchUrl", "launchUrlStatus", "launchStartBtn", "launchHint");
+  bindUrlField("downloadUrl", "downloadUrlStatus", "downloadStartBtn", "downloadHint");
+  bindUrlField("apUrl", "apUrlStatus", "apAnalyzeBtn");
+
+  function pasteInto(inputId, hintId, statusId, buttonId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.focus();
+
+    const applyText = text => {
+      const clean = String(text || "").trim();
+      if (!clean) return false;
+      input.value = clean;
+      input.classList.remove("error");
+      if (hintId) document.getElementById(hintId).style.display = "none";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      updateUrlState(inputId, statusId, buttonId);
+      toast("✅ Ссылка принята из буфера");
+      return true;
+    };
+
+    const fallback = () => {
+      if (navigator.clipboard && typeof navigator.clipboard.readText === "function") {
+        navigator.clipboard.readText().then(text => {
+          if (!applyText(text)) legacyPaste();
+        }).catch(() => legacyPaste());
+      } else {
+        legacyPaste();
+      }
+    };
+
+    const legacyPaste = () => {
+      input.focus();
+      try {
+        document.execCommand("paste");
+      } catch (e) {}
+      setTimeout(() => {
+        if (!isValidUrl(input.value)) toast("Нажмите на поле и выберите Вставить");
+      }, 150);
+    };
+
+    const webApp = window.Telegram && window.Telegram.WebApp;
+    if (webApp && typeof webApp.readTextFromClipboard === "function") {
+      let handled = false;
+      try {
+        webApp.readTextFromClipboard(text => {
+          handled = true;
+          if (!applyText(text)) fallback();
+        });
+      } catch (e) {}
+      setTimeout(() => { if (!handled) fallback(); }, 900);
+      return;
+    }
+    fallback();
+  }
+
+  document.getElementById("launchPasteBtn").addEventListener("click",
+    () => pasteInto("launchUrl", "launchHint", "launchUrlStatus", "launchStartBtn"));
+  document.getElementById("downloadPasteBtn").addEventListener("click",
+    () => pasteInto("downloadUrl", "downloadHint", "downloadUrlStatus", "downloadStartBtn"));
+  document.getElementById("apPasteBtn").addEventListener("click",
+    () => pasteInto("apUrl", null, "apUrlStatus", "apAnalyzeBtn"));
 
   document.getElementById("launchFileBtn").addEventListener("click", () => {
     if (tg) {
@@ -3387,9 +3469,10 @@
   document.getElementById("launchStartBtn").addEventListener("click", async () => {
     const input = document.getElementById("launchUrl");
     const url = input.value.trim();
-    if (!url) {
+    if (!isValidUrl(url)) {
       input.classList.add("error");
       document.getElementById("launchHint").style.display = "";
+      updateUrlState("launchUrl", "launchUrlStatus", "launchStartBtn");
       return;
     }
 
@@ -3434,9 +3517,10 @@
   document.getElementById("downloadStartBtn").addEventListener("click", async () => {
     const input = document.getElementById("downloadUrl");
     const url = input.value.trim();
-    if (!url) {
+    if (!isValidUrl(url)) {
       input.classList.add("error");
       document.getElementById("downloadHint").style.display = "";
+      updateUrlState("downloadUrl", "downloadUrlStatus", "downloadStartBtn");
       return;
     }
 
@@ -3483,8 +3567,12 @@
   function clearUrlInputs() {
     document.getElementById("launchUrl").value = "";
     document.getElementById("downloadUrl").value = "";
+    document.getElementById("apUrl").value = "";
     document.getElementById("launchHint").style.display = "none";
     document.getElementById("downloadHint").style.display = "none";
+    updateUrlState("launchUrl", "launchUrlStatus", "launchStartBtn");
+    updateUrlState("downloadUrl", "downloadUrlStatus", "downloadStartBtn");
+    updateUrlState("apUrl", "apUrlStatus", "apAnalyzeBtn");
   }
   window.addEventListener("DOMContentLoaded", clearUrlInputs);
   window.addEventListener("load", clearUrlInputs);
