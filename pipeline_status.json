@@ -37,7 +37,18 @@
     }
   ],
   "error_log": "",
-  "active_tasks": [],
+  "active_tasks": [
+    {
+      "task_id": "chat_718716596_1795374404",
+      "title": "https://youtu.be/0Bm9rhbSTrw?si=uYl86zZYPtLPz9K6",
+      "mode": "split_50_50",
+      "clip_count": 3,
+      "status": "running",
+      "percent": 0,
+      "current_step": "Запуск задачи...",
+      "updated_at": "22:06:44"
+    }
+  ],
   "history_tasks": [
     {
       "task_id": "chat_718716596_1795364850",
@@ -50,5 +61,5 @@
       "updated_at": "19:38:36"
     }
   ],
-  "updated_at": "19:38:36"
+  "updated_at": "22:06:44"
 }
