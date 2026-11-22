@@ -1354,15 +1354,13 @@
     <input type="range" id="bannerHeightRange" min="10" max="100" value="33" style="width:100%;accent-color:#8B5CF6">
   </div>
 
-  <div class="section-title">ЗЕЛЁНЫЙ ФОН</div>
-  <div class="toggle-row">
-    <div>
-      <div class="tile-title">Убирать зелёный фон</div>
-      <div class="desc">Автоматически, если он есть</div>
-    </div>
-    <label class="switch"><input type="checkbox" id="bannerRemoveGreen" checked><span class="slider"></span></label>
+  <div class="section-title">УДАЛЕНИЕ ФОНА (ХРОМАКЕЙ)</div>
+  <div class="chip-row" id="bannerChromaRow">
+    <div class="chip" data-chroma-mode="none">Нет</div>
+    <div class="chip active" data-chroma-mode="green">Зелёный</div>
+    <div class="chip" data-chroma-mode="black">Чёрный</div>
   </div>
-  <div class="hint">Если баннер снят на зелёном фоне (хромакей), фон вырежется сам — останется только объект.</div>
+  <div class="hint">Зелёный вырезает хромакей, чёрный — тёмный фон у футажей и эффектов перед наложением.</div>
 
   <div id="bannerPauseBlock" style="display:none">
     <div class="section-title">КОГДА ПОСТАВИТЬ ПАУЗУ</div>
@@ -1377,8 +1375,15 @@
       <input type="range" id="pauseSecondRange" min="1" max="60" value="10" style="width:100%;accent-color:#8B5CF6">
     </div>
     <div class="color-row">
-      <div class="color-label">Длительность — <span id="pauseDurationValue">3 с</span></div>
-      <input type="range" id="pauseDurationRange" min="0.5" max="10" step="0.5" value="3" style="width:100%;accent-color:#8B5CF6">
+      <div class="color-label">Длительность — <span id="pauseDurationValue">Авто (по видео баннера)</span></div>
+      <input type="range" id="pauseDurationRange" min="0.5" max="10" step="0.5" value="3" disabled style="width:100%;accent-color:#8B5CF6">
+    </div>
+    <div class="toggle-row" style="margin-bottom:0">
+      <div>
+        <div class="tile-title">По длительности баннера</div>
+        <div class="desc">Пауза равна длительности видео или GIF баннера</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="autoBannerDuration" checked><span class="slider"></span></label>
     </div>
   </div>
 
@@ -1537,6 +1542,7 @@
   let bannerPosition = "bottom";
   let bannerHeight = 33;
   let bannerId = "new";
+  let chromaMode = "green";
   let pauseWhen = "middle";
   let pauseSecond = 10;
   let pauseDuration = 3;
@@ -1672,13 +1678,20 @@
     document.querySelectorAll("[data-banner-pos]").forEach(el => {
       el.classList.toggle("active", el.dataset.bannerPos === bannerPosition);
     });
+    document.querySelectorAll("[data-chroma-mode]").forEach(el => {
+      el.classList.toggle("active", el.dataset.chromaMode === chromaMode);
+    });
     document.querySelectorAll("[data-pause-when]").forEach(el => {
       el.classList.toggle("active", el.dataset.pauseWhen === pauseWhen);
     });
 
+    const autoDuration = document.getElementById("autoBannerDuration").checked;
+    document.getElementById("pauseDurationRange").disabled = autoDuration;
+
     document.getElementById("bannerHeightValue").textContent = bannerHeight + "%";
     document.getElementById("pauseSecondValue").textContent = pauseSecond + " с";
-    document.getElementById("pauseDurationValue").textContent = pauseDuration + " с";
+    document.getElementById("pauseDurationValue").textContent =
+      autoDuration ? "Авто (по видео баннера)" : pauseDuration + " с";
 
     const strip = document.getElementById("bannerStrip");
     strip.style.height = bannerHeight + "%";
@@ -2201,6 +2214,12 @@
       renderBannerControls();
     });
   });
+  document.querySelectorAll("[data-chroma-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      chromaMode = el.dataset.chromaMode;
+      renderBannerControls();
+    });
+  });
   document.querySelectorAll("[data-pause-when]").forEach(el => {
     el.addEventListener("click", () => {
       pauseWhen = el.dataset.pauseWhen;
@@ -2219,16 +2238,18 @@
     pauseDuration = Number(e.target.value);
     renderBannerControls();
   });
+  document.getElementById("autoBannerDuration").addEventListener("change", renderBannerControls);
   document.getElementById("bannerDoneBtn").addEventListener("click", () => {
     localStorage.setItem(BANNER_SETTINGS_KEY, JSON.stringify({
       banner_id: bannerId,
       mode: bannerMode,
       position: bannerPosition,
       height_percent: bannerHeight,
-      remove_green: document.getElementById("bannerRemoveGreen").checked,
+      chroma_mode: chromaMode,
       pause_when: pauseWhen,
       pause_second: pauseSecond,
       pause_duration: pauseDuration,
+      auto_banner_duration: document.getElementById("autoBannerDuration").checked,
       add_subs: document.getElementById("bannerAddSubs").checked
     }));
     goLaunch("Вставить баннер");
