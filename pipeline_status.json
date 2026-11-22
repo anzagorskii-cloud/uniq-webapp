@@ -1,8 +1,8 @@
 {
   "status": "running",
-  "percent": 20,
-  "current_step": "Скачивание завершено",
-  "detail": "Длительность 4045.9 c",
+  "percent": 35,
+  "current_step": "Распознавание речи завершено",
+  "detail": "Слов с таймкодами: 6859",
   "clip_progress": "",
   "steps": [
     {
@@ -13,12 +13,12 @@
     {
       "id": "analyze",
       "title": "2. Поиск ярких моментов и камер (OpenCV/LLM)",
-      "state": "active"
+      "state": "done"
     },
     {
       "id": "whisper",
       "title": "3. Распознавание речи (Whisper)",
-      "state": "pending"
+      "state": "active"
     },
     {
       "id": "gfx",
@@ -37,6 +37,7 @@
     }
   ],
   "error_log": "",
+  "updated_at": "19:28:51",
   "active_tasks": [
     {
       "task_id": "chat_718716596_1795364850",
@@ -49,6 +50,5 @@
       "updated_at": "19:28:04"
     }
   ],
-  "history_tasks": [],
-  "updated_at": "19:28:04"
+  "history_tasks": []
 }
