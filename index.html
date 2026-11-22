@@ -757,6 +757,22 @@
       margin-top: 8px;
     }
 
+    .banner-strip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: rgba(139, 92, 246, 0.35);
+      border: 2px solid #8B5CF6;
+      box-sizing: border-box;
+      display: grid;
+      place-items: center;
+      font-size: 8px;
+      font-weight: 800;
+      color: #DDD6FE;
+      letter-spacing: .4px;
+      transition: all .2s ease;
+    }
+
     .bottom-nav {
       position: fixed;
       left: 0;
@@ -849,7 +865,7 @@
       <div class="tile-icon">S</div>
       <div class="tile-title">Субтитры + Хук</div>
     </div>
-    <div class="tile" data-mode="banner">
+    <div class="tile" id="openBannerTile">
       <div class="tile-icon">B</div>
       <div class="tile-title">Вставить баннер<br>(Хромакей)</div>
     </div>
@@ -1097,6 +1113,90 @@
   <button class="primary-btn sub-done" id="overlayDoneBtn">Готово</button>
 </div>
 
+<div id="tab-banner" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="bannerBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Вставка баннера</div>
+  <div class="screen-sub">Хромакей, сжатие и паузы</div>
+
+  <div class="section-title">СХЕМА</div>
+  <div class="overlay-scheme">
+    <div class="overlay-phone" id="bannerPhone">
+      <div class="banner-strip" id="bannerStrip">БАННЕР</div>
+    </div>
+    <div class="scheme-side">
+      <div class="preview-side-title">СХЕМА</div>
+      <div class="preview-side-text" id="bannerSchemeText"></div>
+    </div>
+  </div>
+
+  <div class="section-title">БАННЕР</div>
+  <div class="style-grid" id="bannerLibrary">
+    <div class="style-card active" data-banner-id="new">
+      <div class="style-sample">✈️</div>
+      <div>Новый — в чат</div>
+    </div>
+  </div>
+  <div class="hint" id="addBannerLibrary" style="cursor:pointer;color:#C4B5FD">+ Добавить баннер в библиотеку →</div>
+
+  <div class="section-title">РЕЖИМ</div>
+  <div class="chip-row" id="bannerModeRow">
+    <div class="chip active" data-banner-mode="squeeze">Сжатие</div>
+    <div class="chip" data-banner-mode="overlay">Поверх</div>
+    <div class="chip" data-banner-mode="pause">Пауза</div>
+  </div>
+
+  <div class="section-title">РАЗМЕЩЕНИЕ</div>
+  <div class="chip-row" id="bannerPositionRow">
+    <div class="chip" data-banner-pos="top">Сверху</div>
+    <div class="chip" data-banner-pos="center" style="display:none">По центру</div>
+    <div class="chip active" data-banner-pos="bottom">Снизу</div>
+  </div>
+
+  <div class="color-row" id="bannerHeightRow" style="display:none">
+    <div class="color-label">Высота баннера — <span id="bannerHeightValue">33%</span></div>
+    <input type="range" id="bannerHeightRange" min="10" max="100" value="33" style="width:100%;accent-color:#8B5CF6">
+  </div>
+
+  <div class="section-title">ЗЕЛЁНЫЙ ФОН</div>
+  <div class="toggle-row">
+    <div>
+      <div class="tile-title">Убирать зелёный фон</div>
+      <div class="desc">Автоматически, если он есть</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="bannerRemoveGreen" checked><span class="slider"></span></label>
+  </div>
+  <div class="hint">Если баннер снят на зелёном фоне (хромакей), фон вырежется сам — останется только объект.</div>
+
+  <div id="bannerPauseBlock" style="display:none">
+    <div class="section-title">КОГДА ПОСТАВИТЬ ПАУЗУ</div>
+    <div class="chip-row" id="pauseWhenRow">
+      <div class="chip" data-pause-when="start">Начало</div>
+      <div class="chip active" data-pause-when="middle">Середина</div>
+      <div class="chip" data-pause-when="end">Конец</div>
+      <div class="chip" data-pause-when="custom">Своё</div>
+    </div>
+    <div class="color-row" id="pauseSecondRow" style="display:none">
+      <div class="color-label">Секунда — <span id="pauseSecondValue">10 с</span></div>
+      <input type="range" id="pauseSecondRange" min="1" max="60" value="10" style="width:100%;accent-color:#8B5CF6">
+    </div>
+    <div class="color-row">
+      <div class="color-label">Длительность — <span id="pauseDurationValue">3 с</span></div>
+      <input type="range" id="pauseDurationRange" min="0.5" max="10" step="0.5" value="3" style="width:100%;accent-color:#8B5CF6">
+    </div>
+  </div>
+
+  <div class="section-title">СУБТИТРЫ</div>
+  <div class="toggle-row">
+    <div class="tile-title">Добавить субтитры</div>
+    <label class="switch"><input type="checkbox" id="bannerAddSubs"><span class="slider"></span></label>
+  </div>
+
+  <button class="primary-btn sub-done" id="bannerDoneBtn">Готово</button>
+</div>
+
 <div class="bottom-nav">
   <div class="nav-item active" data-tab="home" data-screen="home">Главная</div>
   <div class="nav-item" data-tab="uniq" data-screen="uniq">Уникализация</div>
@@ -1176,6 +1276,13 @@
   let uniqCopies = 3;
   let overlayPosition = "top";
   let overlayHeight = 35;
+  let bannerMode = "squeeze";
+  let bannerPosition = "bottom";
+  let bannerHeight = 33;
+  let bannerId = "new";
+  let pauseWhen = "middle";
+  let pauseSecond = 10;
+  let pauseDuration = 3;
 
   function safePreset() {
     const s = {};
@@ -1263,6 +1370,77 @@
     document.querySelectorAll("[data-overlay-pos]").forEach(el => {
       el.classList.toggle("active", el.dataset.overlayPos === overlayPosition);
     });
+  }
+
+  function renderBannerLibrary() {
+    const box = document.getElementById("bannerLibrary");
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem("clipper_banner_library") || "[]"); } catch (e) {}
+    if (!Array.isArray(saved)) saved = [];
+
+    let html =
+      '<div class="style-card' + (bannerId === "new" ? " active" : "") + '" data-banner-id="new">' +
+      '<div class="style-sample">✈️</div><div>Новый — в чат</div></div>';
+
+    saved.forEach(item => {
+      html +=
+        '<div class="style-card' + (bannerId === item.id ? " active" : "") + '" data-banner-id="' + item.id + '">' +
+        '<div class="style-sample">▣</div><div>' + item.name + '</div></div>';
+    });
+
+    box.innerHTML = html;
+    box.querySelectorAll("[data-banner-id]").forEach(el => {
+      el.addEventListener("click", () => {
+        bannerId = el.dataset.bannerId;
+        renderBannerLibrary();
+      });
+    });
+  }
+
+  function renderBannerControls() {
+    const isPause = bannerMode === "pause";
+    const center = document.querySelector('[data-banner-pos="center"]');
+    center.style.display = isPause ? "" : "none";
+    if (isPause && bannerPosition === "top") bannerPosition = "top";
+    if (!isPause && bannerPosition === "center") bannerPosition = "bottom";
+
+    document.getElementById("bannerHeightRow").style.display = isPause ? "" : "none";
+    document.getElementById("bannerPauseBlock").style.display = isPause ? "" : "none";
+    document.getElementById("pauseSecondRow").style.display =
+      pauseWhen === "custom" ? "" : "none";
+
+    document.querySelectorAll("[data-banner-mode]").forEach(el => {
+      el.classList.toggle("active", el.dataset.bannerMode === bannerMode);
+    });
+    document.querySelectorAll("[data-banner-pos]").forEach(el => {
+      el.classList.toggle("active", el.dataset.bannerPos === bannerPosition);
+    });
+    document.querySelectorAll("[data-pause-when]").forEach(el => {
+      el.classList.toggle("active", el.dataset.pauseWhen === pauseWhen);
+    });
+
+    document.getElementById("bannerHeightValue").textContent = bannerHeight + "%";
+    document.getElementById("pauseSecondValue").textContent = pauseSecond + " с";
+    document.getElementById("pauseDurationValue").textContent = pauseDuration + " с";
+
+    const strip = document.getElementById("bannerStrip");
+    strip.style.height = bannerHeight + "%";
+    strip.style.top = "";
+    strip.style.bottom = "";
+    if (bannerPosition === "top") {
+      strip.style.top = "0";
+    } else if (bannerPosition === "bottom") {
+      strip.style.bottom = "0";
+    } else {
+      strip.style.top = Math.round((100 - bannerHeight) / 2) + "%";
+    }
+
+    const texts = {
+      squeeze: "Видео уменьшается, баннер занимает освободившуюся полосу. Ничего не перекрыто.",
+      overlay: "Баннер ложится поверх видео на всю длительность.",
+      pause: "Видео встаёт на паузу, и несколько секунд показывается баннер. Место паузы — любое."
+    };
+    document.getElementById("bannerSchemeText").textContent = texts[bannerMode] || texts.squeeze;
   }
 
   function loadClipCount() {
@@ -1602,7 +1780,7 @@
     if (target) target.classList.add("active");
     setActiveTab(tab);
     document.querySelector(".bottom-nav").style.display =
-      tab === "subtitles" || tab === "overlay" ? "none" : "";
+      tab === "subtitles" || tab === "overlay" || tab === "banner" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
@@ -1643,6 +1821,66 @@
         height_percent: overlayHeight
       }));
       addHistory("Наложить видео", selectedCount);
+      tg.close();
+    }
+  });
+  document.getElementById("openBannerTile").addEventListener("click", () => {
+    renderBannerLibrary();
+    renderBannerControls();
+    showTab("banner");
+  });
+  document.getElementById("bannerBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("addBannerLibrary").addEventListener("click", () => {
+    if (tg) {
+      tg.sendData(JSON.stringify({ action: "banner_add_library" }));
+      tg.close();
+    }
+  });
+  document.querySelectorAll("[data-banner-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      bannerMode = el.dataset.bannerMode;
+      renderBannerControls();
+    });
+  });
+  document.querySelectorAll("[data-banner-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      bannerPosition = el.dataset.bannerPos;
+      renderBannerControls();
+    });
+  });
+  document.querySelectorAll("[data-pause-when]").forEach(el => {
+    el.addEventListener("click", () => {
+      pauseWhen = el.dataset.pauseWhen;
+      renderBannerControls();
+    });
+  });
+  document.getElementById("bannerHeightRange").addEventListener("input", e => {
+    bannerHeight = Number(e.target.value);
+    renderBannerControls();
+  });
+  document.getElementById("pauseSecondRange").addEventListener("input", e => {
+    pauseSecond = Number(e.target.value);
+    renderBannerControls();
+  });
+  document.getElementById("pauseDurationRange").addEventListener("input", e => {
+    pauseDuration = Number(e.target.value);
+    renderBannerControls();
+  });
+  document.getElementById("bannerDoneBtn").addEventListener("click", () => {
+    if (tg) {
+      tg.sendData(JSON.stringify({
+        action: "banner_settings",
+        banner_id: bannerId,
+        mode: bannerMode,
+        position: bannerPosition,
+        height_percent: bannerHeight,
+        remove_green: document.getElementById("bannerRemoveGreen").checked,
+        pause_when: pauseWhen,
+        pause_second: pauseSecond,
+        pause_duration: pauseDuration,
+        add_subs: document.getElementById("bannerAddSubs").checked
+      }));
+      addHistory("Вставить баннер", selectedCount);
       tg.close();
     }
   });
@@ -1819,6 +2057,8 @@
   });
   refreshSubtitles();
   renderOverlayScheme();
+  renderBannerLibrary();
+  renderBannerControls();
   renderCount();
   renderHistory();
 
