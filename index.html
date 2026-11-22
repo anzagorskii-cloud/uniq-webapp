@@ -779,6 +779,21 @@
       margin-top: 16px;
     }
 
+    #tab-banner { overflow: visible; }
+
+    .banner-scheme-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: #0B0A10;
+      padding-top: 8px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.25);
+    }
+
+    .banner-scheme-sticky .overlay-scheme { margin-bottom: 0; }
+
     .overlay-scheme {
       display: flex;
       gap: 14px;
@@ -1404,14 +1419,16 @@
   <div class="screen-title">Вставка баннера</div>
   <div class="screen-sub">Хромакей, сжатие и паузы</div>
 
-  <div class="section-title">СХЕМА</div>
-  <div class="overlay-scheme">
-    <div class="overlay-phone" id="bannerPhone">
-      <div class="banner-strip" id="bannerStrip">БАННЕР</div>
-    </div>
-    <div class="scheme-side">
-      <div class="preview-side-title">СХЕМА</div>
-      <div class="preview-side-text" id="bannerSchemeText"></div>
+  <div class="banner-scheme-sticky">
+    <div class="section-title">СХЕМА</div>
+    <div class="overlay-scheme">
+      <div class="overlay-phone" id="bannerPhone">
+        <div class="banner-strip" id="bannerStrip">БАННЕР</div>
+      </div>
+      <div class="scheme-side">
+        <div class="preview-side-title">СХЕМА</div>
+        <div class="preview-side-text" id="bannerSchemeText"></div>
+      </div>
     </div>
   </div>
 
