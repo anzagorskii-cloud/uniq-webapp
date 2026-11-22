@@ -3037,10 +3037,34 @@
   });
   document.getElementById("bannerBackBtn").addEventListener("click", () => showTab("home"));
   document.getElementById("addBannerLibrary").addEventListener("click", () => {
-    if (tg) {
-      tg.sendData(JSON.stringify({ action: "banner_add_library" }));
-      tg.close();
-    }
+    const picker = document.createElement("input");
+    picker.type = "file";
+    picker.accept = "image/*,video/*";
+    picker.addEventListener("change", async () => {
+      const file = picker.files && picker.files[0];
+      if (!file) return;
+      const form = new FormData();
+      form.append("file", file);
+      const init = (tg && tg.initDataUnsafe) || {};
+      const chatId = (init.chat && init.chat.id) || (init.user && init.user.id);
+      if (chatId) form.append("chat_id", String(chatId));
+      try {
+        const response = await apiFetch("/api/banners/upload", { method: "POST", body: form });
+        const data = await response.json();
+        if (data && data.banner) {
+          const saved = readJson("clipper_banner_library", []);
+          const list = Array.isArray(saved) ? saved : [];
+          list.push({ id: data.banner.id, name: data.banner.name });
+          localStorage.setItem("clipper_banner_library", JSON.stringify(list.slice(-20)));
+          bannerId = data.banner.id;
+          renderBannerLibrary();
+          toast("🖼 Баннер загружен в библиотеку");
+        }
+      } catch (e) {
+        toast("⚠️ Не удалось загрузить баннер");
+      }
+    });
+    picker.click();
   });
   document.querySelectorAll("[data-banner-mode]").forEach(el => {
     el.addEventListener("click", () => {
