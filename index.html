@@ -45,7 +45,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    .screen { display: none; }
+    .screen { display: none; padding-bottom: 110px; }
     .screen.active { display: block; }
 
     .topbar {
@@ -792,7 +792,11 @@
       border-bottom: 1px solid rgba(139, 92, 246, 0.25);
     }
 
-    .banner-scheme-sticky .overlay-scheme { margin-bottom: 0; }
+    .banner-scheme-sticky .overlay-scheme {
+      margin-bottom: 0;
+      overflow: hidden;
+      position: relative;
+    }
 
     .overlay-scheme {
       display: flex;
@@ -1597,6 +1601,8 @@
   const SUB_STYLE_KEY = "clipper_sub_style";
   const LAUNCH_ACTIVE_KEY = "clipper_launch_active_mode";
   const LAUNCH_MODE_KEY = "clipper_launch_mode";
+  const TASK_ENDPOINT_KEY = "clipper_task_endpoint";
+  const TASK_QUEUE_KEY = "clipper_pending_tasks";
   const AI_CONTENT_KEY = "clipper_ai_content_type";
   const LAUNCH_URL_KEY = "clipper_launch_video_url";
   const UNIQ_FULL_KEY = "clipper_uniq_full";
@@ -2631,7 +2637,27 @@
     }
   });
 
-  document.getElementById("launchStartBtn").addEventListener("click", () => {
+  async function submitTask(task) {
+    const endpoint = localStorage.getItem(TASK_ENDPOINT_KEY) || "pipeline_task.json";
+    const stored = readJson(TASK_QUEUE_KEY, []);
+    const queue = Array.isArray(stored) ? stored : [];
+    queue.push(task);
+    localStorage.setItem(TASK_QUEUE_KEY, JSON.stringify(queue.slice(-20)));
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(task),
+        cache: "no-store"
+      });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  document.getElementById("launchStartBtn").addEventListener("click", async () => {
     const input = document.getElementById("launchUrl");
     const url = input.value.trim();
     if (!url) {
@@ -2655,11 +2681,19 @@
       overlay_settings: readJson(OVERLAY_SETTINGS_KEY, {})
     };
 
+    const init = (tg && tg.initDataUnsafe) || {};
+    const chatId = (init.chat && init.chat.id) || (init.user && init.user.id) || null;
+    const task = Object.assign({
+      task_id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10),
+      chat_id: chatId,
+      created_at: new Date().toISOString()
+    }, packet);
+
+    const delivered = await submitTask(task);
     localStorage.setItem(LAUNCH_URL_KEY, url);
-    if (tg) tg.sendData(JSON.stringify(packet));
     addHistory("Запуск задачи", packet.clip_count);
     showTab("process");
-    toast("🚀 Задача запущена");
+    toast(delivered ? "🚀 Задача запущена" : "⏳ Задача в очереди — ожидаю соединение");
   });
 
   fetchProcess();
