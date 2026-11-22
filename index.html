@@ -532,6 +532,67 @@
       align-items: center;
     }
 
+    #tab-autopilot { padding-bottom: 110px; }
+
+    .ap-hook {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 86%;
+      text-align: center;
+      font-weight: 900;
+      font-size: 10px;
+      line-height: 1.15;
+      border-radius: 6px;
+      padding: 3px 6px;
+      transition: all .18s ease;
+    }
+    .ap-hook.top { top: 8px; }
+    .ap-hook.joint { top: 50%; transform: translate(-50%, -50%); }
+    .ap-hook.bottom { bottom: 16px; }
+    .ap-hook.gradient .title {
+      background: linear-gradient(180deg, #FFF200 0%, #4ADE80 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 1px 2px #000);
+    }
+    .ap-hook.white { background: #FFFFFF; color: #0D0D0D; }
+    .ap-hook.dark { background: rgba(15,15,20,.85); color: #FFFFFF; border: 1px solid rgba(255,255,255,.2); }
+    .ap-hook.none { background: transparent; color: #FFFFFF; text-shadow: 0 1px 3px #000; }
+
+    .ap-subs {
+      position: absolute;
+      z-index: 5;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 88%;
+      text-align: center;
+      font-weight: 800;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .ap-subs.top { top: 16%; }
+    .ap-subs.joint { top: 50%; transform: translate(-50%, -50%); }
+    .ap-subs.bottom { bottom: 14%; }
+    .ap-subs .word { transition: transform .18s ease; }
+    .ap-subs .word.active { transform: scale(1.22); }
+
+    .ap-input {
+      width: 100%;
+      border: 1px solid rgba(139,92,246,.35);
+      border-radius: 12px;
+      background: #12101B;
+      color: var(--text);
+      padding: 12px 13px;
+      font-size: 14px;
+      outline: none;
+    }
+    .ap-input:focus { border-color: var(--accent); box-shadow: var(--glow); }
+
+    .ap-field { margin-bottom: 12px; }
+
     .preview-wrap { flex: 0 0 auto; }
 
     .preview {
@@ -1141,6 +1202,14 @@
 
   <div class="section-title">ИНСТРУМЕНТЫ</div>
 
+  <div class="wide-card card" id="openAutopilotTile" style="margin-bottom:10px">
+    <div>
+      <div class="tile-title">✨ Автопилот ИИ</div>
+      <div class="hero-sub">Анализ ссылки и вся правка текста, шрифтов и сетки на одном экране</div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
   <div class="hero-card card" id="openSubtitlesTile">
     <div>
       <div class="hero-title">Стримеры 50/50 • Субтитры и Хук</div>
@@ -1180,6 +1249,129 @@
     <div class="arrow">→</div>
   </div>
 
+</div>
+
+<div id="tab-autopilot" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="apBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">✨ Автопилот ИИ</div>
+  <div class="screen-sub" id="apStepLabel">Шаг 1 из 2 — ссылка на видео</div>
+
+  <div id="apStepOne">
+    <div class="section-title">ШАГ 1 — ССЫЛКА</div>
+    <input class="ap-input" id="apUrl" placeholder="Вставьте ссылку на YouTube, TikTok, Reels или Shorts...">
+    <button class="primary-btn" id="apAnalyzeBtn">🔍 Проанализировать ссылку</button>
+  </div>
+
+  <div id="apResult" style="display:none">
+    <div class="section-title">ШАГ 2 — 🤖 РЕКОМЕНДАЦИЯ ИИ</div>
+
+    <div class="preview-block">
+      <div class="preview-wrap">
+        <div class="preview" id="apPreview">
+          <div class="preview-grid" id="apGrid"></div>
+          <div class="ap-hook joint gradient" id="apHook"><span class="title">ХУК</span></div>
+          <div class="ap-subs joint" id="apSubs"></div>
+        </div>
+      </div>
+      <div class="scheme-side">
+        <div class="preview-side-title">ЖИВОЕ ПРЕВЬЮ</div>
+        <div class="preview-side-text">Сетка, хук и субтитры меняются мгновенно — вся правка здесь, без перехода в другие вкладки.</div>
+      </div>
+    </div>
+
+    <div class="section-title">ТЕКСТ ХУКА</div>
+    <div class="ap-field"><input class="ap-input" id="apHookText" placeholder="Фраза хука, которую предложил ИИ"></div>
+
+    <div class="color-label">Стиль хука</div>
+    <div class="chip-row">
+      <div class="chip active" data-ap-hook-style="gradient">Градиент</div>
+      <div class="chip" data-ap-hook-style="white">Белая карточка</div>
+      <div class="chip" data-ap-hook-style="dark">Тёмная капсула</div>
+      <div class="chip" data-ap-hook-style="none">Без плашки</div>
+    </div>
+
+    <div class="color-label">Время показа хука</div>
+    <div class="chip-row">
+      <div class="chip active" data-ap-hook-dur="3">3с</div>
+      <div class="chip" data-ap-hook-dur="5">5с</div>
+      <div class="chip" data-ap-hook-dur="-1">Всё видео</div>
+    </div>
+
+    <div class="section-title">ШРИФТ И ЦВЕТ СУБТИТРОВ</div>
+    <div class="color-label">Шрифт</div>
+    <div class="chip-row">
+      <div class="chip active" data-ap-font="Manrope">Manrope</div>
+      <div class="chip" data-ap-font="Unbounded">Unbounded</div>
+      <div class="chip" data-ap-font="Dela Gothic One">Dela Gothic One</div>
+      <div class="chip" data-ap-font="Caveat">Caveat</div>
+    </div>
+
+    <div class="color-label">Основной цвет текста</div>
+    <div class="swatches" id="apTextColors">
+      <div class="swatch active" data-ap-color="#FFFFFF" style="background:#FFFFFF"></div>
+      <div class="swatch" data-ap-color="#FFE600" style="background:#FFE600"></div>
+      <div class="swatch" data-ap-color="#8B5CF6" style="background:#8B5CF6"></div>
+      <div class="swatch" data-ap-color="#22C55E" style="background:#22C55E"></div>
+      <div class="swatch" data-ap-color="#38BDF8" style="background:#38BDF8"></div>
+      <div class="swatch" data-ap-color="#F472B6" style="background:#F472B6"></div>
+      <div class="swatch" data-ap-color="#EF4444" style="background:#EF4444"></div>
+    </div>
+
+    <div class="color-label">Цвет подсветки слова</div>
+    <div class="swatches" id="apHighlightColors">
+      <div class="swatch none active" data-ap-highlight="none">∅</div>
+      <div class="swatch" data-ap-highlight="#FFFFFF" style="background:#FFFFFF"></div>
+      <div class="swatch" data-ap-highlight="#FFE600" style="background:#FFE600"></div>
+      <div class="swatch" data-ap-highlight="#8B5CF6" style="background:#8B5CF6"></div>
+      <div class="swatch" data-ap-highlight="#22C55E" style="background:#22C55E"></div>
+      <div class="swatch" data-ap-highlight="#38BDF8" style="background:#38BDF8"></div>
+      <div class="swatch" data-ap-highlight="#F472B6" style="background:#F472B6"></div>
+    </div>
+
+    <div class="color-label">Размер субтитров</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-size="44">S</div>
+      <div class="chip active" data-ap-size="54">M</div>
+      <div class="chip" data-ap-size="64">L</div>
+      <div class="chip" data-ap-size="76">XL</div>
+    </div>
+
+    <div class="section-title">РАСПОЛОЖЕНИЕ В КАДРЕ</div>
+    <div class="color-label">Сетка кадра</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-grid="1">1 экран</div>
+      <div class="chip active" data-ap-grid="50">50/50</div>
+      <div class="chip" data-ap-grid="3">3 кам</div>
+      <div class="chip" data-ap-grid="4">4 кам</div>
+    </div>
+
+    <div class="color-label">Позиция субтитров</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-sub-pos="8">Сверху</div>
+      <div class="chip active" data-ap-sub-pos="5">На стыке</div>
+      <div class="chip" data-ap-sub-pos="2">Снизу</div>
+    </div>
+
+    <div class="color-label">Позиция хука</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-hook-pos="top">Сверху</div>
+      <div class="chip active" data-ap-hook-pos="joint">На стыке</div>
+      <div class="chip" data-ap-hook-pos="bottom">Снизу</div>
+      <div class="chip" data-ap-hook-pos="off">Выкл</div>
+    </div>
+
+    <div class="section-title">КОЛИЧЕСТВО КЛИПОВ</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-count="3">3</div>
+      <div class="chip active" data-ap-count="5">5</div>
+      <div class="chip" data-ap-count="10">10</div>
+    </div>
+
+    <button class="primary-btn sub-done" id="apLaunchBtn">🚀 ПОДТВЕРДИТЬ И ЗАПУСТИТЬ РЕНДЕР</button>
+  </div>
 </div>
 
 <div id="tab-aicut" class="screen">
@@ -1898,6 +2090,171 @@
     document.getElementById("bannerSchemeText").textContent = texts[bannerMode] || texts.squeeze;
   }
 
+  const autopilotConfig = {
+    url: "",
+    hookText: "ЭТО НУЖНО УВИДЕТЬ САМОМУ",
+    hookStyle: "gradient",
+    hookDuration: 3,
+    font: "Manrope",
+    textColor: "#FFFFFF",
+    highlightColor: "none",
+    fontSize: 54,
+    grid: "50",
+    subPosition: 5,
+    hookPosition: "joint",
+    clipCount: 5
+  };
+
+  function renderAutopilotPreview() {
+    const cfg = autopilotConfig;
+    const grid = document.getElementById("apGrid");
+    const zone = (label, style) =>
+      '<div class="grid-zone" style="' + style + '">' + label + "</div>";
+
+    if (cfg.grid === "1") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr";
+      grid.innerHTML = zone("КАДР", "grid-column:1;grid-row:1");
+    } else if (cfg.grid === "50") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.innerHTML = zone("КАМЕРА", "") + zone("ИГРА", "");
+    } else if (cfg.grid === "3") {
+      grid.style.gridTemplateColumns = "1fr 1fr";
+      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.innerHTML =
+        zone("1", "grid-column:1;grid-row:1") +
+        zone("2", "grid-column:2;grid-row:1") +
+        zone("3", "grid-column:1 / 3;grid-row:2");
+    } else {
+      grid.style.gridTemplateColumns = "1fr 1fr";
+      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.innerHTML =
+        zone("1", "grid-column:1;grid-row:1") +
+        zone("2", "grid-column:2;grid-row:1") +
+        zone("3", "grid-column:1;grid-row:2") +
+        zone("4", "grid-column:2;grid-row:2");
+    }
+
+    const hook = document.getElementById("apHook");
+    hook.className = "ap-hook " +
+      (cfg.hookPosition === "off" ? "top" : cfg.hookPosition) + " " + cfg.hookStyle;
+    hook.style.display = cfg.hookPosition === "off" ? "none" : "";
+    hook.querySelector(".title").textContent = cfg.hookText || "ХУК";
+
+    const subs = document.getElementById("apSubs");
+    const positionClass = cfg.subPosition === 8 ? "top" : cfg.subPosition === 2 ? "bottom" : "joint";
+    subs.className = "ap-subs " + positionClass;
+    const words = (cfg.hookText || "ТАК ВЫГЛЯДИТ ВАШ КЛИП").split(/\s+/).slice(0, 3);
+    subs.innerHTML = words.map((word, index) =>
+      '<span class="word' + (index === 0 ? " active" : "") + '">' + escapeHtml(word) + "</span>"
+    ).join(" ");
+    subs.style.fontFamily = "'" + cfg.font + "', sans-serif";
+    subs.style.color = cfg.textColor;
+    subs.style.textShadow = "-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 6px rgba(0,0,0,.5)";
+    const previewSize = { 44: 9, 54: 11, 64: 13, 76: 15 }[cfg.fontSize] || 11;
+    subs.style.fontSize = previewSize + "px";
+    if (cfg.highlightColor !== "none") {
+      subs.querySelector(".word.active").style.color = cfg.highlightColor;
+    }
+  }
+
+  function renderAutopilot() {
+    document.querySelectorAll("[data-ap-hook-style]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apHookStyle === autopilotConfig.hookStyle));
+    document.querySelectorAll("[data-ap-hook-dur]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apHookDur) === autopilotConfig.hookDuration));
+    document.querySelectorAll("[data-ap-font]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apFont === autopilotConfig.font));
+    document.querySelectorAll("[data-ap-size]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apSize) === autopilotConfig.fontSize));
+    document.querySelectorAll("[data-ap-grid]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apGrid === autopilotConfig.grid));
+    document.querySelectorAll("[data-ap-sub-pos]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apSubPos) === autopilotConfig.subPosition));
+    document.querySelectorAll("[data-ap-hook-pos]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apHookPos === autopilotConfig.hookPosition));
+    document.querySelectorAll("[data-ap-count]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apCount) === autopilotConfig.clipCount));
+    document.querySelectorAll("[data-ap-color]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apColor === autopilotConfig.textColor));
+    document.querySelectorAll("[data-ap-highlight]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apHighlight === autopilotConfig.highlightColor));
+    renderAutopilotPreview();
+  }
+
+  function analyzeAutopilotUrl() {
+    const input = document.getElementById("apUrl");
+    const url = input.value.trim();
+    if (!/^https?:\/\//i.test(url)) {
+      input.classList.add("error");
+      toast("Вставьте ссылку, начинающуюся с http://");
+      return;
+    }
+    input.classList.remove("error");
+    autopilotConfig.url = url;
+    let slug = url.split("?")[0].split("/").filter(Boolean).pop() || "ЭТОТ МОМЕНТ";
+    slug = decodeURIComponent(slug).replace(/[-_+]+/g, " ").replace(/\.[a-z0-9]+$/i, "").toUpperCase();
+    autopilotConfig.hookText = slug.slice(0, 42).trim() || "ЭТО НУЖНО УВИДЕТЬ САМОМУ";
+    document.getElementById("apHookText").value = autopilotConfig.hookText;
+    document.getElementById("apStepOne").style.display = "none";
+    document.getElementById("apResult").style.display = "";
+    document.getElementById("apStepLabel").textContent = "Шаг 2 из 2 — рекомендация ИИ и правка";
+    renderAutopilot();
+    toast("🤖 Рекомендация ИИ готова");
+  }
+
+  function launchAutopilot() {
+    const cfg = autopilotConfig;
+    if (!cfg.url) {
+      toast("Сначала проанализируйте ссылку");
+      return;
+    }
+    const hook = {
+      enabled: cfg.hookPosition !== "off",
+      position: cfg.hookPosition === "off" ? "top" : cfg.hookPosition,
+      style: cfg.hookStyle,
+      size: "M",
+      duration: cfg.hookDuration
+    };
+    const subSettings = {
+      style: "tiktok",
+      text_color: cfg.textColor,
+      highlight_color: cfg.highlightColor,
+      outline_color: "#000000",
+      plate_color: "none",
+      font_size: cfg.fontSize,
+      font: cfg.font,
+      uppercase: true,
+      words: 3,
+      position: cfg.subPosition,
+      margin_percent: 18,
+      grid: cfg.grid,
+      hook: hook
+    };
+    const init = (tg && tg.initDataUnsafe) || {};
+    const chatId = (init.chat && init.chat.id) || (init.user && init.user.id) || null;
+    const task = Object.assign({
+      task_id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10),
+      chat_id: chatId,
+      created_at: new Date().toISOString()
+    }, {
+      action: "start_pipeline",
+      active_mode: "split_50_50",
+      video_url: cfg.url,
+      clip_count: cfg.clipCount,
+      ai_content_type: aiContentType,
+      ai_use_subs: true,
+      sub_settings: subSettings,
+      hook_settings: hook
+    });
+    submitTask(task);
+    addHistory("Автопилот ИИ", cfg.clipCount);
+    document.getElementById("apUrl").value = "";
+    showTab("process");
+    toast("🚀 Рендер запущен");
+  }
+
   function renderDownloadControls() {
     document.querySelectorAll("[data-download-quality]").forEach(el => {
       el.classList.toggle("active", el.dataset.downloadQuality === downloadQuality);
@@ -2462,8 +2819,9 @@
     }
     setActiveTab(tab);
     document.querySelector(".bottom-nav").style.display =
-      tab === "subtitles" || tab === "aicut" || tab === "overlay" ||
-      tab === "banner" || tab === "launch" || tab === "download" ? "none" : "";
+      tab === "subtitles" || tab === "aicut" || tab === "autopilot" ||
+      tab === "overlay" || tab === "banner" || tab === "launch" ||
+      tab === "download" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
@@ -2481,6 +2839,37 @@
     refreshSubtitles();
     showTab("subtitles");
   });
+  document.getElementById("openAutopilotTile").addEventListener("click", () => showTab("autopilot"));
+  document.getElementById("apBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("apAnalyzeBtn").addEventListener("click", analyzeAutopilotUrl);
+  document.getElementById("apLaunchBtn").addEventListener("click", launchAutopilot);
+  document.getElementById("apHookText").addEventListener("input", e => {
+    autopilotConfig.hookText = e.target.value;
+    renderAutopilotPreview();
+  });
+
+  const apBindings = [
+    ["data-ap-hook-style", "hookStyle", false],
+    ["data-ap-hook-dur", "hookDuration", true],
+    ["data-ap-font", "font", false],
+    ["data-ap-size", "fontSize", true],
+    ["data-ap-grid", "grid", false],
+    ["data-ap-sub-pos", "subPosition", true],
+    ["data-ap-hook-pos", "hookPosition", false],
+    ["data-ap-count", "clipCount", true],
+    ["data-ap-color", "textColor", false],
+    ["data-ap-highlight", "highlightColor", false]
+  ];
+  apBindings.forEach(([attr, key, numeric]) => {
+    document.querySelectorAll("#tab-autopilot [" + attr + "]").forEach(el => {
+      el.addEventListener("click", () => {
+        const value = el.getAttribute(attr);
+        autopilotConfig[key] = numeric ? Number(value) : value;
+        renderAutopilot();
+      });
+    });
+  });
+
   document.getElementById("openAiCutTile").addEventListener("click", () => {
     renderAiCutControls();
     showTab("aicut");
@@ -2844,6 +3233,7 @@
 
   refreshSubtitles();
   renderAiCutControls();
+  renderAutopilot();
   renderOverlayScheme();
   renderBannerLibrary();
   renderBannerControls();
