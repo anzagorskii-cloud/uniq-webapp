@@ -2234,6 +2234,7 @@
   }
 
   const STATUS_URL = "https://api.github.com/repos/anzagorskii-cloud/uniq-webapp/contents/pipeline_status.json";
+  const STATUS_RAW_URL = "https://raw.githubusercontent.com/anzagorskii-cloud/uniq-webapp/main/pipeline_status.json";
 
   function statusUrl() {
     return STATUS_URL + "?ref=main&_=" + Date.now();
@@ -2270,6 +2271,19 @@
     home.textContent = "⚡ Идёт сборка: " + (data.percent || 0) + "% (Открыть процесс)";
   }
 
+  async function fetchRawStatus(subtitle) {
+    try {
+      const response = await fetch(STATUS_RAW_URL + "?nocache=" + Date.now(), {
+        cache: "no-store"
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (!data || typeof data !== "object" || Array.isArray(data)) return;
+      subtitle.textContent = "Живой мониторинг (зеркало GitHub)";
+      renderProcess(data);
+    } catch (e) {}
+  }
+
   async function fetchStatus() {
     const subtitle = document.getElementById("processSubtitle");
     try {
@@ -2279,17 +2293,20 @@
       });
       if (!response.ok) {
         subtitle.textContent = "Синхронизация с GitHub... HTTP " + response.status;
+        await fetchRawStatus(subtitle);
         return;
       }
       const data = await response.json();
       if (!data || typeof data !== "object" || Array.isArray(data)) {
         subtitle.textContent = "Синхронизация с GitHub... пустой ответ";
+        await fetchRawStatus(subtitle);
         return;
       }
       subtitle.textContent = "Живой мониторинг сборки видео";
       renderProcess(data);
     } catch (e) {
       subtitle.textContent = "Синхронизация с GitHub... нет соединения";
+      await fetchRawStatus(subtitle);
     }
   }
 
