@@ -798,13 +798,132 @@
       transition: all .2s ease;
     }
 
+    .home-progress {
+      display: none;
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(139,92,246,.14);
+      border: 1px solid rgba(139,92,246,.45);
+      color: #C4B5FD;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--glow);
+    }
+
+    .proc-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.25);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .proc-percent {
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .proc-caption { color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+    .proc-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #2A2438;
+      overflow: hidden;
+      margin-top: 14px;
+    }
+
+    .proc-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #8B5CF6, #A855F7);
+      box-shadow: var(--glow);
+      transition: width .4s ease;
+    }
+
+    .proc-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      background: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .proc-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--card);
+      border: 1px solid transparent;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .proc-step.active {
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      background: #1D1730;
+    }
+
+    .proc-step.done { color: #86EFAC; }
+    .proc-step.error { color: #FCA5A5; border-color: #EF4444; }
+
+    .proc-error {
+      display: none;
+      background: #2A1116;
+      border: 1px solid #EF4444;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .proc-error pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #FECACA;
+      font-size: 11px;
+      line-height: 1.4;
+      margin: 8px 0 12px;
+    }
+
+    .pulse-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 1.1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .35; transform: scale(1.5); }
+    }
+
     .bottom-nav {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
       background: rgba(11,10,16,.92);
       backdrop-filter: blur(14px);
@@ -853,6 +972,8 @@
   <div class="topbar">
     <div class="brand">КЛИППЕР</div>
   </div>
+
+  <div class="home-progress" id="homeProgress" data-action="open-process">⚡ Идёт сборка: 0% (Открыть процесс)</div>
 
   <div class="status-card">
     <div class="status-title">Статус комбайна</div>
@@ -1230,10 +1351,37 @@
   <button class="primary-btn sub-done" id="bannerDoneBtn">Готово</button>
 </div>
 
+<div id="tab-process" class="screen">
+  <div class="topbar">
+    <div class="brand">КЛИППЕР</div>
+  </div>
+
+  <div class="screen-title">⚡ Процесс</div>
+  <div class="screen-sub">Живой мониторинг сборки видео</div>
+
+  <div class="proc-card">
+    <div class="proc-percent" id="procPercent">0%</div>
+    <div class="proc-caption" id="procStep">Ожидание задачи</div>
+    <div class="proc-track"><div class="proc-fill" id="procFill"></div></div>
+    <div><span class="proc-badge" id="procClip">Клип —</span></div>
+    <div class="proc-caption" id="procTime">Обновлено: —</div>
+  </div>
+
+  <div class="section-title">ЭТАПЫ</div>
+  <div id="procSteps"></div>
+
+  <div class="proc-error" id="procError">
+    <div class="tile-title" style="color:#FCA5A5">ДЕТАЛИ ОШИБКИ</div>
+    <pre id="procErrorText"></pre>
+    <button class="secondary-btn" id="copyErrorBtn">📋 Скопировать ошибку</button>
+  </div>
+</div>
+
 <div class="bottom-nav">
   <div class="nav-item active" data-tab="home" data-screen="home">Главная</div>
   <div class="nav-item" data-tab="uniq" data-screen="uniq">Уникализация</div>
   <div class="nav-item" data-tab="history">История</div>
+  <div class="nav-item" data-tab="process">⚡ Процесс <span id="navPulse" class="pulse-dot" style="display:none"></span></div>
 </div>
 
 <div class="toast" id="toast">Сохранено</div>
@@ -1812,6 +1960,46 @@
     });
   }
 
+  const STATUS_URL = "https://raw.githubusercontent.com/anzagorskii-cloud/uniq-webapp/main/pipeline_status.json";
+
+  function renderProcess(data) {
+    if (!data) return;
+
+    document.getElementById("procPercent").textContent = (data.percent || 0) + "%";
+    document.getElementById("procFill").style.width = (data.percent || 0) + "%";
+    document.getElementById("procStep").textContent = data.current_step || "Ожидание задачи";
+    document.getElementById("procClip").textContent =
+      data.clip_progress ? "Клип " + data.clip_progress : "Клип —";
+    document.getElementById("procTime").textContent =
+      "Обновлено: " + (data.updated_at || "—");
+
+    const steps = Array.isArray(data.steps) ? data.steps : [];
+    const icons = { done: "✅", active: "⏳", error: "❌", pending: "○" };
+    document.getElementById("procSteps").innerHTML = steps.map(item =>
+      '<div class="proc-step ' + item.state + '">' +
+      '<span>' + (icons[item.state] || "○") + '</span>' +
+      '<span>' + item.title + '</span></div>'
+    ).join("");
+
+    const isError = data.status === "error";
+    document.getElementById("procError").style.display = isError ? "" : "none";
+    document.getElementById("procErrorText").textContent = data.error_log || "";
+
+    const isRunning = data.status === "running";
+    document.getElementById("navPulse").style.display = isRunning ? "" : "none";
+
+    const home = document.getElementById("homeProgress");
+    home.style.display = isRunning ? "" : "none";
+    home.textContent = "⚡ Идёт сборка: " + (data.percent || 0) + "% (Открыть процесс)";
+  }
+
+  async function fetchProcess() {
+    try {
+      const response = await fetch(STATUS_URL + "?t=" + Date.now(), { cache: "no-store" });
+      if (response.ok) renderProcess(await response.json());
+    } catch (e) {}
+  }
+
   function showTab(tab) {
     document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
     const target = document.getElementById("tab-" + tab);
@@ -2108,12 +2296,21 @@
       toast("Клипов за раз: " + selectedCount);
     });
   });
+  document.getElementById("homeProgress").addEventListener("click", () => showTab("process"));
+  document.getElementById("copyErrorBtn").addEventListener("click", () => {
+    const text = document.getElementById("procErrorText").textContent || "";
+    if (navigator.clipboard) navigator.clipboard.writeText(text);
+    toast("Ошибка скопирована");
+  });
+
   refreshSubtitles();
   renderOverlayScheme();
   renderBannerLibrary();
   renderBannerControls();
   renderCount();
   renderHistory();
+  fetchProcess();
+  setInterval(fetchProcess, 2000);
 
   if (tg) {
     tg.ready();
