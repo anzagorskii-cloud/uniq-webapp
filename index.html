@@ -499,48 +499,58 @@
       position: absolute;
       z-index: 3;
       left: 50%;
-      width: 84%;
+      width: 90%;
       text-align: center;
-      padding: 3px 4px;
+      font-size: 9px;
+      line-height: 1.15;
+      font-weight: 800;
       border-radius: 6px;
       pointer-events: none;
       transition: all .18s ease;
-      font-weight: 800;
     }
 
-    .hook-mini .badge {
-      display: inline-block;
-      background: #EF4444;
-      color: #FFFFFF;
-      font-size: 6px;
-      padding: 1px 3px;
-      border-radius: 3px;
-      margin-bottom: 1px;
-      letter-spacing: .4px;
-    }
-
-    .hook-mini .title { display: block; line-height: 1.1; }
+    .hook-mini .title { display: block; }
 
     .hook-mini.top { top: 6px; transform: translateX(-50%); }
     .hook-mini.joint { top: 50%; transform: translate(-50%, -50%); }
     .hook-mini.bottom { bottom: 20px; transform: translateX(-50%); }
 
-    .hook-mini.gradient { background: transparent; color: #000000; }
-    .hook-mini.gradient .title {
-      background: linear-gradient(180deg, #FFF200, #4ADE80);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 900;
-      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+    .hook-mini.white {
+      background: #FFFFFF;
+      color: #0D0D0D;
+      padding: 3px 6px;
+      border-radius: 6px;
+      font-weight: 800;
     }
 
-    .hook-mini.white { background: #FFFFFF; color: #000000; }
-    .hook-mini.dark { background: rgba(0,0,0,.72); color: #FFFFFF; }
+    .hook-mini.gradient {
+      background: transparent;
+      padding: 2px 4px;
+      font-weight: 900;
+    }
+    .hook-mini.gradient .title {
+      background: linear-gradient(180deg, #FFF200 0%, #4ADE80 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter: drop-shadow(0 1px 2px #000000);
+      font-weight: 900;
+    }
+
+    .hook-mini.dark {
+      background: rgba(15, 15, 20, 0.85);
+      color: #FFFFFF;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 3px 6px;
+      border-radius: 6px;
+    }
+
     .hook-mini.none {
       background: transparent;
       color: #FFFFFF;
-      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+      text-shadow: 0 1px 3px #000000;
+      padding: 2px 4px;
     }
 
     .preview-grid {
@@ -973,8 +983,7 @@
       <div class="preview">
         <div class="preview-grid" id="previewGrid"></div>
         <div class="hook-mini top white" id="hookMini">
-          <span class="badge">СТРИМ</span>
-          <span class="title">ЗАГОЛОВОК ХУКА</span>
+          <span class="title">ОН РЕАЛЬНО ЭТО СДЕЛАЛ?!</span>
         </div>
         <div class="preview-phrase" id="previewPhrase"></div>
       </div>
@@ -1618,10 +1627,6 @@
 
     mini.style.display = "";
     mini.className = "hook-mini " + hook.position + " " + hook.style;
-
-    const fontMap = { 34: 7, 42: 8, 50: 9 };
-    const px = fontMap[hook.size] || 8;
-    mini.querySelector(".title").style.fontSize = px + "px";
 
     document.querySelectorAll("[data-hook-pos]").forEach(el => {
       el.classList.toggle("active", el.dataset.hookPos === hook.position);
