@@ -1512,7 +1512,7 @@
   </div>
 
   <div class="screen-title">⚡ Процесс</div>
-  <div class="screen-sub">Живой мониторинг сборки видео</div>
+  <div class="screen-sub" id="processSubtitle">Живой мониторинг сборки видео</div>
 
   <div class="proc-card">
     <div class="proc-percent" id="procPercent">0%</div>
@@ -2235,6 +2235,10 @@
 
   const STATUS_URL = "https://api.github.com/repos/anzagorskii-cloud/uniq-webapp/contents/pipeline_status.json";
 
+  function statusUrl() {
+    return STATUS_URL + "?ref=main&_=" + Date.now();
+  }
+
   function renderProcess(data) {
     if (!data) return;
 
@@ -2266,14 +2270,27 @@
     home.textContent = "⚡ Идёт сборка: " + (data.percent || 0) + "% (Открыть процесс)";
   }
 
-  async function fetchProcess() {
+  async function fetchStatus() {
+    const subtitle = document.getElementById("processSubtitle");
     try {
-      const response = await fetch(STATUS_URL + "?nocache=" + Date.now(), {
+      const response = await fetch(statusUrl(), {
         headers: { "Accept": "application/vnd.github.v3.raw" },
         cache: "no-store"
       });
-      if (response.ok) renderProcess(await response.json());
-    } catch (e) {}
+      if (!response.ok) {
+        subtitle.textContent = "Синхронизация с GitHub... HTTP " + response.status;
+        return;
+      }
+      const data = await response.json();
+      if (!data || typeof data !== "object" || Array.isArray(data)) {
+        subtitle.textContent = "Синхронизация с GitHub... пустой ответ";
+        return;
+      }
+      subtitle.textContent = "Живой мониторинг сборки видео";
+      renderProcess(data);
+    } catch (e) {
+      subtitle.textContent = "Синхронизация с GitHub... нет соединения";
+    }
   }
 
   function readJson(key, fallback) {
@@ -2324,6 +2341,7 @@
     if (target) target.classList.add("active");
     if (tab === "launch") document.getElementById("launchUrl").value = "";
     if (tab === "download") document.getElementById("downloadUrl").value = "";
+    if (tab === "process") fetchStatus();
     setActiveTab(tab);
     document.querySelector(".bottom-nav").style.display =
       tab === "subtitles" || tab === "aicut" || tab === "overlay" ||
@@ -2808,8 +2826,8 @@
   clearUrlInputs();
   renderDownloadControls();
 
-  fetchProcess();
-  setInterval(fetchProcess, 2000);
+  fetchStatus();
+  setInterval(fetchStatus, 2000);
 
   if (tg) {
     tg.ready();
