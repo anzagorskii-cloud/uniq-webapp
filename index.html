@@ -532,7 +532,7 @@
       align-items: center;
     }
 
-    #tab-autopilot { padding-bottom: 110px; }
+    #tab-autopilot { padding-bottom: 130px; }
 
     .ap-hook {
       position: absolute;
@@ -2121,19 +2121,21 @@
       grid.innerHTML = zone("КАМЕРА", "") + zone("ИГРА", "");
     } else if (cfg.grid === "3") {
       grid.style.gridTemplateColumns = "1fr 1fr";
-      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.style.gridTemplateRows = "1fr 1fr 2fr";
       grid.innerHTML =
         zone("1", "grid-column:1;grid-row:1") +
         zone("2", "grid-column:2;grid-row:1") +
-        zone("3", "grid-column:1 / 3;grid-row:2");
+        zone("3", "grid-column:1 / span 2;grid-row:2") +
+        zone("ВИДЕО / ИГРА", "grid-column:1 / span 2;grid-row:3");
     } else {
       grid.style.gridTemplateColumns = "1fr 1fr";
-      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.style.gridTemplateRows = "1fr 1fr 2fr";
       grid.innerHTML =
         zone("1", "grid-column:1;grid-row:1") +
         zone("2", "grid-column:2;grid-row:1") +
         zone("3", "grid-column:1;grid-row:2") +
-        zone("4", "grid-column:2;grid-row:2");
+        zone("4", "grid-column:2;grid-row:2") +
+        zone("ВИДЕО / ИГРА", "grid-column:1 / span 2;grid-row:3");
     }
 
     const hook = document.getElementById("apHook");
@@ -2143,9 +2145,12 @@
     hook.querySelector(".title").textContent = cfg.hookText || "ХУК";
 
     const subs = document.getElementById("apSubs");
-    const positionClass = cfg.subPosition === 8 ? "top" : cfg.subPosition === 2 ? "bottom" : "joint";
+    let positionClass = cfg.subPosition === 8 ? "top" : cfg.subPosition === 2 ? "bottom" : "joint";
+    if (cfg.hookPosition !== "off" && cfg.hookPosition === positionClass) {
+      positionClass = "bottom";
+    }
     subs.className = "ap-subs " + positionClass;
-    const words = (cfg.hookText || "ТАК ВЫГЛЯДИТ ВАШ КЛИП").split(/\s+/).slice(0, 3);
+    const words = "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(/\s+/).slice(0, 3);
     subs.innerHTML = words.map((word, index) =>
       '<span class="word' + (index === 0 ? " active" : "") + '">' + escapeHtml(word) + "</span>"
     ).join(" ");
@@ -2183,6 +2188,8 @@
     renderAutopilotPreview();
   }
 
+  let autopilotAnalysisId = null;
+
   function analyzeAutopilotUrl() {
     const input = document.getElementById("apUrl");
     const url = input.value.trim();
@@ -2193,13 +2200,42 @@
     }
     input.classList.remove("error");
     autopilotConfig.url = url;
-    let slug = url.split("?")[0].split("/").filter(Boolean).pop() || "ЭТОТ МОМЕНТ";
-    slug = decodeURIComponent(slug).replace(/[-_+]+/g, " ").replace(/\.[a-z0-9]+$/i, "").toUpperCase();
-    autopilotConfig.hookText = slug.slice(0, 42).trim() || "ЭТО НУЖНО УВИДЕТЬ САМОМУ";
+    autopilotConfig.hookText = "АНАЛИЗИРУЮ ВИДЕО...";
     document.getElementById("apHookText").value = autopilotConfig.hookText;
     document.getElementById("apStepOne").style.display = "none";
     document.getElementById("apResult").style.display = "";
-    document.getElementById("apStepLabel").textContent = "Шаг 2 из 2 — рекомендация ИИ и правка";
+    document.getElementById("apStepLabel").textContent = "Шаг 2 из 2 — ИИ анализирует видео";
+    renderAutopilot();
+
+    autopilotAnalysisId = "analyze_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+    const init = (tg && tg.initDataUnsafe) || {};
+    submitTask({
+      action: "analyze_video",
+      task_id: autopilotAnalysisId,
+      video_url: url,
+      chat_id: (init.chat && init.chat.id) || (init.user && init.user.id) || null,
+      created_at: new Date().toISOString()
+    });
+    toast("🤖 ИИ анализирует видео...");
+  }
+
+  function applyAutopilotRecommendation(recommendation) {
+    if (!recommendation || !autopilotAnalysisId ||
+        recommendation.task_id !== autopilotAnalysisId) return;
+    if (recommendation.hook_text) {
+      autopilotConfig.hookText = recommendation.hook_text;
+      document.getElementById("apHookText").value = recommendation.hook_text;
+    }
+    if (["1", "50", "3", "4"].includes(recommendation.grid)) {
+      autopilotConfig.grid = recommendation.grid;
+    }
+    if (recommendation.title) {
+      document.getElementById("apStepLabel").textContent =
+        "Шаг 2 из 2 — " + recommendation.title.slice(0, 70);
+    } else {
+      document.getElementById("apStepLabel").textContent = "Шаг 2 из 2 — рекомендация ИИ и правка";
+    }
+    autopilotAnalysisId = null;
     renderAutopilot();
     toast("🤖 Рекомендация ИИ готова");
   }
@@ -2241,6 +2277,7 @@
     }, {
       action: "start_pipeline",
       active_mode: "split_50_50",
+      autopilot: true,
       video_url: cfg.url,
       clip_count: cfg.clipCount,
       ai_content_type: aiContentType,
@@ -2730,6 +2767,9 @@
     subtitle.textContent = sourceLabel;
     renderProcess(data);
     renderHistory();
+    if (data.autopilot_recommendation) {
+      applyAutopilotRecommendation(data.autopilot_recommendation);
+    }
     return true;
   }
 
