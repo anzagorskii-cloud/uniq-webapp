@@ -23,6 +23,19 @@
 
     * { box-sizing: border-box; }
 
+    .card, .btn {
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hero-card, .tile, .wide-card, .style-card, .chip, .pill,
+    .ai-type-card, button, .nav-item, .count-selector {
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       margin: 0;
       padding: 16px 16px 110px;
@@ -159,7 +172,7 @@
       padding: 18px;
       overflow: hidden;
       border: 1px solid rgba(139,92,246,.35);
-      background: linear-gradient(120deg, #1B1830 0%, #132A26 100%);
+      background: linear-gradient(120deg, #1B1830 0%, #2A1B40 100%);
       box-shadow: var(--glow);
       display: flex;
       align-items: center;
@@ -265,6 +278,46 @@
     }
 
     .wide-card:active { box-shadow: var(--glow); }
+
+    #tab-aicut { padding-bottom: 110px; }
+
+    .ai-type-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.16);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .ai-type-card.active {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, var(--card), #241B38);
+      box-shadow: var(--glow);
+    }
+
+    .ai-type-card:active { transform: scale(.99); }
+
+    .ai-type-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      background: linear-gradient(135deg, #7C3AED, #A855F7);
+      margin-bottom: 10px;
+    }
+
+    .ai-type-title { font-size: 15px; font-weight: 800; line-height: 1.25; }
+
+    .ai-type-desc {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
 
     .history-item {
       background: var(--card);
@@ -1034,22 +1087,18 @@
 
   <div class="section-title">ИНСТРУМЕНТЫ</div>
 
-  <div class="hero-card" data-mode="split_50_50">
+  <div class="hero-card card" id="openSubtitlesTile">
     <div>
-      <div class="hero-title">Стримеры 50/50<br>(Умная сетка 1–4 вебки)</div>
-      <div class="hero-sub">Автоопределение камер, игра снизу, субтитры на стыке</div>
+      <div class="hero-title">Стримеры 50/50 • Субтитры и Хук</div>
+      <div class="hero-sub">Умная сетка 1–4 камеры, живой стиль текста и тайминг хука</div>
     </div>
     <div class="arrow">→</div>
   </div>
 
   <div class="grid2">
-    <div class="tile" data-mode="ai_cut">
+    <div class="tile card" id="openAiCutTile">
       <div class="tile-icon">AI</div>
       <div class="tile-title">Нарезка ИИ<br>Игры / Фильмы / Аниме</div>
-    </div>
-    <div class="tile" id="openSubtitlesTile">
-      <div class="tile-icon">S</div>
-      <div class="tile-title">Субтитры + Хук</div>
     </div>
     <div class="tile" id="openBannerTile">
       <div class="tile-icon">B</div>
@@ -1077,6 +1126,46 @@
     <div class="arrow">→</div>
   </div>
 
+</div>
+
+<div id="tab-aicut" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="aiCutBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Нарезка ИИ</div>
+  <div class="screen-sub">Схема монтажа под ваш контент</div>
+
+  <div class="section-title">ЧТО РЕДАКТИРУЕМ? (СХЕМА МОНТАЖА)</div>
+
+  <div class="ai-type-card card active" data-content-type="movies">
+    <div class="ai-type-icon">🎬</div>
+    <div class="ai-type-title">Фильмы и сериалы</div>
+    <div class="ai-type-desc">Поиск напряжённых диалогов и кульминаций, умный кроп 9:16 по лицам героев, киношные субтитры и сюжетный хук.</div>
+  </div>
+
+  <div class="ai-type-card card" data-content-type="anime">
+    <div class="ai-type-icon">⛩</div>
+    <div class="ai-type-title">Аниме</div>
+    <div class="ai-type-desc">Детектор экшен-сцен, сочная цветокоррекция, динамичный кроп 9:16 без обрезки персонажей и яркий хук.</div>
+  </div>
+
+  <div class="ai-type-card card" data-content-type="games">
+    <div class="ai-type-icon">🎮</div>
+    <div class="ai-type-title">Игры и хайлайты</div>
+    <div class="ai-type-desc">Поиск лучших моментов по пикам звука и экшена, фокус на центре экрана, быстрые субтитры и хук.</div>
+  </div>
+
+  <div class="toggle-row">
+    <div>
+      <div class="tile-title">Добавить субтитры и хук из моего пресета</div>
+      <div class="desc">Стиль текста и тайминг хука из конструктора</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="aiUseSubPreset" checked><span class="slider"></span></label>
+  </div>
+
+  <button class="secondary-btn" id="aiOpenStyleBtn">⚙️ Настроить стиль текста</button>
+  <button class="primary-btn sub-done" id="aiNextBtn">Далее — к ссылке</button>
 </div>
 
 <div id="tab-uniq" class="screen">
@@ -1490,6 +1579,8 @@
 
   const SUB_STYLE_KEY = "clipper_sub_style";
   const LAUNCH_ACTIVE_KEY = "clipper_launch_active_mode";
+  const LAUNCH_MODE_KEY = "clipper_launch_mode";
+  const AI_CONTENT_KEY = "clipper_ai_content_type";
   const LAUNCH_URL_KEY = "clipper_launch_video_url";
   const UNIQ_FULL_KEY = "clipper_uniq_full";
   const BANNER_SETTINGS_KEY = "clipper_banner_settings";
@@ -1543,6 +1634,9 @@
   let bannerHeight = 33;
   let bannerId = "new";
   let chromaMode = "green";
+  let aiContentType = "movies";
+  let aiUseSubPreset = true;
+  let subReturnTab = "launch";
   let pauseWhen = "middle";
   let pauseSecond = 10;
   let pauseDuration = 3;
@@ -1713,6 +1807,13 @@
     document.getElementById("bannerSchemeText").textContent = texts[bannerMode] || texts.squeeze;
   }
 
+  function renderAiCutControls() {
+    document.querySelectorAll("[data-content-type]").forEach(el => {
+      el.classList.toggle("active", el.dataset.contentType === aiContentType);
+    });
+    document.getElementById("aiUseSubPreset").checked = aiUseSubPreset;
+  }
+
   function loadClipCount() {
     try {
       const value = parseInt(localStorage.getItem(CLIP_COUNT_KEY), 10);
@@ -1723,6 +1824,10 @@
   }
 
   let selectedCount = loadClipCount();
+  try {
+    const savedAiType = localStorage.getItem(AI_CONTENT_KEY);
+    if (["movies", "anime", "games"].includes(savedAiType)) aiContentType = savedAiType;
+  } catch (e) {}
 
   function loadSubStyle() {
     const base = Object.assign({}, SUB_PRESETS.tiktok, {
@@ -2134,8 +2239,9 @@
     ).join("");
   }
 
-  function goLaunch(modeLabel) {
+  function goLaunch(modeLabel, modeKey) {
     localStorage.setItem(LAUNCH_ACTIVE_KEY, modeLabel);
+    localStorage.setItem(LAUNCH_MODE_KEY, modeKey || "split_50_50");
     document.getElementById("launchUrl").value = localStorage.getItem(LAUNCH_URL_KEY) || "";
     document.getElementById("launchHint").style.display = "none";
     document.getElementById("launchUrl").classList.remove("error");
@@ -2150,7 +2256,8 @@
     if (target) target.classList.add("active");
     setActiveTab(tab);
     document.querySelector(".bottom-nav").style.display =
-      tab === "subtitles" || tab === "overlay" || tab === "banner" || tab === "launch" ? "none" : "";
+      tab === "subtitles" || tab === "aicut" || tab === "overlay" ||
+      tab === "banner" || tab === "launch" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
@@ -2164,10 +2271,36 @@
   document.getElementById("openUniqTile").addEventListener("click", () => showTab("uniq"));
   document.getElementById("backBtn").addEventListener("click", () => showTab("home"));
   document.getElementById("openSubtitlesTile").addEventListener("click", () => {
+    subReturnTab = "launch";
     refreshSubtitles();
     showTab("subtitles");
   });
-  document.getElementById("subBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("openAiCutTile").addEventListener("click", () => {
+    renderAiCutControls();
+    showTab("aicut");
+  });
+  document.getElementById("aiCutBackBtn").addEventListener("click", () => showTab("home"));
+  document.querySelectorAll("[data-content-type]").forEach(el => {
+    el.addEventListener("click", () => {
+      aiContentType = el.dataset.contentType;
+      renderAiCutControls();
+    });
+  });
+  document.getElementById("aiUseSubPreset").addEventListener("change", e => {
+    aiUseSubPreset = e.target.checked;
+  });
+  document.getElementById("aiOpenStyleBtn").addEventListener("click", () => {
+    subReturnTab = "aicut";
+    refreshSubtitles();
+    showTab("subtitles");
+  });
+  document.getElementById("aiNextBtn").addEventListener("click", () => {
+    localStorage.setItem(AI_CONTENT_KEY, aiContentType);
+    goLaunch("Нарезка ИИ", "ai_cut");
+  });
+  document.getElementById("subBackBtn").addEventListener("click", () => {
+    showTab(subReturnTab === "aicut" ? "aicut" : "home");
+  });
   document.getElementById("openOverlayTile").addEventListener("click", () => {
     renderOverlayScheme();
     showTab("overlay");
@@ -2372,7 +2505,11 @@
 
   document.getElementById("subDoneBtn").addEventListener("click", () => {
     localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
-    goLaunch("Субтитры + Хук");
+    if (subReturnTab === "aicut") {
+      showTab("aicut");
+      return;
+    }
+    goLaunch("Стримеры 50/50 • Субтитры и Хук", "split_50_50");
   });
 
   setInterval(() => {
@@ -2442,6 +2579,7 @@
   });
 
   refreshSubtitles();
+  renderAiCutControls();
   renderOverlayScheme();
   renderBannerLibrary();
   renderBannerControls();
@@ -2488,9 +2626,11 @@
     const sub = readJson(SUB_STYLE_KEY, {});
     const packet = {
       action: "start_pipeline",
-      active_mode: localStorage.getItem(LAUNCH_ACTIVE_KEY) || "",
+      active_mode: localStorage.getItem(LAUNCH_MODE_KEY) || "split_50_50",
       clip_count: Number(localStorage.getItem(CLIP_COUNT_KEY) || 5),
       video_url: url,
+      ai_content_type: aiContentType,
+      ai_use_subs: aiUseSubPreset,
       sub_settings: sub,
       hook_settings: sub.hook || {},
       uniq_settings: readJson(UNIQ_FULL_KEY, {}),
