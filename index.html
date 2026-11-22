@@ -1896,14 +1896,22 @@
   const CONTROL_PATH = "/api/control";
   const STATUS_PATH = "/api/status";
 
+  let preferredApiIndex = 0;
   async function apiFetch(path, options) {
     let lastError = null;
-    for (const base of API_BASES) {
+    const order = [preferredApiIndex].concat(
+      API_BASES.map((_, index) => index).filter(index => index !== preferredApiIndex)
+    );
+    for (const index of order) {
+      const base = API_BASES[index];
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 8000);
       try {
         const response = await fetch(base + path, Object.assign({}, options || {}, { signal: controller.signal }));
-        if (response.ok) return response;
+        if (response.ok) {
+          preferredApiIndex = index;
+          return response;
+        }
         lastError = new Error("HTTP " + response.status);
       } catch (e) {
         lastError = e;
