@@ -352,6 +352,41 @@
       padding: 5px 9px;
     }
 
+    .task-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.18);
+      border-radius: 14px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
+    }
+
+    .task-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .task-title { font-size: 13px; font-weight: 700; word-break: break-all; }
+    .task-sub { margin-top: 3px; font-size: 11px; color: var(--muted); }
+
+    .task-badge { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+    .task-badge.running { color: #C4B5FD; background: rgba(139,92,246,.16); border: 1px solid rgba(139,92,246,.4); }
+    .task-badge.paused { color: #FDE68A; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.4); }
+    .task-badge.done { color: #86EFAC; background: rgba(52,211,153,.14); border: 1px solid rgba(52,211,153,.4); }
+    .task-badge.cancelled, .task-badge.error { color: #FCA5A5; background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.4); }
+
+    .task-progress { height: 6px; border-radius: 6px; background: #2A2538; margin-top: 10px; overflow: hidden; }
+    .task-progress > span { display: block; height: 100%; background: linear-gradient(90deg, #7C3AED, #A855F7); border-radius: 6px; }
+
+    .task-actions { display: flex; gap: 8px; margin-top: 11px; }
+    .task-btn {
+      flex: 1;
+      border: 1px solid rgba(139,92,246,.35);
+      background: #211C30;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .task-btn.danger { border-color: rgba(239,68,68,.45); color: #FCA5A5; }
+
     .empty {
       color: var(--muted);
       font-size: 13px;
@@ -2197,26 +2232,86 @@
     renderHistory();
   }
 
+  function escapeHtml(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[ch]);
+  }
+
+  function taskStatusLabel(status) {
+    return {
+      running: "В работе",
+      paused: "На паузе",
+      done: "Готово",
+      cancelled: "Остановлено",
+      error: "Ошибка"
+    }[status] || "В работе";
+  }
+
   function renderHistory() {
     const box = document.getElementById("history");
-    let list = [];
-    try { list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); } catch (e) {}
+    const active = (lastStatus && Array.isArray(lastStatus.active_tasks)) ? lastStatus.active_tasks : [];
+    const finished = (lastStatus && Array.isArray(lastStatus.history_tasks)) ? lastStatus.history_tasks : [];
+    const hidden = readJson("clipper_hidden_tasks", []);
+    const hiddenIds = Array.isArray(hidden) ? hidden.map(String) : [];
 
-    document.getElementById("historyCount").textContent = "Выполнено запусков: " + list.length;
+    let local = readJson(HISTORY_KEY, []);
+    if (!Array.isArray(local)) local = [];
+    const remote = active.concat(finished).filter(
+      item => !hiddenIds.includes(String(item.task_id || ""))
+    );
+    const remoteIds = new Set(remote.map(item => String(item.task_id || "")));
+    const fallback = local
+      .filter(item => !remoteIds.has(String(item.task_id || "")))
+      .map(item => ({
+        task_id: item.task_id || ("local_" + (item.date || "")),
+        title: item.name || "Задача",
+        mode: "",
+        clip_count: item.clip_count || 0,
+        status: "done",
+        percent: 100,
+        current_step: item.status || "Готово",
+        updated_at: item.date || ""
+      }))
+      .filter(item => !hiddenIds.includes(String(item.task_id)));
+    const all = remote.concat(fallback);
 
-    if (!list.length) {
+    document.getElementById("historyCount").textContent =
+      "Задач: " + all.length + " • в работе: " + active.length;
+
+    if (!all.length) {
       box.innerHTML = '<div class="history-empty">История пуста — выберите любой инструмент на Главной, чтобы начать</div>';
       return;
     }
 
-    box.innerHTML = list.map(item => (
-      '<div class="history-item">' +
-        '<div><div class="history-name">' + item.name + '</div>' +
-        '<div class="history-clips">Клипов за раз: ' + (item.clip_count || 5) + '</div>' +
-        '<div class="history-meta">' + (item.date || "") + '</div></div>' +
-        '<div class="history-status">' + item.status + '</div>' +
-      '</div>'
-    )).join("");
+    box.innerHTML = all.map(item => {
+      const status = item.status || "running";
+      const percent = Math.max(0, Math.min(100, Number(item.percent) || 0));
+      const badgeClass = status === "done" ? "done"
+        : status === "paused" ? "paused"
+        : (status === "cancelled" || status === "error") ? "cancelled" : "running";
+      const id = escapeHtml(item.task_id || "");
+      const actions = [];
+      if (status === "running") {
+        actions.push('<button class="task-btn" data-task-action="pause" data-task-id="' + id + '">⏸ Пауза</button>');
+      }
+      if (status === "paused") {
+        actions.push('<button class="task-btn" data-task-action="resume" data-task-id="' + id + '">▶️ Возобновить</button>');
+      }
+      actions.push('<button class="task-btn danger" data-task-action="delete" data-task-id="' + id + '">🗑 Удалить</button>');
+
+      return '<div class="task-card">' +
+        '<div class="task-head">' +
+          '<div><div class="task-title">' + escapeHtml(item.title || "Задача") + '</div>' +
+          '<div class="task-sub">' + escapeHtml(item.mode || "Режим не указан") +
+            (item.clip_count ? " • клипов: " + escapeHtml(item.clip_count) : "") + '</div></div>' +
+          '<div class="task-badge ' + badgeClass + '">' + taskStatusLabel(status) + '</div>' +
+        '</div>' +
+        '<div class="task-progress"><span style="width:' + percent + '%"></span></div>' +
+        '<div class="task-sub">' + percent + '% • ' + escapeHtml(item.current_step || "—") + '</div>' +
+        '<div class="task-actions">' + actions.join("") + '</div>' +
+      '</div>';
+    }).join("");
   }
 
   function sendData(payload, label, clipCount) {
@@ -2233,15 +2328,17 @@
     });
   }
 
-  const STATUS_URL = "https://api.github.com/repos/anzagorskii-cloud/uniq-webapp/contents/pipeline_status.json";
+  const STATUS_URL = "https://anzagorskii-cloud.github.io/uniq-webapp/pipeline_status.json";
   const STATUS_RAW_URL = "https://raw.githubusercontent.com/anzagorskii-cloud/uniq-webapp/main/pipeline_status.json";
+  let lastStatus = null;
 
-  function statusUrl() {
-    return STATUS_URL + "?ref=main&_=" + Date.now();
+  function statusUrl(base) {
+    return base + "?t=" + Date.now();
   }
 
   function renderProcess(data) {
     if (!data) return;
+    lastStatus = data;
 
     document.getElementById("procPercent").textContent = (data.percent || 0) + "%";
     document.getElementById("procFill").style.width = (data.percent || 0) + "%";
@@ -2271,41 +2368,41 @@
     home.textContent = "⚡ Идёт сборка: " + (data.percent || 0) + "% (Открыть процесс)";
   }
 
+  function applyStatus(data, subtitle, sourceLabel) {
+    if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+    subtitle.textContent = sourceLabel;
+    renderProcess(data);
+    renderHistory();
+    return true;
+  }
+
   async function fetchRawStatus(subtitle) {
     try {
-      const response = await fetch(STATUS_RAW_URL + "?nocache=" + Date.now(), {
-        cache: "no-store"
-      });
-      if (!response.ok) return;
-      const data = await response.json();
-      if (!data || typeof data !== "object" || Array.isArray(data)) return;
-      subtitle.textContent = "Живой мониторинг (зеркало GitHub)";
-      renderProcess(data);
-    } catch (e) {}
+      const response = await fetch(statusUrl(STATUS_RAW_URL), { cache: "no-store" });
+      if (!response.ok) return false;
+      return applyStatus(await response.json(), subtitle, "Живой мониторинг (зеркало GitHub)");
+    } catch (e) {
+      return false;
+    }
   }
 
   async function fetchStatus() {
     const subtitle = document.getElementById("processSubtitle");
     try {
-      const response = await fetch(statusUrl(), {
-        headers: { "Accept": "application/vnd.github.v3.raw" },
-        cache: "no-store"
-      });
+      const response = await fetch(statusUrl(STATUS_URL), { cache: "no-store" });
       if (!response.ok) {
-        subtitle.textContent = "Синхронизация с GitHub... HTTP " + response.status;
-        await fetchRawStatus(subtitle);
+        subtitle.textContent = "Синхронизация... HTTP " + response.status;
+        if (!await fetchRawStatus(subtitle)) {
+          subtitle.textContent = "Синхронизация... HTTP " + response.status;
+        }
         return;
       }
-      const data = await response.json();
-      if (!data || typeof data !== "object" || Array.isArray(data)) {
-        subtitle.textContent = "Синхронизация с GitHub... пустой ответ";
+      if (!await applyStatus(await response.json(), subtitle, "Живой мониторинг сборки видео")) {
+        subtitle.textContent = "Синхронизация... пустой ответ";
         await fetchRawStatus(subtitle);
-        return;
       }
-      subtitle.textContent = "Живой мониторинг сборки видео";
-      renderProcess(data);
     } catch (e) {
-      subtitle.textContent = "Синхронизация с GitHub... нет соединения";
+      subtitle.textContent = "Синхронизация... нет соединения";
       await fetchRawStatus(subtitle);
     }
   }
@@ -2359,6 +2456,10 @@
     if (tab === "launch") document.getElementById("launchUrl").value = "";
     if (tab === "download") document.getElementById("downloadUrl").value = "";
     if (tab === "process") fetchStatus();
+    if (tab === "history") {
+      renderHistory();
+      fetchStatus();
+    }
     setActiveTab(tab);
     document.querySelector(".bottom-nav").style.display =
       tab === "subtitles" || tab === "aicut" || tab === "overlay" ||
@@ -2503,8 +2604,55 @@
     }));
     goLaunch("Вставить баннер");
   });
+  async function sendControl(taskId, command) {
+    const payload = {
+      action: "control_task",
+      task_id: taskId,
+      command: command,
+      command_id: "cmd_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8)
+    };
+    const endpoint = localStorage.getItem(TASK_ENDPOINT_KEY) || "pipeline_task.json";
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        cache: "no-store"
+      });
+      return response.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  document.getElementById("history").addEventListener("click", async e => {
+    const btn = e.target.closest("[data-task-action]");
+    if (!btn) return;
+    const taskId = btn.dataset.taskId;
+    const action = btn.dataset.taskAction;
+    if (!taskId) return;
+
+    if (action === "pause") {
+      await sendControl(taskId, "pause");
+      toast("⏸ Пауза отправлена");
+    } else if (action === "resume") {
+      await sendControl(taskId, "resume");
+      toast("▶️ Возобновлено");
+    } else if (action === "delete") {
+      await sendControl(taskId, "cancel");
+      const hidden = readJson("clipper_hidden_tasks", []);
+      const list = Array.isArray(hidden) ? hidden : [];
+      if (!list.includes(taskId)) list.push(taskId);
+      localStorage.setItem("clipper_hidden_tasks", JSON.stringify(list.slice(-50)));
+      toast("🗑 Задача удалена");
+      renderHistory();
+    }
+    setTimeout(fetchStatus, 1500);
+  });
+
   document.getElementById("clearHistoryBtn").addEventListener("click", () => {
     localStorage.removeItem(HISTORY_KEY);
+    localStorage.removeItem("clipper_hidden_tasks");
     renderHistory();
     toast("История очищена");
   });
