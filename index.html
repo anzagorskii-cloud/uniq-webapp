@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Клиппер</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&amp;family=Dela+Gothic+One&amp;family=Manrope:wght@700;800&amp;family=Unbounded:wght@700;900&amp;display=swap" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -428,6 +431,157 @@
       margin-top: 10px;
     }
 
+    .preview-block { margin-bottom: 20px; }
+
+    .preview-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .preview {
+      width: 196px;
+      aspect-ratio: 9 / 16;
+      border-radius: 20px;
+      background: linear-gradient(160deg, #1A1330 0%, #0B0A10 70%);
+      border: 1px solid rgba(139, 92, 246, .55);
+      box-shadow: 0 0 26px rgba(139, 92, 246, .35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(139,92,246,.18), transparent 62%);
+      pointer-events: none;
+    }
+
+    .preview-phrase {
+      position: relative;
+      text-align: center;
+      line-height: 1.18;
+      max-width: 100%;
+      word-break: break-word;
+    }
+
+    .preview-word {
+      display: inline-block;
+      padding: 1px 3px;
+      border-radius: 7px;
+      transition: color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .preview-word.active { transform: scale(1.09); }
+
+    .style-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .style-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.2);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #D8D2EC;
+    }
+
+    .style-card.active {
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      background: #1D1730;
+    }
+
+    .color-row { margin-bottom: 13px; }
+
+    .color-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    .swatches { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+
+    .swatch {
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.08);
+    }
+
+    .swatch.active { border-color: #fff; box-shadow: var(--glow); }
+
+    .swatch.none {
+      background: #211C30;
+      color: #C4B5FD;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .custom-color {
+      width: 33px;
+      height: 33px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .chip-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 10px; }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(139,92,246,.3);
+      background: #211C30;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .sub-done {
+      position: sticky;
+      bottom: 16px;
+      z-index: 5;
+      margin-top: 16px;
+    }
+
     .bottom-nav {
       position: fixed;
       left: 0;
@@ -516,7 +670,7 @@
       <div class="tile-icon">AI</div>
       <div class="tile-title">Нарезка ИИ<br>Игры / Фильмы / Аниме</div>
     </div>
-    <div class="tile" data-mode="subs_only">
+    <div class="tile" id="openSubtitlesTile">
       <div class="tile-icon">S</div>
       <div class="tile-title">Субтитры + Хук</div>
     </div>
@@ -567,6 +721,76 @@
   <div id="history" style="margin-top:16px"></div>
 </div>
 
+<div id="tab-subtitles" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="subBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Субтитры + Хук</div>
+  <div class="screen-sub">Конструктор стиля с живым превью</div>
+
+  <div class="section-title">ПРЕВЬЮ</div>
+  <div class="preview-block">
+    <div class="preview-wrap">
+      <div class="preview">
+        <div class="preview-phrase" id="previewPhrase"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">СТИЛЬ</div>
+  <div class="style-grid" id="styleGrid">
+    <div class="style-card active" data-sub-style="tiktok">TikTok</div>
+    <div class="style-card" data-sub-style="classic">Классика</div>
+    <div class="style-card" data-sub-style="plate">Плашка</div>
+    <div class="style-card" data-sub-style="bold">Жирный</div>
+    <div class="style-card" data-sub-style="minimal">Минимал</div>
+  </div>
+
+  <div class="section-title">ЦВЕТА</div>
+  <div id="colorRows"></div>
+
+  <div class="section-title">ТЕКСТ</div>
+  <div class="color-label">Размер</div>
+  <div class="chip-row" id="sizeRow">
+    <div class="chip" data-size="44">S</div>
+    <div class="chip active" data-size="54">M</div>
+    <div class="chip" data-size="64">L</div>
+    <div class="chip" data-size="76">XL</div>
+  </div>
+
+  <div class="color-label">Шрифт</div>
+  <div class="chip-row" id="fontRow">
+    <div class="chip active" data-font="Manrope">Manrope</div>
+    <div class="chip" data-font="Unbounded">Unbounded</div>
+    <div class="chip" data-font="Dela Gothic One">Dela Gothic One</div>
+    <div class="chip" data-font="Caveat">Caveat</div>
+  </div>
+
+  <div class="toggle-row">
+    <div class="tile-title">Заглавные буквы</div>
+    <label class="switch"><input type="checkbox" id="subUppercase" checked><span class="slider"></span></label>
+  </div>
+
+  <div class="color-label">Слов на экране</div>
+  <div class="chip-row" id="wordsRow">
+    <div class="chip" data-words="1">1</div>
+    <div class="chip" data-words="2">2</div>
+    <div class="chip active" data-words="3">3</div>
+    <div class="chip" data-words="5">Фраза</div>
+  </div>
+
+  <div class="section-title">ПОЛОЖЕНИЕ</div>
+  <div class="chip-row" id="positionRow">
+    <div class="chip" data-pos="8">Сверху</div>
+    <div class="chip active" data-pos="5">По центру (стык 50/50)</div>
+    <div class="chip" data-pos="2">Снизу</div>
+  </div>
+
+  <button class="secondary-btn" id="saveSubStyleBtn">⭐ Сохранить как мой стиль</button>
+  <button class="primary-btn sub-done" id="subDoneBtn">Готово</button>
+</div>
+
 <div class="bottom-nav">
   <div class="nav-item active" data-tab="home" data-screen="home">Главная</div>
   <div class="nav-item" data-tab="uniq" data-screen="uniq">Уникализация</div>
@@ -600,6 +824,22 @@
     download: "Скачать видео",
     uniq_settings: "Уникализация"
   };
+
+  const SUB_STYLE_KEY = "clipper_sub_style";
+  const SUB_PRESETS = {
+    tiktok:  { style: "tiktok",  text_color: "#FFFFFF", highlight_color: "#8B5CF6", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: true,  words: 3, position: 5 },
+    classic: { style: "classic", text_color: "#FFFFFF", highlight_color: "#FFFFFF", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5 },
+    plate:   { style: "plate",   text_color: "#FFFFFF", highlight_color: "none",    outline_color: "none",    plate_color: "#000000", font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5 },
+    bold:    { style: "bold",    text_color: "#FFE600", highlight_color: "#FFE600", outline_color: "#000000", plate_color: "none",     font_size: 76, font: "Unbounded",      uppercase: true,  words: 1, position: 5 },
+    minimal: { style: "minimal", text_color: "#FFFFFF", highlight_color: "none",    outline_color: "none",    plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5 }
+  };
+
+  const COLOR_SECTIONS = [
+    { key: "text_color", label: "Текст", none: false, colors: ["#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444", "#1E1B2E"] },
+    { key: "highlight_color", label: "Подсветка слова", none: true, colors: ["#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444"] },
+    { key: "outline_color", label: "Обводка", none: true, colors: ["#000000", "#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444"] },
+    { key: "plate_color", label: "Плашка под текстом", none: true, colors: ["#000000", "#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444"] }
+  ];
 
   const tg = window.Telegram && window.Telegram.WebApp;
   const first = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name;
@@ -636,6 +876,156 @@
   }
 
   let selectedCount = loadClipCount();
+
+  function loadSubStyle() {
+    const base = Object.assign({}, SUB_PRESETS.tiktok);
+    try {
+      const raw = localStorage.getItem(SUB_STYLE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        Object.keys(base).forEach(key => {
+          if (key in saved) base[key] = saved[key];
+        });
+      }
+    } catch (e) {}
+    return base;
+  }
+
+  let subSettings = loadSubStyle();
+  const PREVIEW_WORDS = "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
+  let previewChunk = 0;
+  let previewActive = 0;
+
+  function renderColorRows() {
+    const box = document.getElementById("colorRows");
+    box.innerHTML = "";
+
+    COLOR_SECTIONS.forEach(section => {
+      const row = document.createElement("div");
+      row.className = "color-row";
+
+      const label = document.createElement("div");
+      label.className = "color-label";
+      label.textContent = section.label;
+      row.appendChild(label);
+
+      const swatches = document.createElement("div");
+      swatches.className = "swatches";
+
+      if (section.none) {
+        const none = document.createElement("div");
+        none.className = "swatch none" + (subSettings[section.key] === "none" ? " active" : "");
+        none.textContent = "✕";
+        none.addEventListener("click", () => {
+          subSettings[section.key] = "none";
+          refreshSubtitles();
+        });
+        swatches.appendChild(none);
+      }
+
+      section.colors.forEach(color => {
+        const sw = document.createElement("div");
+        sw.className = "swatch" + (subSettings[section.key] === color ? " active" : "");
+        sw.style.background = color;
+        sw.addEventListener("click", () => {
+          subSettings[section.key] = color;
+          refreshSubtitles();
+        });
+        swatches.appendChild(sw);
+      });
+
+      const custom = document.createElement("input");
+      custom.type = "color";
+      custom.className = "custom-color";
+      custom.value = /^#[0-9A-Fa-f]{6}$/.test(subSettings[section.key])
+        ? subSettings[section.key]
+        : "#FFFFFF";
+      custom.addEventListener("input", () => {
+        subSettings[section.key] = custom.value.toUpperCase();
+        refreshSubtitles();
+      });
+      swatches.appendChild(custom);
+
+      row.appendChild(swatches);
+      box.appendChild(row);
+    });
+  }
+
+  function renderPreview() {
+    const phrase = document.getElementById("previewPhrase");
+    const count = subSettings.words;
+    const chunk = [];
+    for (let i = 0; i < count; i++) {
+      chunk.push(PREVIEW_WORDS[(previewChunk + i) % PREVIEW_WORDS.length]);
+    }
+    if (previewActive >= count) previewActive = 0;
+
+    const preview = phrase.parentElement;
+    preview.style.alignItems = subSettings.position === 8
+      ? "flex-start"
+      : subSettings.position === 2 ? "flex-end" : "center";
+
+    phrase.style.fontFamily = "'" + subSettings.font + "', sans-serif";
+    phrase.style.fontSize = Math.round(subSettings.font_size * 0.52) + "px";
+    phrase.style.fontWeight = subSettings.font === "Caveat" ? "700" : "800";
+    phrase.style.color = subSettings.text_color;
+    phrase.style.textTransform = subSettings.uppercase ? "uppercase" : "none";
+
+    phrase.innerHTML = "";
+    chunk.forEach((word, index) => {
+      const span = document.createElement("span");
+      span.className = "preview-word" + (index === previewActive ? " active" : "");
+      span.textContent = word;
+
+      if (index === previewActive) {
+        if (subSettings.highlight_color !== "none") {
+          span.style.color = subSettings.highlight_color;
+          span.style.transform = "scale(1.09)";
+        }
+        if (subSettings.plate_color !== "none") {
+          span.style.background = subSettings.plate_color;
+          span.style.padding = "1px 6px";
+        }
+      }
+
+      if (subSettings.outline_color !== "none") {
+        const c = subSettings.outline_color;
+        span.style.textShadow = [
+          "-1px -1px 0 " + c, "1px -1px 0 " + c,
+          "-1px 1px 0 " + c, "1px 1px 0 " + c,
+          "0 2px 6px rgba(0,0,0,.5)"
+        ].join(",");
+      }
+
+      phrase.appendChild(span);
+      if (index < chunk.length - 1) phrase.appendChild(document.createTextNode(" "));
+    });
+  }
+
+  function syncSubControls() {
+    document.querySelectorAll("[data-sub-style]").forEach(el => {
+      el.classList.toggle("active", el.dataset.subStyle === subSettings.style);
+    });
+    document.querySelectorAll("[data-size]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.size) === subSettings.font_size);
+    });
+    document.querySelectorAll("[data-font]").forEach(el => {
+      el.classList.toggle("active", el.dataset.font === subSettings.font);
+    });
+    document.querySelectorAll("[data-words]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.words) === subSettings.words);
+    });
+    document.querySelectorAll("[data-pos]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.pos) === subSettings.position);
+    });
+    document.getElementById("subUppercase").checked = !!subSettings.uppercase;
+  }
+
+  function refreshSubtitles() {
+    syncSubControls();
+    renderColorRows();
+    renderPreview();
+  }
 
   function renderCount() {
     document.querySelectorAll(".pill").forEach(el => {
@@ -705,6 +1095,7 @@
     const target = document.getElementById("tab-" + tab);
     if (target) target.classList.add("active");
     setActiveTab(tab);
+    document.querySelector(".bottom-nav").style.display = tab === "subtitles" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
@@ -717,6 +1108,11 @@
 
   document.getElementById("openUniqTile").addEventListener("click", () => showTab("uniq"));
   document.getElementById("backBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("openSubtitlesTile").addEventListener("click", () => {
+    refreshSubtitles();
+    showTab("subtitles");
+  });
+  document.getElementById("subBackBtn").addEventListener("click", () => showTab("home"));
   document.getElementById("clearHistoryBtn").addEventListener("click", () => {
     localStorage.removeItem(HISTORY_KEY);
     renderHistory();
@@ -726,6 +1122,71 @@
   document.querySelectorAll(".nav-item").forEach(el => {
     el.addEventListener("click", () => showTab(el.dataset.tab));
   });
+
+  document.querySelectorAll("[data-sub-style]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings = Object.assign({}, SUB_PRESETS[el.dataset.subStyle]);
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-size]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.font_size = Number(el.dataset.size);
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-font]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.font = el.dataset.font;
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-words]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.words = Number(el.dataset.words);
+      previewActive = 0;
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.position = Number(el.dataset.pos);
+      refreshSubtitles();
+    });
+  });
+
+  document.getElementById("subUppercase").addEventListener("change", e => {
+    subSettings.uppercase = e.target.checked;
+    refreshSubtitles();
+  });
+
+  document.getElementById("saveSubStyleBtn").addEventListener("click", () => {
+    localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
+    toast("Мой стиль сохранён");
+  });
+
+  document.getElementById("subDoneBtn").addEventListener("click", () => {
+    localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
+    if (tg) {
+      tg.sendData(JSON.stringify({ action: "sub_settings", settings: subSettings }));
+      addHistory(MODE_NAMES.subs_only, selectedCount);
+      tg.close();
+    }
+  });
+
+  setInterval(() => {
+    if (!document.getElementById("tab-subtitles").classList.contains("active")) return;
+    previewActive++;
+    renderPreview();
+    if (previewActive >= subSettings.words) {
+      previewActive = 0;
+      previewChunk = (previewChunk + 1) % PREVIEW_WORDS.length;
+    }
+  }, 900);
 
   const listBox = document.getElementById("uniqList");
   ITEMS.forEach(item => {
@@ -762,6 +1223,7 @@
       toast("Клипов за раз: " + selectedCount);
     });
   });
+  refreshSubtitles();
   renderCount();
   renderHistory();
 
