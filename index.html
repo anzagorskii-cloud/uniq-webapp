@@ -728,6 +728,7 @@
     }
 
     .overlay-phone {
+      position: relative;
       width: 96px;
       height: 170px;
       border-radius: 12px;
@@ -736,7 +737,8 @@
       display: flex;
       flex-direction: column;
       flex: 0 0 auto;
-      border: 1px solid rgba(139,92,246,.35);
+      flex-shrink: 0;
+      border: 1px solid rgba(139, 92, 246, 0.35);
     }
 
     .overlay-zone {
@@ -771,9 +773,12 @@
       position: absolute;
       left: 0;
       right: 0;
+      max-height: 100%;
+      box-sizing: border-box;
+      z-index: 2;
+      pointer-events: none;
       background: rgba(139, 92, 246, 0.35);
       border: 2px solid #8B5CF6;
-      box-sizing: border-box;
       display: grid;
       place-items: center;
       font-size: 8px;
