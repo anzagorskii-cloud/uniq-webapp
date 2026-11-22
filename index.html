@@ -1886,7 +1886,7 @@
   const GITHUB_PAT_KEY = "github_pat";
   const GITHUB_REPO = "anzagorskii-cloud/uniq-webapp";
   // Локальный FastAPI через бесплатный HTTPS-туннель Cloudflare.
-  const API_BASE = "https://vertical-pharmaceuticals-publishing-prayers.trycloudflare.com";
+  const API_BASE = "https://bookstore-arthritis-smallest-desire.trycloudflare.com";
   const START_TASK_URL = API_BASE + "/api/start_task";
   const CONTROL_URL = API_BASE + "/api/control";
   const TASK_QUEUE_KEY = "clipper_pending_tasks";
@@ -3422,12 +3422,23 @@
     }
   });
 
-  async function submitTask(task) {
+  function queueTask(task) {
     const stored = readJson(TASK_QUEUE_KEY, []);
     const queue = Array.isArray(stored) ? stored : [];
     queue.push(Object.assign({}, task, { status: "queued" }));
     localStorage.setItem(TASK_QUEUE_KEY, JSON.stringify(queue.slice(-20)));
+  }
 
+  function removeQueuedTask(taskId) {
+    const stored = readJson(TASK_QUEUE_KEY, []);
+    const queue = Array.isArray(stored) ? stored : [];
+    localStorage.setItem(
+      TASK_QUEUE_KEY,
+      JSON.stringify(queue.filter(item => String(item.task_id || "") !== String(taskId || "")))
+    );
+  }
+
+  async function postTask(task) {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         const response = await fetch(START_TASK_URL, {
@@ -3444,8 +3455,33 @@
         await new Promise(resolve => setTimeout(resolve, 600 * (attempt + 1)));
       }
     }
-    toast("⚠️ Локальный сервер недоступен — задача сохранена в истории");
     return "none";
+  }
+
+  async function submitTask(task) {
+    queueTask(task);
+    const delivered = await postTask(task);
+    if (delivered === "local") {
+      removeQueuedTask(task.task_id);
+    } else {
+      toast("⚠️ Туннель недоступен — задача в очереди, повторю автоматически");
+    }
+    return delivered;
+  }
+
+  let flushingQueue = false;
+  async function flushPendingTasks() {
+    if (flushingQueue) return;
+    flushingQueue = true;
+    try {
+      const stored = readJson(TASK_QUEUE_KEY, []);
+      const queue = Array.isArray(stored) ? stored : [];
+      for (const item of queue) {
+        if (await postTask(item) === "local") removeQueuedTask(item.task_id);
+      }
+    } finally {
+      flushingQueue = false;
+    }
   }
 
   document.getElementById("launchStartBtn").addEventListener("click", async () => {
@@ -3559,6 +3595,8 @@
 
   fetchStatus();
   setInterval(fetchStatus, 2000);
+  flushPendingTasks();
+  setInterval(flushPendingTasks, 5000);
 
   if (tg) {
     tg.ready();
