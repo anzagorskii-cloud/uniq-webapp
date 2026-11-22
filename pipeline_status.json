@@ -1,8 +1,8 @@
 {
-  "status": "running",
-  "percent": 85,
-  "current_step": "Рендер завершён",
-  "detail": "Клип 3 из 3 • уникализация и отправка",
+  "status": "done",
+  "percent": 100,
+  "current_step": "Готово",
+  "detail": "Отправлено клипов: 3",
   "clip_progress": "3/3",
   "steps": [
     {
@@ -33,11 +33,11 @@
     {
       "id": "uniq",
       "title": "6. Уникализация и отправка в Telegram",
-      "state": "active"
+      "state": "done"
     }
   ],
   "error_log": "",
-  "updated_at": "22:17:04",
+  "updated_at": "22:18:26",
   "active_tasks": [
     {
       "task_id": "chat_718716596_1795374404",
@@ -45,9 +45,9 @@
       "mode": "split_50_50",
       "clip_count": 3,
       "status": "running",
-      "percent": 70,
-      "current_step": "Хук и субтитры готовы",
-      "updated_at": "22:16:26"
+      "percent": 85,
+      "current_step": "Рендер завершён",
+      "updated_at": "22:17:04"
     }
   ],
   "history_tasks": [
