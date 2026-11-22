@@ -917,6 +917,46 @@
       50% { opacity: .35; transform: scale(1.5); }
     }
 
+    .launch-input-row { display: flex; gap: 8px; align-items: stretch; }
+
+    .launch-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      background: #211C30;
+      border: 1px solid rgba(139,92,246,.35);
+      border-radius: 12px;
+      padding: 13px 14px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .launch-input:focus { border-color: var(--accent); box-shadow: var(--glow); }
+    .launch-input.error { border-color: #EF4444; box-shadow: 0 0 12px rgba(239,68,68,.4); }
+
+    .launch-paste {
+      flex: 0 0 auto;
+      border: none;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      cursor: pointer;
+    }
+
+    .launch-summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(139,92,246,.12);
+    }
+
+    .launch-summary-row span:last-child { color: #C4B5FD; text-align: right; }
+
     .bottom-nav {
       position: fixed;
       left: 0;
@@ -1377,6 +1417,37 @@
   </div>
 </div>
 
+<div id="tab-launch" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="launchBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Запуск задачи</div>
+  <div class="screen-sub">Проверьте настройки и укажите источник</div>
+
+  <div class="section-title">СВОДКА НАСТРОЕК</div>
+  <div class="proc-card">
+    <div id="launchSummary"></div>
+    <button class="secondary-btn" id="launchEditBtn">✏️ Изменить</button>
+  </div>
+
+  <div class="section-title">ССЫЛКА НА ВИДЕО</div>
+  <div class="launch-input-row">
+    <input class="launch-input" id="launchUrl" placeholder="Вставьте ссылку на YouTube, Twitch, TikTok или Reels...">
+    <button class="launch-paste" id="launchPasteBtn">📋 Вставить</button>
+  </div>
+
+  <div class="hint" id="launchHint" style="display:none;color:#FCA5A5">Вставьте ссылку на видео</div>
+
+  <div class="section-title">ИЛИ ФАЙЛ</div>
+  <div class="proc-card">
+    <div class="preview-side-text">Или отправьте готовый видеофайл из галереи прямо в чат бота</div>
+    <button class="secondary-btn" id="launchFileBtn">📎 Отправить файл в чат</button>
+  </div>
+
+  <button class="primary-btn sub-done" id="launchStartBtn">🚀 ЗАПУСТИТЬ НАРЕЗКУ</button>
+</div>
+
 <div class="bottom-nav">
   <div class="nav-item active" data-tab="home" data-screen="home">Главная</div>
   <div class="nav-item" data-tab="uniq" data-screen="uniq">Уникализация</div>
@@ -1413,6 +1484,11 @@
   };
 
   const SUB_STYLE_KEY = "clipper_sub_style";
+  const LAUNCH_ACTIVE_KEY = "clipper_launch_active_mode";
+  const LAUNCH_URL_KEY = "clipper_launch_video_url";
+  const UNIQ_FULL_KEY = "clipper_uniq_full";
+  const BANNER_SETTINGS_KEY = "clipper_banner_settings";
+  const OVERLAY_SETTINGS_KEY = "clipper_overlay_settings";
   const SUB_PRESETS = {
     tiktok:  { style: "tiktok",  text_color: "#FFFFFF", highlight_color: "#8B5CF6", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: true,  words: 3, position: 5, margin_percent: 18 },
     classic: { style: "classic", text_color: "#FFFFFF", highlight_color: "#FFFFFF", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5, margin_percent: 18 },
@@ -2000,13 +2076,54 @@
     } catch (e) {}
   }
 
+  function readJson(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function renderLaunchSummary() {
+    const mode = localStorage.getItem(LAUNCH_ACTIVE_KEY) || "—";
+    const clips = localStorage.getItem(CLIP_COUNT_KEY) || "5";
+    const sub = readJson(SUB_STYLE_KEY, {});
+    const uniq = readJson(UNIQ_FULL_KEY, {});
+    const uniqSettings = uniq.settings || {};
+    const methods = Object.values(uniqSettings).filter(v => v === true).length;
+    const hookStyle = sub.hook && sub.hook.style ? sub.hook.style : "gradient";
+
+    const rows = [
+      ["Режим", mode],
+      ["Клипов за раз", clips],
+      ["Стиль субтитров", sub.style || "tiktok"],
+      ["Стиль хука", hookStyle],
+      ["Методов уникализации", String(methods)]
+    ];
+
+    document.getElementById("launchSummary").innerHTML = rows.map(r =>
+      '<div class="launch-summary-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>'
+    ).join("");
+  }
+
+  function goLaunch(modeLabel) {
+    localStorage.setItem(LAUNCH_ACTIVE_KEY, modeLabel);
+    document.getElementById("launchUrl").value = localStorage.getItem(LAUNCH_URL_KEY) || "";
+    document.getElementById("launchHint").style.display = "none";
+    document.getElementById("launchUrl").classList.remove("error");
+    renderLaunchSummary();
+    showTab("launch");
+    toast("✅ Настройки сохранены");
+  }
+
   function showTab(tab) {
     document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
     const target = document.getElementById("tab-" + tab);
     if (target) target.classList.add("active");
     setActiveTab(tab);
     document.querySelector(".bottom-nav").style.display =
-      tab === "subtitles" || tab === "overlay" || tab === "banner" ? "none" : "";
+      tab === "subtitles" || tab === "overlay" || tab === "banner" || tab === "launch" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
@@ -2040,15 +2157,11 @@
     renderOverlayScheme();
   });
   document.getElementById("overlayDoneBtn").addEventListener("click", () => {
-    if (tg) {
-      tg.sendData(JSON.stringify({
-        action: "overlay_settings",
-        position: overlayPosition,
-        height_percent: overlayHeight
-      }));
-      addHistory("Наложить видео", selectedCount);
-      tg.close();
-    }
+    localStorage.setItem(OVERLAY_SETTINGS_KEY, JSON.stringify({
+      position: overlayPosition,
+      height_percent: overlayHeight
+    }));
+    goLaunch("Наложить видео");
   });
   document.getElementById("openBannerTile").addEventListener("click", () => {
     renderBannerLibrary();
@@ -2093,22 +2206,18 @@
     renderBannerControls();
   });
   document.getElementById("bannerDoneBtn").addEventListener("click", () => {
-    if (tg) {
-      tg.sendData(JSON.stringify({
-        action: "banner_settings",
-        banner_id: bannerId,
-        mode: bannerMode,
-        position: bannerPosition,
-        height_percent: bannerHeight,
-        remove_green: document.getElementById("bannerRemoveGreen").checked,
-        pause_when: pauseWhen,
-        pause_second: pauseSecond,
-        pause_duration: pauseDuration,
-        add_subs: document.getElementById("bannerAddSubs").checked
-      }));
-      addHistory("Вставить баннер", selectedCount);
-      tg.close();
-    }
+    localStorage.setItem(BANNER_SETTINGS_KEY, JSON.stringify({
+      banner_id: bannerId,
+      mode: bannerMode,
+      position: bannerPosition,
+      height_percent: bannerHeight,
+      remove_green: document.getElementById("bannerRemoveGreen").checked,
+      pause_when: pauseWhen,
+      pause_second: pauseSecond,
+      pause_duration: pauseDuration,
+      add_subs: document.getElementById("bannerAddSubs").checked
+    }));
+    goLaunch("Вставить баннер");
   });
   document.getElementById("clearHistoryBtn").addEventListener("click", () => {
     localStorage.removeItem(HISTORY_KEY);
@@ -2227,16 +2336,7 @@
 
   document.getElementById("subDoneBtn").addEventListener("click", () => {
     localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
-    if (tg) {
-      tg.sendData(JSON.stringify({
-        action: "sub_settings",
-        settings: subSettings,
-        hook: subSettings.hook,
-        hook_duration: subSettings.hook.duration
-      }));
-      addHistory(MODE_NAMES.subs_only, selectedCount);
-      tg.close();
-    }
+    goLaunch("Субтитры + Хук");
   });
 
   setInterval(() => {
@@ -2258,13 +2358,15 @@
   });
 
   document.getElementById("doneBtn").addEventListener("click", () => {
-    sendData({
-      action: "uniq_settings",
+    const full = {
       mode: uniqMode,
       fps: uniqFps,
       copies: uniqMode === "пакет" ? uniqCopies : 1,
       settings: settings
-    }, MODE_NAMES.uniq_settings, selectedCount);
+    };
+    localStorage.setItem(UNIQ_FULL_KEY, JSON.stringify(full));
+    localStorage.setItem(PRESET_KEY, JSON.stringify(settings));
+    goLaunch("Уникализация");
   });
 
   document.querySelectorAll("[data-uniq-mode]").forEach(el => {
@@ -2309,6 +2411,64 @@
   renderBannerControls();
   renderCount();
   renderHistory();
+  document.getElementById("launchBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("launchEditBtn").addEventListener("click", () => showTab("home"));
+
+  document.getElementById("launchUrl").addEventListener("input", e => {
+    localStorage.setItem(LAUNCH_URL_KEY, e.target.value);
+    e.target.classList.remove("error");
+    document.getElementById("launchHint").style.display = "none";
+  });
+
+  document.getElementById("launchPasteBtn").addEventListener("click", async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const input = document.getElementById("launchUrl");
+      input.value = text.trim();
+      localStorage.setItem(LAUNCH_URL_KEY, input.value);
+      input.classList.remove("error");
+      document.getElementById("launchHint").style.display = "none";
+    } catch (e) {
+      toast("Не удалось прочитать буфер обмена");
+    }
+  });
+
+  document.getElementById("launchFileBtn").addEventListener("click", () => {
+    if (tg) {
+      tg.sendData(JSON.stringify({ action: "request_file" }));
+      tg.close();
+    }
+  });
+
+  document.getElementById("launchStartBtn").addEventListener("click", () => {
+    const input = document.getElementById("launchUrl");
+    const url = input.value.trim();
+    if (!url) {
+      input.classList.add("error");
+      document.getElementById("launchHint").style.display = "";
+      return;
+    }
+
+    const sub = readJson(SUB_STYLE_KEY, {});
+    const packet = {
+      action: "start_pipeline",
+      active_mode: localStorage.getItem(LAUNCH_ACTIVE_KEY) || "",
+      clip_count: Number(localStorage.getItem(CLIP_COUNT_KEY) || 5),
+      video_url: url,
+      sub_settings: sub,
+      hook_settings: sub.hook || {},
+      uniq_settings: readJson(UNIQ_FULL_KEY, {}),
+      banner_settings: readJson(BANNER_SETTINGS_KEY, {}),
+      overlay_settings: readJson(OVERLAY_SETTINGS_KEY, {})
+    };
+
+    localStorage.setItem(LAUNCH_URL_KEY, url);
+    if (tg) tg.sendData(JSON.stringify(packet));
+    addHistory("Запуск задачи", packet.clip_count);
+    showTab("process");
+    toast("🚀 Задача запущена");
+  });
+
   fetchProcess();
   setInterval(fetchProcess, 2000);
 
