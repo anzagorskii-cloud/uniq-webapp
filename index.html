@@ -525,6 +525,16 @@
     .hook-mini.joint { top: 50%; transform: translate(-50%, -50%); }
     .hook-mini.bottom { bottom: 20px; transform: translateX(-50%); }
 
+    .hook-mini.gradient { background: transparent; color: #000000; }
+    .hook-mini.gradient .title {
+      background: linear-gradient(180deg, #FFF200, #4ADE80);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 900;
+      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+    }
+
     .hook-mini.white { background: #FFFFFF; color: #000000; }
     .hook-mini.dark { background: rgba(0,0,0,.72); color: #FFFFFF; }
     .hook-mini.none {
@@ -1052,6 +1062,14 @@
     <label class="switch"><input type="checkbox" id="hookEnabled" checked><span class="slider"></span></label>
   </div>
 
+  <div class="color-row">
+    <div class="color-label">Время показа хука — <span id="hookDurationValue">4 сек</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <input type="range" id="hookDurationRange" min="2" max="15" step="1" value="4" style="flex:1;accent-color:#8B5CF6">
+      <div class="chip" id="hookAllVideoBtn" style="flex:0 0 auto">На всё видео</div>
+    </div>
+  </div>
+
   <div class="color-label">ПОЛОЖЕНИЕ ХУКА</div>
   <div class="chip-row" id="hookPositionRow">
     <div class="chip active" data-hook-pos="top">Сверху</div>
@@ -1061,7 +1079,8 @@
 
   <div class="color-label">СТИЛЬ ПЛАШКИ</div>
   <div class="chip-row" id="hookStyleRow">
-    <div class="chip active" data-hook-style="white">Белая карточка</div>
+    <div class="chip active" data-hook-style="gradient">Градиент (как в топе)</div>
+    <div class="chip" data-hook-style="white">Белая карточка</div>
     <div class="chip" data-hook-style="dark">Темная капсула</div>
     <div class="chip" data-hook-style="none">Без плашки</div>
   </div>
@@ -1470,7 +1489,8 @@
 
     let subSettings = loadSubStyle();
   if (!subSettings.grid) subSettings.grid = "50";
-  if (!subSettings.hook) subSettings.hook = { enabled: true, position: "top", style: "white", size: 42 };
+  if (!subSettings.hook) subSettings.hook = { enabled: true, position: "top", style: "gradient", size: 42, duration: 4 };
+  if (subSettings.hook.duration === undefined) subSettings.hook.duration = 4;
   let lastMargin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
   const PREVIEW_WORDS =
  "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
@@ -1577,6 +1597,14 @@
   function renderHookMini() {
     const mini = document.getElementById("hookMini");
     const hook = subSettings.hook;
+    const allVideo = hook.duration === -1;
+
+    const range = document.getElementById("hookDurationRange");
+    range.disabled = allVideo;
+    range.value = allVideo ? 4 : hook.duration;
+    document.getElementById("hookDurationValue").textContent =
+      allVideo ? "Всё видео" : hook.duration + " сек";
+    document.getElementById("hookAllVideoBtn").classList.toggle("active", allVideo);
 
     if (!hook.enabled) {
       mini.style.display = "none";
@@ -1963,6 +1991,16 @@
     renderHookMini();
   });
 
+  document.getElementById("hookDurationRange").addEventListener("input", e => {
+    subSettings.hook.duration = Number(e.target.value);
+    renderHookMini();
+  });
+
+  document.getElementById("hookAllVideoBtn").addEventListener("click", () => {
+    subSettings.hook.duration = subSettings.hook.duration === -1 ? 4 : -1;
+    renderHookMini();
+  });
+
   document.querySelectorAll("[data-hook-pos]").forEach(el => {
     el.addEventListener("click", () => {
       subSettings.hook.position = el.dataset.hookPos;
@@ -1992,7 +2030,12 @@
   document.getElementById("subDoneBtn").addEventListener("click", () => {
     localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
     if (tg) {
-      tg.sendData(JSON.stringify({ action: "sub_settings", settings: subSettings, hook: subSettings.hook }));
+      tg.sendData(JSON.stringify({
+        action: "sub_settings",
+        settings: subSettings,
+        hook: subSettings.hook,
+        hook_duration: subSettings.hook.duration
+      }));
       addHistory(MODE_NAMES.subs_only, selectedCount);
       tg.close();
     }
