@@ -471,11 +471,13 @@
 
     .preview-phrase {
       position: relative;
+      width: 92%;
+      max-width: 92%;
+      margin: 0 auto;
       text-align: center;
-      line-height: 1.15;
-      max-width: 100%;
+      line-height: 1.25;
       word-break: normal;
-      overflow-wrap: normal;
+      overflow-wrap: break-word;
       white-space: normal;
     }
 
@@ -1017,7 +1019,7 @@
     });
   }
 
-  function renderPreview() {
+  function updateSubPreview() {
     const phrase = document.getElementById("previewPhrase");
     const count = subSettings.words;
     const chunk = [];
@@ -1036,16 +1038,18 @@
     preview.style.paddingTop = subSettings.position === 8 ? marginPx + "px" : "8px";
     preview.style.paddingBottom = subSettings.position === 2 ? marginPx + "px" : "8px";
 
-    let fontScale = 0.52;
-    if (
-      (subSettings.font === "Unbounded" || subSettings.font === "Dela Gothic One") &&
-      subSettings.font_size === 76
-    ) {
-      fontScale *= 0.8;
+    const previewSizes = { 44: 11, 54: 13, 64: 15, 76: 17 };
+    let previewFontSize = previewSizes[subSettings.font_size] || 13;
+
+    if (subSettings.words === 3) previewFontSize *= 0.82;
+    if (subSettings.words === 5) previewFontSize *= 0.72;
+
+    if (subSettings.font === "Unbounded" || subSettings.font === "Dela Gothic One") {
+      previewFontSize *= 0.85;
     }
 
     phrase.style.fontFamily = "'" + subSettings.font + "', sans-serif";
-    phrase.style.fontSize = Math.round(subSettings.font_size * fontScale) + "px";
+    phrase.style.fontSize = Math.round(previewFontSize * 10) / 10 + "px";
     phrase.style.fontWeight = subSettings.font === "Caveat" ? "700" : "800";
     phrase.style.color = subSettings.text_color;
     phrase.style.textTransform = subSettings.uppercase ? "uppercase" : "none";
@@ -1115,7 +1119,7 @@
   function refreshSubtitles() {
     syncSubControls();
     renderColorRows();
-    renderPreview();
+    updateSubPreview();
   }
 
   function renderCount() {
@@ -1263,7 +1267,7 @@
     subSettings.margin_percent = value;
     lastMargin = value;
     document.getElementById("marginValue").textContent = value + "%";
-    renderPreview();
+    updateSubPreview();
   });
 
   document.getElementById("subUppercase").addEventListener("change", e => {
@@ -1288,7 +1292,7 @@
   setInterval(() => {
     if (!document.getElementById("tab-subtitles").classList.contains("active")) return;
     previewActive++;
-    renderPreview();
+    updateSubPreview();
     if (previewActive >= subSettings.words) {
       previewActive = 0;
       previewChunk = (previewChunk + 1) % PREVIEW_WORDS.length;
