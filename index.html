@@ -106,6 +106,42 @@
       box-shadow: var(--glow);
     }
 
+    .count-selector {
+      margin: -8px 0 6px;
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.22);
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 0 12px rgba(139,92,246,.12);
+    }
+
+    .count-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #C4B5FD;
+      margin-bottom: 10px;
+    }
+
+    .pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+    .pill {
+      border-radius: 999px;
+      padding: 9px 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--muted);
+      background: #211C30;
+      border: 1px solid rgba(139,92,246,.25);
+      cursor: pointer;
+    }
+
+    .pill.active {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
+    }
+
     .section-title {
       margin: 22px 2px 12px;
       font-size: 12px;
@@ -436,6 +472,15 @@
     <div class="progress-track"><div class="progress-fill"></div></div>
   </div>
 
+  <div class="count-selector">
+    <div class="count-label">Количество клипов за раз</div>
+    <div class="pills">
+      <button class="pill" data-count="3">3</button>
+      <button class="pill" data-count="5">5</button>
+      <button class="pill" data-count="10">10</button>
+    </div>
+  </div>
+
   <div class="section-title">ИНСТРУМЕНТЫ</div>
 
   <div class="hero-card" data-mode="split_50_50">
@@ -515,6 +560,7 @@
 
   const PRESET_KEY = "clipper_uniq_settings";
   const HISTORY_KEY = "clipper_history";
+  const CLIP_COUNT_KEY = "clipper_clip_count";
   const MODE_NAMES = {
     split_50_50: "Стримеры 50/50",
     ai_cut: "Нарезка ИИ",
@@ -548,6 +594,23 @@
   }
 
   let settings = loadSettings();
+
+  function loadClipCount() {
+    try {
+      const value = parseInt(localStorage.getItem(CLIP_COUNT_KEY), 10);
+      return [3, 5, 10].includes(value) ? value : 5;
+    } catch (e) {
+      return 5;
+    }
+  }
+
+  let selectedCount = loadClipCount();
+
+  function renderCount() {
+    document.querySelectorAll(".pill").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.count) === selectedCount);
+    });
+  }
 
   function toast(text) {
     const el = document.getElementById("toast");
@@ -610,7 +673,7 @@
   document.querySelectorAll("[data-mode]").forEach(el => {
     el.addEventListener("click", () => {
       const mode = el.dataset.mode;
-      sendData({ action: "select_mode", mode: mode }, MODE_NAMES[mode] || mode);
+      sendData({ action: "select_mode", mode: mode, clip_count: selectedCount }, MODE_NAMES[mode] || mode);
     });
   });
 
@@ -657,6 +720,15 @@
     sendData({ action: "uniq_settings", settings: settings }, MODE_NAMES.uniq_settings);
   });
 
+  document.querySelectorAll(".pill").forEach(el => {
+    el.addEventListener("click", () => {
+      selectedCount = Number(el.dataset.count);
+      localStorage.setItem(CLIP_COUNT_KEY, String(selectedCount));
+      renderCount();
+      toast("Клипов за раз: " + selectedCount);
+    });
+  });
+  renderCount();
   renderHistory();
 
   if (tg) {
