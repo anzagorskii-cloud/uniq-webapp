@@ -37,7 +37,6 @@
     }
   ],
   "error_log": "",
-  "updated_at": "19:23:29",
   "active_tasks": [
     {
       "task_id": "chat_718716596_1795364606",
@@ -45,10 +44,11 @@
       "mode": "split_50_50",
       "clip_count": 3,
       "status": "running",
-      "percent": 0,
-      "current_step": "Запуск задачи...",
-      "updated_at": "19:23:28"
+      "percent": 5,
+      "current_step": "Возобновлено",
+      "updated_at": "19:23:39"
     }
   ],
-  "history_tasks": []
+  "history_tasks": [],
+  "updated_at": "19:23:39"
 }
