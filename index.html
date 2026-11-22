@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Уникализация</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0D0F0E;
+      --card: #171A18;
+      --green: #22C55E;
+      --text: #F3F4F6;
+      --muted: #9CA3AF;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px 16px 100px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1 {
+      margin: 4px 0 4px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .label {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .desc {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .switch {
+      position: relative;
+      flex: 0 0 auto;
+      width: 51px;
+      height: 31px;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #3A3F3B;
+      border-radius: 31px;
+      cursor: pointer;
+      transition: background .25s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 27px;
+      height: 27px;
+      left: 2px;
+      top: 2px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,.35);
+      transition: transform .25s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--green);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--bg) 70%, rgba(13,15,14,0));
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #saveBtn {
+      background: transparent;
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    #doneBtn {
+      background: var(--green);
+      color: #06150C;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 120px;
+      transform: translateX(-50%);
+      background: #2A2F2B;
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <h1>Уникализация</h1>
+  <p class="subtitle">Выбери, что применять к клипам 50/50</p>
+
+  <div id="list"></div>
+
+  <div class="footer">
+    <button id="saveBtn">Сохранить как пресет</button>
+    <button id="doneBtn">Готово</button>
+  </div>
+
+  <div class="toast" id="toast">Пресет сохранён</div>
+
+  <script>
+    const ITEMS = [
+      { key: "zoom",     name: "Зум",     desc: "Увеличение 1–5% и сдвиг кадра",        def: true },
+      { key: "mirror",   name: "Зеркало", desc: "Отражение по горизонтали",             def: false },
+      { key: "speed",    name: "Скорость", desc: "Темп 0.97–1.03x",                     def: true },
+      { key: "color",    name: "Цвет",    desc: "Яркость, контраст, оттенок",           def: true },
+      { key: "noise",    name: "Зерно",   desc: "Лёгкое зерно поверх кадра",            def: true },
+      { key: "border",   name: "Рамка",   desc: "Рамка 1–2 px по краю",                 def: true },
+      { key: "trim",     name: "Обрезка", desc: "0.1–0.5 с в начале и в конце",         def: true },
+      { key: "reencode", name: "Перекодирование", desc: "Новые битрейт, CRF и GOP",     def: true },
+      { key: "pitch",    name: "Тон аудио", desc: "Тон звука ±1–2%",                    def: true },
+      { key: "metadata", name: "Метаданные", desc: "Удаление метаданных и даты съёмки", def: true }
+    ];
+
+    const STORAGE_KEY = "clipper_uniq_settings";
+
+    function defaultSettings() {
+      const s = {};
+      ITEMS.forEach(i => { s[i.key] = i.def; });
+      return s;
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultSettings();
+        const saved = JSON.parse(raw);
+        const s = defaultSettings();
+        ITEMS.forEach(i => {
+          if (typeof saved[i.key] === "boolean") s[i.key] = saved[i.key];
+        });
+        return s;
+      } catch (e) {
+        return defaultSettings();
+      }
+    }
+
+    let settings = loadSettings();
+
+    const list = document.getElementById("list");
+    ITEMS.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div>
+          <div class="label">${item.name}</div>
+          <div class="desc">${item.desc}</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="sw_${item.key}" ${settings[item.key] ? "checked" : ""}>
+          <span class="slider"></span>
+        </label>
+      `;
+      list.appendChild(card);
+
+      document.getElementById("sw_" + item.key).addEventListener("change", e => {
+        settings[item.key] = e.target.checked;
+      });
+    });
+
+    function toast(text) {
+      const el = document.getElementById("toast");
+      el.textContent = text;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 1400);
+    }
+
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      toast("Пресет сохранён");
+    });
+
+    document.getElementById("doneBtn").addEventListener("click", () => {
+      const tg = window.Telegram && window.Telegram.WebApp;
+      if (tg) {
+        tg.sendData(JSON.stringify({ action: "uniq_settings", settings }));
+        tg.close();
+      }
+    });
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
