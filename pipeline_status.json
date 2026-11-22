@@ -37,18 +37,18 @@
     }
   ],
   "error_log": "",
-  "updated_at": "19:38:36",
-  "active_tasks": [
+  "active_tasks": [],
+  "history_tasks": [
     {
       "task_id": "chat_718716596_1795364850",
       "title": "/tmp/clipper_2uy9in9m/source.mp4",
       "mode": "split_50_50",
       "clip_count": 3,
-      "status": "running",
-      "percent": 85,
-      "current_step": "Рендер завершён",
-      "updated_at": "19:37:09"
+      "status": "done",
+      "percent": 100,
+      "current_step": "Готово",
+      "updated_at": "19:38:36"
     }
   ],
-  "history_tasks": []
+  "updated_at": "19:38:36"
 }
