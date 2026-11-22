@@ -1888,8 +1888,8 @@
   // Локальный FastAPI через бесплатные HTTPS-туннели.
   // Первый — Cloudflare (как в задаче), второй — резервный SSH-туннель.
   const API_BASES = [
-    "https://bookstore-arthritis-smallest-desire.trycloudflare.com",
-    "https://42ea1e5be494b6.app.lhr.life"
+    "https://b7eaa8637b4cbf.app.lhr.life",
+    "https://bookstore-arthritis-smallest-desire.trycloudflare.com"
   ];
   const API_BASE = API_BASES[0];
   const START_TASK_PATH = "/api/start_task";
@@ -2353,7 +2353,9 @@
     showTab("process");
     toast(delivered === "local"
       ? "🚀 Задача отправлена на локальный сервер — окно не закроется"
-      : "⏳ Задача сохранена локально — сервер недоступен");
+      : delivered === "telegram"
+        ? "🚀 Туннель недоступен — задача ушла в бота, рендер запустится"
+        : "⏳ Задача сохранена локально — сервер недоступен");
   }
 
   function renderDownloadControls() {
@@ -3547,13 +3549,22 @@
         await new Promise(resolve => setTimeout(resolve, 600 * (attempt + 1)));
       }
     }
+
+    // Последний рубеж: если оба HTTPS-туннеля недоступны, отправляем
+    // задачу через Telegram WebApp. Окно закроется, но рендер запустится.
+    if (tg && typeof tg.sendData === "function") {
+      try {
+        tg.sendData(JSON.stringify(task));
+        return "telegram";
+      } catch (e) {}
+    }
     return "none";
   }
 
   async function submitTask(task) {
     queueTask(task);
     const delivered = await postTask(task);
-    if (delivered === "local") {
+    if (delivered === "local" || delivered === "telegram") {
       removeQueuedTask(task.task_id);
     } else {
       toast("⚠️ Туннель недоступен — задача в очереди, повторю автоматически");
@@ -3569,7 +3580,11 @@
       const stored = readJson(TASK_QUEUE_KEY, []);
       const queue = Array.isArray(stored) ? stored : [];
       for (const item of queue) {
-        if (await postTask(item) === "local") removeQueuedTask(item.task_id);
+        const delivered = await postTask(item);
+        if (delivered === "local" || delivered === "telegram") {
+          removeQueuedTask(item.task_id);
+        }
+        if (delivered === "telegram") break;
       }
     } finally {
       flushingQueue = false;
@@ -3619,7 +3634,9 @@
     showTab("process");
     toast(delivered === "local"
       ? "🚀 Задача отправлена на локальный сервер — окно не закроется"
-      : "⏳ Задача сохранена локально — сервер недоступен");
+      : delivered === "telegram"
+        ? "🚀 Туннель недоступен — задача ушла в бота, рендер запустится"
+        : "⏳ Задача сохранена локально — сервер недоступен");
   });
 
   document.getElementById("downloadStartBtn").addEventListener("click", async () => {
@@ -3655,7 +3672,9 @@
     showTab("process");
     toast(delivered === "local"
       ? "⬇️ Задача отправлена на локальный сервер"
-      : "⏳ Задача сохранена локально — сервер недоступен");
+      : delivered === "telegram"
+        ? "⬇️ Туннель недоступен — задача ушла в бота, рендер запустится"
+        : "⏳ Задача сохранена локально — сервер недоступен");
   });
 
   document.getElementById("githubPatInput").value = localStorage.getItem(GITHUB_PAT_KEY) || "";
