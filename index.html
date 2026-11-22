@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Клиппер 50/50</title>
+  <title>Клиппер</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -302,6 +302,26 @@
       padding: 14px 2px;
     }
 
+    .history-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 70px 24px;
+      background: var(--card);
+      border: 1px dashed rgba(139,92,246,.35);
+      border-radius: 18px;
+      box-shadow: 0 0 16px rgba(139,92,246,.1);
+      margin-top: 16px;
+    }
+
+    .history-clips {
+      margin-top: 5px;
+      color: #C4B5FD;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
     .back-btn {
       background: transparent;
       color: #C4B5FD;
@@ -459,14 +479,14 @@
 </head>
 <body>
 
-<div id="screen-home" class="screen active">
+<div id="tab-home" class="screen active">
   <div class="topbar">
-    <div class="brand">КЛИППЕР 50/50</div>
+    <div class="brand">КЛИППЕР</div>
   </div>
 
   <div class="status-card">
     <div class="status-title">Статус комбайна</div>
-    <div class="status-name">Клиппер 50/50</div>
+    <div class="status-name">Клиппер</div>
     <div class="status-hello" id="hello">Привет, друг!</div>
     <span class="badge">БЕЗЛИМИТ • GPU/LOCAL</span>
     <div class="progress-track"><div class="progress-fill"></div></div>
@@ -518,11 +538,9 @@
     <div class="arrow">→</div>
   </div>
 
-  <div class="section-title">ПОСЛЕДНИЕ ЗАДАЧИ</div>
-  <div id="history"></div>
 </div>
 
-<div id="screen-uniq" class="screen">
+<div id="tab-uniq" class="screen">
   <div class="topbar">
     <button class="back-btn" id="backBtn">← Назад</button>
   </div>
@@ -534,6 +552,19 @@
 
   <button class="secondary-btn" id="saveBtn">Сохранить как пресет</button>
   <button class="primary-btn" id="doneBtn">Готово</button>
+</div>
+
+<div id="tab-history" class="screen">
+  <div class="topbar">
+    <div class="brand">КЛИППЕР</div>
+  </div>
+
+  <div class="screen-title">История задач</div>
+  <div class="screen-sub" id="historyCount">Выполнено запусков: 0</div>
+
+  <button class="secondary-btn" id="clearHistoryBtn">🗑 Очистить историю</button>
+
+  <div id="history" style="margin-top:16px"></div>
 </div>
 
 <div class="bottom-nav">
@@ -619,15 +650,16 @@
     setTimeout(() => el.classList.remove("show"), 1400);
   }
 
-  function addHistory(name) {
+  function addHistory(name, clipCount) {
     try {
       const list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
       list.unshift({
         name: name,
+        clip_count: clipCount || selectedCount,
         status: "Готово",
         date: new Date().toLocaleString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
       });
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 10)));
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 20)));
     } catch (e) {}
     renderHistory();
   }
@@ -636,23 +668,28 @@
     const box = document.getElementById("history");
     let list = [];
     try { list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); } catch (e) {}
+
+    document.getElementById("historyCount").textContent = "Выполнено запусков: " + list.length;
+
     if (!list.length) {
-      box.innerHTML = '<div class="empty">Пока нет задач</div>';
+      box.innerHTML = '<div class="history-empty">История пуста — выберите любой инструмент на Главной, чтобы начать</div>';
       return;
     }
+
     box.innerHTML = list.map(item => (
       '<div class="history-item">' +
         '<div><div class="history-name">' + item.name + '</div>' +
+        '<div class="history-clips">Клипов за раз: ' + (item.clip_count || 5) + '</div>' +
         '<div class="history-meta">' + (item.date || "") + '</div></div>' +
         '<div class="history-status">' + item.status + '</div>' +
       '</div>'
     )).join("");
   }
 
-  function sendData(payload, label) {
+  function sendData(payload, label, clipCount) {
     if (tg) {
       tg.sendData(JSON.stringify(payload));
-      addHistory(label);
+      addHistory(label, clipCount);
       tg.close();
     }
   }
@@ -663,34 +700,31 @@
     });
   }
 
-  function showScreen(name) {
+  function showTab(tab) {
     document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
-    document.getElementById("screen-" + name).classList.add("active");
-    setActiveTab(name === "uniq" ? "uniq" : "home");
+    const target = document.getElementById("tab-" + tab);
+    if (target) target.classList.add("active");
+    setActiveTab(tab);
     window.scrollTo(0, 0);
   }
 
   document.querySelectorAll("[data-mode]").forEach(el => {
     el.addEventListener("click", () => {
       const mode = el.dataset.mode;
-      sendData({ action: "select_mode", mode: mode, clip_count: selectedCount }, MODE_NAMES[mode] || mode);
+      sendData({ action: "select_mode", mode: mode, clip_count: selectedCount }, MODE_NAMES[mode] || mode, selectedCount);
     });
   });
 
-  document.getElementById("openUniqTile").addEventListener("click", () => showScreen("uniq"));
-  document.getElementById("backBtn").addEventListener("click", () => showScreen("home"));
+  document.getElementById("openUniqTile").addEventListener("click", () => showTab("uniq"));
+  document.getElementById("backBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("clearHistoryBtn").addEventListener("click", () => {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+    toast("История очищена");
+  });
 
   document.querySelectorAll(".nav-item").forEach(el => {
-    el.addEventListener("click", () => {
-      const tab = el.dataset.tab;
-      if (tab === "history") {
-        showScreen("home");
-        setActiveTab("history");
-        document.querySelector(".section-title:last-of-type").scrollIntoView({ behavior: "smooth" });
-      } else {
-        showScreen(tab);
-      }
-    });
+    el.addEventListener("click", () => showTab(el.dataset.tab));
   });
 
   const listBox = document.getElementById("uniqList");
@@ -717,7 +751,7 @@
   });
 
   document.getElementById("doneBtn").addEventListener("click", () => {
-    sendData({ action: "uniq_settings", settings: settings }, MODE_NAMES.uniq_settings);
+    sendData({ action: "uniq_settings", settings: settings }, MODE_NAMES.uniq_settings, selectedCount);
   });
 
   document.querySelectorAll(".pill").forEach(el => {
