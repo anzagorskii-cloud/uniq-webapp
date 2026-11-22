@@ -1129,7 +1129,7 @@
     </div>
   </div>
 
-  <div class="wide-card" data-mode="download">
+  <div class="wide-card card" id="openDownloadTile">
     <div>
       <div class="tile-title">Скачать видео (TikTok и YouTube)</div>
       <div class="hero-sub">До 1080p, без водяных знаков</div>
@@ -1532,6 +1532,39 @@
   </div>
 </div>
 
+<div id="tab-download" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="downloadBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Скачать видео</div>
+  <div class="screen-sub">YouTube, TikTok, Reels и Shorts</div>
+
+  <div class="section-title">ССЫЛКА</div>
+  <div class="launch-input-row">
+    <input class="launch-input" id="downloadUrl" placeholder="Вставьте ссылку на YouTube, TikTok, Reels или Shorts...">
+    <button class="launch-paste" id="downloadPasteBtn">📋 Вставить</button>
+  </div>
+  <div class="hint" id="downloadHint" style="display:none;color:#FCA5A5">Вставьте ссылку на видео</div>
+
+  <div class="section-title">ФОРМАТ И КАЧЕСТВО</div>
+  <div class="chip-row" id="downloadQualityRow">
+    <div class="chip active" data-download-quality="1080">🎬 1080p FullHD</div>
+    <div class="chip" data-download-quality="720">📱 720p HD</div>
+    <div class="chip" data-download-quality="mp3">🎵 Только звук (MP3)</div>
+  </div>
+
+  <div class="toggle-row">
+    <div>
+      <div class="tile-title">Убрать водяной знак и метаданные</div>
+      <div class="desc">Лёгкая обрезка краёв и очистка метаданных</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="downloadClean" checked><span class="slider"></span></label>
+  </div>
+
+  <button class="primary-btn sub-done" id="downloadStartBtn">⬇️ СКАЧАТЬ ВИДЕО</button>
+</div>
+
 <div id="tab-launch" class="screen">
   <div class="topbar">
     <button class="back-btn" id="launchBackBtn">← Назад</button>
@@ -1604,7 +1637,6 @@
   const TASK_ENDPOINT_KEY = "clipper_task_endpoint";
   const TASK_QUEUE_KEY = "clipper_pending_tasks";
   const AI_CONTENT_KEY = "clipper_ai_content_type";
-  const LAUNCH_URL_KEY = "clipper_launch_video_url";
   const UNIQ_FULL_KEY = "clipper_uniq_full";
   const BANNER_SETTINGS_KEY = "clipper_banner_settings";
   const OVERLAY_SETTINGS_KEY = "clipper_overlay_settings";
@@ -1659,6 +1691,7 @@
   let chromaMode = "green";
   let aiContentType = "movies";
   let aiUseSubPreset = true;
+  let downloadQuality = "1080";
   let subReturnTab = "launch";
   let pauseWhen = "middle";
   let pauseSecond = 10;
@@ -1828,6 +1861,15 @@
       pause: "Видео встаёт на паузу, и несколько секунд показывается баннер. Место паузы — любое."
     };
     document.getElementById("bannerSchemeText").textContent = texts[bannerMode] || texts.squeeze;
+  }
+
+  function renderDownloadControls() {
+    document.querySelectorAll("[data-download-quality]").forEach(el => {
+      el.classList.toggle("active", el.dataset.downloadQuality === downloadQuality);
+    });
+    document.getElementById("downloadUrl").value = "";
+    document.getElementById("downloadHint").style.display = "none";
+    document.getElementById("downloadUrl").classList.remove("error");
   }
 
   function renderAiCutControls() {
@@ -2191,7 +2233,7 @@
     });
   }
 
-  const STATUS_URL = "https://raw.githubusercontent.com/anzagorskii-cloud/uniq-webapp/main/pipeline_status.json";
+  const STATUS_URL = "https://api.github.com/repos/anzagorskii-cloud/uniq-webapp/contents/pipeline_status.json";
 
   function renderProcess(data) {
     if (!data) return;
@@ -2226,7 +2268,10 @@
 
   async function fetchProcess() {
     try {
-      const response = await fetch(STATUS_URL + "?t=" + Date.now(), { cache: "no-store" });
+      const response = await fetch(STATUS_URL + "?nocache=" + Date.now(), {
+        headers: { "Accept": "application/vnd.github.v3.raw" },
+        cache: "no-store"
+      });
       if (response.ok) renderProcess(await response.json());
     } catch (e) {}
   }
@@ -2265,7 +2310,7 @@
   function goLaunch(modeLabel, modeKey) {
     localStorage.setItem(LAUNCH_ACTIVE_KEY, modeLabel);
     localStorage.setItem(LAUNCH_MODE_KEY, modeKey || "split_50_50");
-    document.getElementById("launchUrl").value = localStorage.getItem(LAUNCH_URL_KEY) || "";
+    document.getElementById("launchUrl").value = "";
     document.getElementById("launchHint").style.display = "none";
     document.getElementById("launchUrl").classList.remove("error");
     renderLaunchSummary();
@@ -2277,10 +2322,12 @@
     document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
     const target = document.getElementById("tab-" + tab);
     if (target) target.classList.add("active");
+    if (tab === "launch") document.getElementById("launchUrl").value = "";
+    if (tab === "download") document.getElementById("downloadUrl").value = "";
     setActiveTab(tab);
     document.querySelector(".bottom-nav").style.display =
       tab === "subtitles" || tab === "aicut" || tab === "overlay" ||
-      tab === "banner" || tab === "launch" ? "none" : "";
+      tab === "banner" || tab === "launch" || tab === "download" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
@@ -2301,6 +2348,17 @@
   document.getElementById("openAiCutTile").addEventListener("click", () => {
     renderAiCutControls();
     showTab("aicut");
+  });
+  document.getElementById("openDownloadTile").addEventListener("click", () => {
+    renderDownloadControls();
+    showTab("download");
+  });
+  document.getElementById("downloadBackBtn").addEventListener("click", () => showTab("home"));
+  document.querySelectorAll("[data-download-quality]").forEach(el => {
+    el.addEventListener("click", () => {
+      downloadQuality = el.dataset.downloadQuality;
+      renderDownloadControls();
+    });
   });
   document.getElementById("aiCutBackBtn").addEventListener("click", () => showTab("home"));
   document.querySelectorAll("[data-content-type]").forEach(el => {
@@ -2612,23 +2670,34 @@
   document.getElementById("launchEditBtn").addEventListener("click", () => showTab("home"));
 
   document.getElementById("launchUrl").addEventListener("input", e => {
-    localStorage.setItem(LAUNCH_URL_KEY, e.target.value);
     e.target.classList.remove("error");
     document.getElementById("launchHint").style.display = "none";
   });
 
-  document.getElementById("launchPasteBtn").addEventListener("click", async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      const input = document.getElementById("launchUrl");
-      input.value = text.trim();
-      localStorage.setItem(LAUNCH_URL_KEY, input.value);
-      input.classList.remove("error");
-      document.getElementById("launchHint").style.display = "none";
-    } catch (e) {
-      toast("Не удалось прочитать буфер обмена");
-    }
+  document.getElementById("downloadUrl").addEventListener("input", e => {
+    e.target.classList.remove("error");
+    document.getElementById("downloadHint").style.display = "none";
   });
+
+  async function pasteInto(inputId, hintId) {
+    const input = document.getElementById(inputId);
+    input.focus();
+    try {
+      if (!navigator.clipboard || !navigator.clipboard.readText) {
+        throw new Error("clipboard unavailable");
+      }
+      const text = await navigator.clipboard.readText();
+      input.value = (text || "").trim();
+      input.classList.remove("error");
+      document.getElementById(hintId).style.display = "none";
+    } catch (e) {
+      input.focus();
+      toast("Нажмите на поле и выберите Вставить");
+    }
+  }
+
+  document.getElementById("launchPasteBtn").addEventListener("click", () => pasteInto("launchUrl", "launchHint"));
+  document.getElementById("downloadPasteBtn").addEventListener("click", () => pasteInto("downloadUrl", "downloadHint"));
 
   document.getElementById("launchFileBtn").addEventListener("click", () => {
     if (tg) {
@@ -2689,12 +2758,55 @@
       created_at: new Date().toISOString()
     }, packet);
 
+    input.value = "";
     const delivered = await submitTask(task);
-    localStorage.setItem(LAUNCH_URL_KEY, url);
     addHistory("Запуск задачи", packet.clip_count);
     showTab("process");
     toast(delivered ? "🚀 Задача запущена" : "⏳ Задача в очереди — ожидаю соединение");
   });
+
+  document.getElementById("downloadStartBtn").addEventListener("click", async () => {
+    const input = document.getElementById("downloadUrl");
+    const url = input.value.trim();
+    if (!url) {
+      input.classList.add("error");
+      document.getElementById("downloadHint").style.display = "";
+      return;
+    }
+
+    const init = (tg && tg.initDataUnsafe) || {};
+    const chatId = (init.chat && init.chat.id) || (init.user && init.user.id) || null;
+    const packet = {
+      action: "start_pipeline",
+      mode: "download",
+      active_mode: "download",
+      video_url: url,
+      quality: downloadQuality,
+      remove_watermark: document.getElementById("downloadClean").checked
+    };
+    const task = Object.assign({
+      task_id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10),
+      chat_id: chatId,
+      created_at: new Date().toISOString()
+    }, packet);
+
+    input.value = "";
+    const delivered = await submitTask(task);
+    addHistory("Скачать видео", 0);
+    showTab("process");
+    toast(delivered ? "⬇️ Скачивание запущено" : "⏳ Задача в очереди — ожидаю соединение");
+  });
+
+  function clearUrlInputs() {
+    document.getElementById("launchUrl").value = "";
+    document.getElementById("downloadUrl").value = "";
+    document.getElementById("launchHint").style.display = "none";
+    document.getElementById("downloadHint").style.display = "none";
+  }
+  window.addEventListener("DOMContentLoaded", clearUrlInputs);
+  window.addEventListener("load", clearUrlInputs);
+  clearUrlInputs();
+  renderDownloadControls();
 
   fetchProcess();
   setInterval(fetchProcess, 2000);
