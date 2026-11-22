@@ -471,11 +471,15 @@
 
     .preview-phrase {
       position: relative;
-      width: 92%;
-      max-width: 92%;
+      z-index: 2;
+      width: 90%;
+      max-width: 90%;
+      padding: 4px 6px;
+      box-sizing: border-box;
       margin: 0 auto;
       text-align: center;
-      line-height: 1.25;
+      line-height: 1.2;
+      overflow: hidden;
       word-break: normal;
       overflow-wrap: break-word;
       white-space: normal;
@@ -490,6 +494,45 @@
     }
 
     .preview-word.active { transform: scale(1.09); }
+
+    .preview-grid {
+      position: absolute;
+      inset: 6px;
+      z-index: 1;
+      display: grid;
+      gap: 2px;
+      padding: 2px;
+      border-radius: 12px;
+      background: var(--accent);
+      pointer-events: none;
+    }
+
+    .grid-zone {
+      border: 1px dashed rgba(139, 92, 246, .55);
+      border-radius: 5px;
+      background: rgba(21, 19, 30, .92);
+      display: grid;
+      place-items: center;
+      font-size: 8px;
+      font-weight: 800;
+      color: #A78BFA;
+      letter-spacing: .4px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .grid-safe {
+      border: 1px dashed rgba(139, 92, 246, .7);
+      border-top: 2px solid var(--accent);
+      border-radius: 5px;
+      background: rgba(21, 19, 30, .75);
+      display: grid;
+      place-items: center;
+      font-size: 7px;
+      font-weight: 700;
+      color: #C4B5FD;
+      letter-spacing: .3px;
+    }
 
     .preview-side { flex: 1 1 auto; min-width: 0; }
 
@@ -775,12 +818,20 @@
   <div class="preview-block">
     <div class="preview-wrap">
       <div class="preview">
+        <div class="preview-grid" id="previewGrid"></div>
         <div class="preview-phrase" id="previewPhrase"></div>
       </div>
     </div>
     <div class="preview-side">
       <div class="preview-side-title">ПРЕВЬЮ</div>
       <div class="preview-side-text">Так будут выглядеть субтитры в ролике. Изменения применяются мгновенно.</div>
+      <div class="color-label" style="margin-top:9px">СЕТКА КАДРА</div>
+      <div class="chip-row" id="gridRow">
+        <div class="chip" data-grid="1">1</div>
+        <div class="chip active" data-grid="50">50/50</div>
+        <div class="chip" data-grid="3">3 кам</div>
+        <div class="chip" data-grid="4">4 кам</div>
+      </div>
     </div>
   </div>
 
@@ -958,11 +1009,54 @@
   }
 
     let subSettings = loadSubStyle();
+  if (!subSettings.grid) subSettings.grid = "50";
   let lastMargin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
   const PREVIEW_WORDS =
  "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
   let previewChunk = 0;
   let previewActive = 0;
+
+  function renderGrid() {
+    const grid = document.getElementById("previewGrid");
+    const mode = subSettings.grid;
+    const zone = (label, style) =>
+      '<div class="grid-zone" style="' + style + '">' + label + "</div>";
+
+    if (mode === "1") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr auto";
+      grid.innerHTML =
+        zone("КАДР", "grid-column:1;grid-row:1") +
+        '<div class="grid-safe" style="grid-column:1;grid-row:2;height:22px">БЕЗОПАСНАЯ ЗОНА</div>';
+      return;
+    }
+
+    if (mode === "50") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.innerHTML = zone("КАМЕРА", "") + zone("ИГРА", "");
+      return;
+    }
+
+    grid.style.gridTemplateColumns = "1fr 1fr";
+    grid.style.gridTemplateRows = "1fr 1fr 2fr";
+
+    if (mode === "3") {
+      grid.innerHTML =
+        zone("1", "grid-column:1;grid-row:1") +
+        zone("2", "grid-column:2;grid-row:1") +
+        zone("3", "grid-column:1 / span 2;grid-row:2") +
+        zone("ИГРА", "grid-column:1 / span 2;grid-row:3");
+      return;
+    }
+
+    grid.innerHTML =
+      zone("1", "grid-column:1;grid-row:1") +
+      zone("2", "grid-column:2;grid-row:1") +
+      zone("3", "grid-column:1;grid-row:2") +
+      zone("4", "grid-column:2;grid-row:2") +
+      zone("ИГРА", "grid-column:1 / span 2;grid-row:3");
+  }
 
   function renderColorRows() {
     const box = document.getElementById("colorRows");
@@ -1038,14 +1132,15 @@
     preview.style.paddingTop = subSettings.position === 8 ? marginPx + "px" : "8px";
     preview.style.paddingBottom = subSettings.position === 2 ? marginPx + "px" : "8px";
 
-    const previewSizes = { 44: 11, 54: 13, 64: 15, 76: 17 };
-    let previewFontSize = previewSizes[subSettings.font_size] || 13;
+    const previewSizes = { 44: 10, 54: 12, 64: 14, 76: 16 };
+    let previewFontSize = previewSizes[subSettings.font_size] || 12;
 
-    if (subSettings.words === 3) previewFontSize *= 0.82;
-    if (subSettings.words === 5) previewFontSize *= 0.72;
+    if (subSettings.words === 3 || subSettings.words === 5) {
+      previewFontSize = Math.min(previewFontSize, 12);
+    }
 
     if (subSettings.font === "Unbounded" || subSettings.font === "Dela Gothic One") {
-      previewFontSize *= 0.85;
+      previewFontSize = Math.min(previewFontSize * 0.85, 12);
     }
 
     phrase.style.fontFamily = "'" + subSettings.font + "', sans-serif";
@@ -1101,6 +1196,9 @@
     document.querySelectorAll("[data-pos]").forEach(el => {
       el.classList.toggle("active", Number(el.dataset.pos) === subSettings.position);
     });
+    document.querySelectorAll("[data-grid]").forEach(el => {
+      el.classList.toggle("active", el.dataset.grid === subSettings.grid);
+    });
     document.getElementById("subUppercase").checked = !!subSettings.uppercase;
 
     const range = document.getElementById("marginRange");
@@ -1119,6 +1217,7 @@
   function refreshSubtitles() {
     syncSubControls();
     renderColorRows();
+    renderGrid();
     updateSubPreview();
   }
 
@@ -1258,6 +1357,13 @@
         subSettings.margin_percent = lastMargin;
       }
       subSettings.position = pos;
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-grid]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.grid = el.dataset.grid;
       refreshSubtitles();
     });
   });
