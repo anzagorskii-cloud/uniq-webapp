@@ -1,14 +1,14 @@
 {
-  "status": "running",
-  "percent": 5,
-  "current_step": "Старт",
-  "detail": "Задача принята",
+  "status": "idle",
+  "percent": 0,
+  "current_step": "Ожидание задачи",
+  "detail": "",
   "clip_progress": "",
   "steps": [
     {
       "id": "download",
       "title": "1. Скачивание исходника (yt-dlp)",
-      "state": "active"
+      "state": "pending"
     },
     {
       "id": "analyze",
@@ -37,29 +37,7 @@
     }
   ],
   "error_log": "",
-  "active_tasks": [
-    {
-      "task_id": "chat_718716596_1795364606",
-      "title": "https://youtu.be/0Bm9rhbSTrw?si=uYl86zZYPtLPz9K6",
-      "mode": "split_50_50",
-      "clip_count": 3,
-      "status": "running",
-      "percent": 5,
-      "current_step": "Возобновлено",
-      "updated_at": "19:24:15"
-    }
-  ],
-  "history_tasks": [
-    {
-      "task_id": "chat_718716596_1795364676",
-      "title": "https://youtu.be/0Bm9rhbSTrw?si=uYl86zZYPtLPz9K6",
-      "mode": "split_50_50",
-      "clip_count": 3,
-      "status": "cancelled",
-      "percent": 5,
-      "current_step": "Старт",
-      "updated_at": "19:25:00"
-    }
-  ],
-  "updated_at": "19:25:02"
+  "updated_at": "19:27:30",
+  "active_tasks": [],
+  "history_tasks": []
 }
