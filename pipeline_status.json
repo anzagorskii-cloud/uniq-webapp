@@ -1,19 +1,19 @@
 {
   "status": "running",
-  "percent": 5,
-  "current_step": "Старт",
-  "detail": "Задача принята",
+  "percent": 20,
+  "current_step": "Скачивание завершено",
+  "detail": "Длительность 4045.9 c",
   "clip_progress": "",
   "steps": [
     {
       "id": "download",
       "title": "1. Скачивание исходника (yt-dlp)",
-      "state": "active"
+      "state": "done"
     },
     {
       "id": "analyze",
       "title": "2. Поиск ярких моментов и камер (OpenCV/LLM)",
-      "state": "pending"
+      "state": "active"
     },
     {
       "id": "whisper",
@@ -37,5 +37,5 @@
     }
   ],
   "error_log": "",
-  "updated_at": "17:30:10"
+  "updated_at": "17:37:42"
 }
