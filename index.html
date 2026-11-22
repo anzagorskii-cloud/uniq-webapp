@@ -668,6 +668,57 @@
       margin-top: 16px;
     }
 
+    .overlay-scheme {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.22);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+
+    .overlay-phone {
+      width: 96px;
+      height: 170px;
+      border-radius: 12px;
+      background: #1E1C2A;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      border: 1px solid rgba(139,92,246,.35);
+    }
+
+    .overlay-zone {
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      transition: height .2s ease;
+      overflow: hidden;
+    }
+
+    .overlay-zone.second {
+      background: rgba(139, 92, 246, 0.35);
+      border: 2px solid #8B5CF6;
+      color: #DDD6FE;
+    }
+
+    .overlay-zone.main {
+      background: #252334;
+      color: #A09CB8;
+    }
+
+    .scheme-side { flex: 1 1 auto; min-width: 0; }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+
     .bottom-nav {
       position: fixed;
       left: 0;
@@ -778,6 +829,14 @@
     <div class="arrow">→</div>
   </div>
 
+  <div class="wide-card" id="openOverlayTile" style="margin-top:10px">
+    <div>
+      <div class="tile-title">Наложить видео</div>
+      <div class="hero-sub">Второе видео поверх основного, звук от основного</div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
 </div>
 
 <div id="tab-uniq" class="screen">
@@ -788,6 +847,31 @@
   <div class="screen-title">Уникализация</div>
   <div class="screen-sub">10 методов, применяются только включенные</div>
 
+  <div class="section-title">РЕЖИМ</div>
+  <div class="chip-row" id="uniqModeRow">
+    <div class="chip active" data-uniq-mode="быстрый">Быстрый</div>
+    <div class="chip" data-uniq-mode="ручной">Ручной</div>
+    <div class="chip" data-uniq-mode="пакет">Пакет</div>
+  </div>
+
+  <div class="section-title" id="copiesBlock" style="display:none">КОЛИЧЕСТВО КОПИЙ</div>
+  <div class="chip-row" id="copiesRow" style="display:none">
+    <div class="chip" data-copies="2">2</div>
+    <div class="chip active" data-copies="3">3</div>
+    <div class="chip" data-copies="5">5</div>
+    <div class="chip" data-copies="10">10</div>
+  </div>
+  <div class="hint" id="copiesHint" style="display:none">Каждая копия получит уникальные случайные параметры и хеш</div>
+
+  <div class="section-title">ЧАСТОТА КАДРОВ</div>
+  <div class="chip-row" id="fpsRow">
+    <div class="chip active" data-fps="original">Исходный</div>
+    <div class="chip" data-fps="30">30 FPS</div>
+    <div class="chip" data-fps="60">60 FPS</div>
+  </div>
+  <div class="hint" id="fpsHint">Исходный — частота кадров не меняется.</div>
+
+  <div class="section-title" id="methodsTitle">МЕТОДЫ, ВКЛЮЧЕНО 9 ИЗ 10</div>
   <div id="uniqList"></div>
 
   <button class="secondary-btn" id="saveBtn">Сохранить как пресет</button>
@@ -908,6 +992,42 @@
   <button class="primary-btn sub-done" id="subDoneBtn">Готово</button>
 </div>
 
+<div id="tab-overlay" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="overlayBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Наложить видео</div>
+  <div class="screen-sub">Второе видео поверх основного</div>
+
+  <div class="section-title">СХЕМА</div>
+  <div class="overlay-scheme">
+    <div class="overlay-phone">
+      <div class="overlay-zone second" id="overlayZoneSecond">▶</div>
+      <div class="overlay-zone main" id="overlayZoneMain">▶</div>
+    </div>
+    <div class="scheme-side">
+      <div class="preview-side-title">СХЕМА</div>
+      <div class="preview-side-text" id="overlaySchemeText"></div>
+    </div>
+  </div>
+
+  <div class="section-title">ПОЛОЖЕНИЕ ВТОРОГО ВИДЕО</div>
+  <div class="chip-row" id="overlayPositionRow">
+    <div class="chip active" data-overlay-pos="top">Сверху</div>
+    <div class="chip" data-overlay-pos="bottom">Снизу</div>
+  </div>
+
+  <div class="section-title">РАЗМЕР</div>
+  <div class="color-row">
+    <div class="color-label">Высота второго видео — <span id="overlayHeightValue">35%</span></div>
+    <input type="range" id="overlayHeightRange" min="15" max="65" value="35" style="width:100%;accent-color:#8B5CF6">
+    <div class="hint">По умолчанию — треть экрана (33%).</div>
+  </div>
+
+  <button class="primary-btn sub-done" id="overlayDoneBtn">Готово</button>
+</div>
+
 <div class="bottom-nav">
   <div class="nav-item active" data-tab="home" data-screen="home">Главная</div>
   <div class="nav-item" data-tab="uniq" data-screen="uniq">Уникализация</div>
@@ -982,6 +1102,99 @@
   }
 
   let settings = loadSettings();
+  let uniqMode = "быстрый";
+  let uniqFps = "original";
+  let uniqCopies = 3;
+  let overlayPosition = "top";
+  let overlayHeight = 35;
+
+  function safePreset() {
+    const s = {};
+    ITEMS.forEach(i => { s[i.key] = i.key !== "mirror"; });
+    return s;
+  }
+
+  function updateMethodsTitle() {
+    const count = ITEMS.filter(i => settings[i.key]).length;
+    document.getElementById("methodsTitle").textContent =
+      "МЕТОДЫ, ВКЛЮЧЕНО " + count + " ИЗ 10";
+  }
+
+  function applyUniqMode() {
+    if (uniqMode === "быстрый") {
+      settings = safePreset();
+      renderUniqList();
+    }
+
+    document.querySelectorAll("[data-uniq-mode]").forEach(el => {
+      el.classList.toggle("active", el.dataset.uniqMode === uniqMode);
+    });
+    document.querySelectorAll("[data-fps]").forEach(el => {
+      el.classList.toggle("active", el.dataset.fps === uniqFps);
+    });
+    document.querySelectorAll("[data-copies]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.copies) === uniqCopies);
+    });
+
+    const isPackage = uniqMode === "пакет";
+    document.getElementById("copiesBlock").style.display = isPackage ? "" : "none";
+    document.getElementById("copiesRow").style.display = isPackage ? "" : "none";
+    document.getElementById("copiesHint").style.display = isPackage ? "" : "none";
+
+    const hints = {
+      original: "Исходный — частота кадров не меняется.",
+      "30": "30 FPS — стандарт для Reels и Shorts.",
+      "60": "60 FPS — повышенная плавность движения."
+    };
+    document.getElementById("fpsHint").textContent = hints[uniqFps] || hints.original;
+    updateMethodsTitle();
+  }
+
+  function renderUniqList() {
+    const listBox = document.getElementById("uniqList");
+    listBox.innerHTML = "";
+    ITEMS.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "toggle-card" + (settings[item.key] ? " on" : "");
+      card.innerHTML =
+        '<div><div class="tile-title">' + item.name + '</div>' +
+        '<div class="desc">' + item.desc + '</div></div>' +
+        '<label class="switch"><input type="checkbox" id="sw_' + item.key + '"' +
+        (settings[item.key] ? " checked" : "") + '><span class="slider"></span></label>';
+      listBox.appendChild(card);
+
+      const input = document.getElementById("sw_" + item.key);
+      input.addEventListener("change", e => {
+        settings[item.key] = e.target.checked;
+        card.classList.toggle("on", e.target.checked);
+        updateMethodsTitle();
+      });
+    });
+  }
+
+  function renderOverlayScheme() {
+    const second = document.getElementById("overlayZoneSecond");
+    const main = document.getElementById("overlayZoneMain");
+    second.style.height = overlayHeight + "%";
+    main.style.height = (100 - overlayHeight) + "%";
+
+    if (overlayPosition === "top") {
+      second.style.order = "0";
+      main.style.order = "1";
+    } else {
+      main.style.order = "0";
+      second.style.order = "1";
+    }
+
+    const word = overlayPosition === "top" ? "сверху" : "снизу";
+    document.getElementById("overlaySchemeText").textContent =
+      "Второе видео занимает " + overlayHeight + "% экрана " + word +
+      ". Если оно короче — повторяется по кругу. Звук остаётся от основного видео.";
+    document.getElementById("overlayHeightValue").textContent = overlayHeight + "%";
+    document.querySelectorAll("[data-overlay-pos]").forEach(el => {
+      el.classList.toggle("active", el.dataset.overlayPos === overlayPosition);
+    });
+  }
 
   function loadClipCount() {
     try {
@@ -1289,7 +1502,8 @@
     const target = document.getElementById("tab-" + tab);
     if (target) target.classList.add("active");
     setActiveTab(tab);
-    document.querySelector(".bottom-nav").style.display = tab === "subtitles" ? "none" : "";
+    document.querySelector(".bottom-nav").style.display =
+      tab === "subtitles" || tab === "overlay" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
@@ -1307,6 +1521,32 @@
     showTab("subtitles");
   });
   document.getElementById("subBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("openOverlayTile").addEventListener("click", () => {
+    renderOverlayScheme();
+    showTab("overlay");
+  });
+  document.getElementById("overlayBackBtn").addEventListener("click", () => showTab("home"));
+  document.querySelectorAll("[data-overlay-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      overlayPosition = el.dataset.overlayPos;
+      renderOverlayScheme();
+    });
+  });
+  document.getElementById("overlayHeightRange").addEventListener("input", e => {
+    overlayHeight = Number(e.target.value);
+    renderOverlayScheme();
+  });
+  document.getElementById("overlayDoneBtn").addEventListener("click", () => {
+    if (tg) {
+      tg.sendData(JSON.stringify({
+        action: "overlay_settings",
+        position: overlayPosition,
+        height_percent: overlayHeight
+      }));
+      addHistory("Наложить видео", selectedCount);
+      tg.close();
+    }
+  });
   document.getElementById("clearHistoryBtn").addEventListener("click", () => {
     localStorage.removeItem(HISTORY_KEY);
     renderHistory();
@@ -1405,23 +1645,8 @@
     }
   }, 900);
 
-  const listBox = document.getElementById("uniqList");
-  ITEMS.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "toggle-card" + (settings[item.key] ? " on" : "");
-    card.innerHTML =
-      '<div><div class="tile-title">' + item.name + '</div>' +
-      '<div class="desc">' + item.desc + '</div></div>' +
-      '<label class="switch"><input type="checkbox" id="sw_' + item.key + '"' +
-      (settings[item.key] ? " checked" : "") + '><span class="slider"></span></label>';
-    listBox.appendChild(card);
-
-    const input = document.getElementById("sw_" + item.key);
-    input.addEventListener("change", e => {
-      settings[item.key] = e.target.checked;
-      card.classList.toggle("on", e.target.checked);
-    });
-  });
+  renderUniqList();
+  applyUniqMode();
 
   document.getElementById("saveBtn").addEventListener("click", () => {
     localStorage.setItem(PRESET_KEY, JSON.stringify(settings));
@@ -1429,7 +1654,34 @@
   });
 
   document.getElementById("doneBtn").addEventListener("click", () => {
-    sendData({ action: "uniq_settings", settings: settings }, MODE_NAMES.uniq_settings, selectedCount);
+    sendData({
+      action: "uniq_settings",
+      mode: uniqMode,
+      fps: uniqFps,
+      copies: uniqMode === "пакет" ? uniqCopies : 1,
+      settings: settings
+    }, MODE_NAMES.uniq_settings, selectedCount);
+  });
+
+  document.querySelectorAll("[data-uniq-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      uniqMode = el.dataset.uniqMode;
+      applyUniqMode();
+    });
+  });
+
+  document.querySelectorAll("[data-fps]").forEach(el => {
+    el.addEventListener("click", () => {
+      uniqFps = el.dataset.fps;
+      applyUniqMode();
+    });
+  });
+
+  document.querySelectorAll("[data-copies]").forEach(el => {
+    el.addEventListener("click", () => {
+      uniqCopies = Number(el.dataset.copies);
+      applyUniqMode();
+    });
   });
 
   document.querySelectorAll(".pill").forEach(el => {
@@ -1441,6 +1693,7 @@
     });
   });
   refreshSubtitles();
+  renderOverlayScheme();
   renderCount();
   renderHistory();
 
