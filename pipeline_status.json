@@ -37,7 +37,18 @@
     }
   ],
   "error_log": "",
-  "updated_at": "19:27:30",
-  "active_tasks": [],
-  "history_tasks": []
+  "active_tasks": [
+    {
+      "task_id": "chat_718716596_1795364850",
+      "title": "/tmp/clipper_2uy9in9m/source.mp4",
+      "mode": "split_50_50",
+      "clip_count": 3,
+      "status": "running",
+      "percent": 0,
+      "current_step": "Запуск задачи...",
+      "updated_at": "19:27:32"
+    }
+  ],
+  "history_tasks": [],
+  "updated_at": "19:27:32"
 }
