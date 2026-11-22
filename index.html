@@ -1885,10 +1885,34 @@
   const TASK_ENDPOINT_KEY = "clipper_task_endpoint";
   const GITHUB_PAT_KEY = "github_pat";
   const GITHUB_REPO = "anzagorskii-cloud/uniq-webapp";
-  // Локальный FastAPI через бесплатный HTTPS-туннель Cloudflare.
-  const API_BASE = "https://bookstore-arthritis-smallest-desire.trycloudflare.com";
-  const START_TASK_URL = API_BASE + "/api/start_task";
-  const CONTROL_URL = API_BASE + "/api/control";
+  // Локальный FastAPI через бесплатные HTTPS-туннели.
+  // Первый — Cloudflare (как в задаче), второй — резервный SSH-туннель.
+  const API_BASES = [
+    "https://bookstore-arthritis-smallest-desire.trycloudflare.com",
+    "https://fd3257b37aaee06f-77-51-55-164.serveousercontent.com"
+  ];
+  const API_BASE = API_BASES[0];
+  const START_TASK_PATH = "/api/start_task";
+  const CONTROL_PATH = "/api/control";
+  const STATUS_PATH = "/api/status";
+
+  async function apiFetch(path, options) {
+    let lastError = null;
+    for (const base of API_BASES) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        const response = await fetch(base + path, Object.assign({}, options || {}, { signal: controller.signal }));
+        if (response.ok) return response;
+        lastError = new Error("HTTP " + response.status);
+      } catch (e) {
+        lastError = e;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+    throw lastError || new Error("API unavailable");
+  }
   const TASK_QUEUE_KEY = "clipper_pending_tasks";
   const AI_CONTENT_KEY = "clipper_ai_content_type";
   const UNIQ_FULL_KEY = "clipper_uniq_full";
@@ -2755,8 +2779,8 @@
     });
   }
 
-  const STATUS_URL = API_BASE + "/api/status";
-  const STATUS_RAW_URL = API_BASE + "/api/status";
+  const STATUS_URL = STATUS_PATH;
+  const STATUS_RAW_URL = STATUS_PATH;
   let lastStatus = null;
 
   function statusUrl(base) {
@@ -2808,25 +2832,20 @@
 
   async function fetchRawStatus(subtitle) {
     try {
-      const response = await fetch(statusUrl(STATUS_RAW_URL), { cache: "no-store" });
-      if (!response.ok) return false;
+      const response = await apiFetch(STATUS_RAW_URL + "?t=" + Date.now(), { cache: "no-store" });
       return applyStatus(await response.json(), subtitle, "Живой мониторинг (локальный сервер)");
     } catch (e) {
       return false;
     }
   }
 
+  let statusFetching = false;
   async function fetchStatus() {
+    if (statusFetching) return;
+    statusFetching = true;
     const subtitle = document.getElementById("processSubtitle");
     try {
-      const response = await fetch(statusUrl(STATUS_URL), { cache: "no-store" });
-      if (!response.ok) {
-        subtitle.textContent = "Синхронизация... HTTP " + response.status;
-        if (!await fetchRawStatus(subtitle)) {
-          subtitle.textContent = "Синхронизация... HTTP " + response.status;
-        }
-        return;
-      }
+      const response = await apiFetch(STATUS_URL + "?t=" + Date.now(), { cache: "no-store" });
       if (!await applyStatus(await response.json(), subtitle, "Живой мониторинг сборки видео")) {
         subtitle.textContent = "Синхронизация... пустой ответ";
         await fetchRawStatus(subtitle);
@@ -2834,6 +2853,8 @@
     } catch (e) {
       subtitle.textContent = "Синхронизация... нет соединения";
       await fetchRawStatus(subtitle);
+    } finally {
+      statusFetching = false;
     }
   }
 
@@ -3082,7 +3103,7 @@
     };
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const response = await fetch(CONTROL_URL, {
+        const response = await apiFetch(CONTROL_PATH, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -3441,13 +3462,12 @@
   async function postTask(task) {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const response = await fetch(START_TASK_URL, {
+        const response = await apiFetch(START_TASK_PATH, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(task),
           cache: "no-store"
         });
-        if (!response.ok) throw new Error("HTTP " + response.status);
         const data = await response.json();
         if (data && data.task_id) task.task_id = data.task_id;
         return "local";
