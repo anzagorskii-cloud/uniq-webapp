@@ -25,7 +25,7 @@
 
     body {
       margin: 0;
-      padding: 16px 16px 96px;
+      padding: 16px 16px 110px;
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -431,25 +431,32 @@
       margin-top: 10px;
     }
 
-    .preview-block { margin-bottom: 20px; }
-
-    .preview-wrap {
+    .preview-block {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: #0B0A10;
+      padding: 12px 0 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(139, 92, 246, .18);
       display: flex;
-      justify-content: center;
-      margin-top: 10px;
+      gap: 14px;
+      align-items: center;
     }
 
+    .preview-wrap { flex: 0 0 auto; }
+
     .preview {
-      width: 196px;
-      aspect-ratio: 9 / 16;
-      border-radius: 20px;
+      width: 110px;
+      height: 195px;
+      border-radius: 14px;
       background: linear-gradient(160deg, #1A1330 0%, #0B0A10 70%);
       border: 1px solid rgba(139, 92, 246, .55);
-      box-shadow: 0 0 26px rgba(139, 92, 246, .35);
+      box-shadow: 0 0 22px rgba(139, 92, 246, .32);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 14px;
+      padding: 8px;
       overflow: hidden;
       position: relative;
     }
@@ -465,35 +472,57 @@
     .preview-phrase {
       position: relative;
       text-align: center;
-      line-height: 1.18;
+      line-height: 1.15;
       max-width: 100%;
-      word-break: break-word;
+      word-break: normal;
+      overflow-wrap: normal;
+      white-space: normal;
     }
 
     .preview-word {
       display: inline-block;
-      padding: 1px 3px;
-      border-radius: 7px;
+      white-space: nowrap;
+      padding: 1px 2px;
+      border-radius: 5px;
       transition: color .18s ease, background .18s ease, transform .18s ease;
     }
 
     .preview-word.active { transform: scale(1.09); }
 
+    .preview-side { flex: 1 1 auto; min-width: 0; }
+
+    .preview-side-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      color: #C4B5FD;
+      margin-bottom: 8px;
+    }
+
+    .preview-side-text {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
     .style-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
     }
 
     .style-card {
+      flex: 0 0 132px;
       background: var(--card);
       border: 1px solid rgba(139,92,246,.2);
       border-radius: 14px;
-      padding: 12px;
+      padding: 10px;
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
       color: #D8D2EC;
+      text-align: center;
     }
 
     .style-card.active {
@@ -501,6 +530,18 @@
       border-color: var(--accent);
       box-shadow: var(--glow);
       background: #1D1730;
+    }
+
+    .style-sample {
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #0F0D16;
+      margin-bottom: 8px;
+      font-size: 17px;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .color-row { margin-bottom: 13px; }
@@ -729,22 +770,40 @@
   <div class="screen-title">Субтитры + Хук</div>
   <div class="screen-sub">Конструктор стиля с живым превью</div>
 
-  <div class="section-title">ПРЕВЬЮ</div>
   <div class="preview-block">
     <div class="preview-wrap">
       <div class="preview">
         <div class="preview-phrase" id="previewPhrase"></div>
       </div>
     </div>
+    <div class="preview-side">
+      <div class="preview-side-title">ПРЕВЬЮ</div>
+      <div class="preview-side-text">Так будут выглядеть субтитры в ролике. Изменения применяются мгновенно.</div>
+    </div>
   </div>
 
   <div class="section-title">СТИЛЬ</div>
   <div class="style-grid" id="styleGrid">
-    <div class="style-card active" data-sub-style="tiktok">TikTok</div>
-    <div class="style-card" data-sub-style="classic">Классика</div>
-    <div class="style-card" data-sub-style="plate">Плашка</div>
-    <div class="style-card" data-sub-style="bold">Жирный</div>
-    <div class="style-card" data-sub-style="minimal">Минимал</div>
+    <div class="style-card active" data-sub-style="tiktok">
+      <div class="style-sample"><span style="color:#FFFFFF">АА</span> <span style="color:#8B5CF6">ББ</span></div>
+      <div>TikTok</div>
+    </div>
+    <div class="style-card" data-sub-style="classic">
+      <div class="style-sample" style="text-shadow:0 2px 6px #000"><span style="color:#FFFFFF">Аа</span> <span style="color:#FFFFFF">Бб</span></div>
+      <div>Классика</div>
+    </div>
+    <div class="style-card" data-sub-style="plate">
+      <div class="style-sample" style="background:#1E1B2E;border-radius:8px"><span style="color:#FFFFFF">Аа</span> <span style="color:#FFFFFF">Бб</span></div>
+      <div>Плашка</div>
+    </div>
+    <div class="style-card" data-sub-style="bold">
+      <div class="style-sample" style="font-size:20px"><span style="color:#FFFFFF">АА</span> <span style="color:#FFE600">ББ</span></div>
+      <div>Жирный</div>
+    </div>
+    <div class="style-card" data-sub-style="minimal">
+      <div class="style-sample"><span style="color:#FFFFFF">Аа</span> <span style="color:#FFFFFF">Бб</span></div>
+      <div>Минимал</div>
+    </div>
   </div>
 
   <div class="section-title">ЦВЕТА</div>
@@ -787,6 +846,11 @@
     <div class="chip" data-pos="2">Снизу</div>
   </div>
 
+  <div class="color-row">
+    <div class="color-label">Отступ от края — <span id="marginValue">50% (стык)</span></div>
+    <input type="range" id="marginRange" min="5" max="45" value="18" disabled style="width:100%;accent-color:#8B5CF6">
+  </div>
+
   <button class="secondary-btn" id="saveSubStyleBtn">⭐ Сохранить как мой стиль</button>
   <button class="primary-btn sub-done" id="subDoneBtn">Готово</button>
 </div>
@@ -827,10 +891,10 @@
 
   const SUB_STYLE_KEY = "clipper_sub_style";
   const SUB_PRESETS = {
-    tiktok:  { style: "tiktok",  text_color: "#FFFFFF", highlight_color: "#8B5CF6", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: true,  words: 3, position: 5 },
-    classic: { style: "classic", text_color: "#FFFFFF", highlight_color: "#FFFFFF", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5 },
-    plate:   { style: "plate",   text_color: "#FFFFFF", highlight_color: "none",    outline_color: "none",    plate_color: "#000000", font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5 },
-    bold:    { style: "bold",    text_color: "#FFE600", highlight_color: "#FFE600", outline_color: "#000000", plate_color: "none",     font_size: 76, font: "Unbounded",      uppercase: true,  words: 1, position: 5 },
+    tiktok:  { style: "tiktok",  text_color: "#FFFFFF", highlight_color: "#8B5CF6", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: true,  words: 3, position: 5, margin_percent: 18 },
+    classic: { style: "classic", text_color: "#FFFFFF", highlight_color: "#FFFFFF", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5, margin_percent: 18 },
+    plate:   { style: "plate",   text_color: "#FFFFFF", highlight_color: "none",    outline_color: "none",    plate_color: "#000000", font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5, margin_percent: 18 },
+    bold:    { style: "bold",    text_color: "#FFE600", highlight_color: "#FFE600", outline_color: "#000000", plate_color: "none",     font_size: 76, font: "Unbounded",      uppercase: true,  words: 1, position: 5, margin_percent: 18 },
     minimal: { style: "minimal", text_color: "#FFFFFF", highlight_color: "none",    outline_color: "none",    plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5 }
   };
 
@@ -891,8 +955,10 @@
     return base;
   }
 
-  let subSettings = loadSubStyle();
-  const PREVIEW_WORDS = "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
+    let subSettings = loadSubStyle();
+  let lastMargin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
+  const PREVIEW_WORDS =
+ "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
   let previewChunk = 0;
   let previewActive = 0;
 
@@ -965,8 +1031,21 @@
       ? "flex-start"
       : subSettings.position === 2 ? "flex-end" : "center";
 
+    const margin = subSettings.position === 5 ? 0 : (subSettings.margin_percent || 18);
+    const marginPx = Math.round(195 * margin / 100);
+    preview.style.paddingTop = subSettings.position === 8 ? marginPx + "px" : "8px";
+    preview.style.paddingBottom = subSettings.position === 2 ? marginPx + "px" : "8px";
+
+    let fontScale = 0.52;
+    if (
+      (subSettings.font === "Unbounded" || subSettings.font === "Dela Gothic One") &&
+      subSettings.font_size === 76
+    ) {
+      fontScale *= 0.8;
+    }
+
     phrase.style.fontFamily = "'" + subSettings.font + "', sans-serif";
-    phrase.style.fontSize = Math.round(subSettings.font_size * 0.52) + "px";
+    phrase.style.fontSize = Math.round(subSettings.font_size * fontScale) + "px";
     phrase.style.fontWeight = subSettings.font === "Caveat" ? "700" : "800";
     phrase.style.color = subSettings.text_color;
     phrase.style.textTransform = subSettings.uppercase ? "uppercase" : "none";
@@ -1019,6 +1098,18 @@
       el.classList.toggle("active", Number(el.dataset.pos) === subSettings.position);
     });
     document.getElementById("subUppercase").checked = !!subSettings.uppercase;
+
+    const range = document.getElementById("marginRange");
+    const value = document.getElementById("marginValue");
+    if (subSettings.position === 5) {
+      range.disabled = true;
+      value.textContent = "50% (стык)";
+    } else {
+      range.disabled = false;
+      const margin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
+      range.value = margin;
+      value.textContent = margin + "%";
+    }
   }
 
   function refreshSubtitles() {
@@ -1125,7 +1216,8 @@
 
   document.querySelectorAll("[data-sub-style]").forEach(el => {
     el.addEventListener("click", () => {
-      subSettings = Object.assign({}, SUB_PRESETS[el.dataset.subStyle]);
+      const margin = subSettings.margin_percent === 50 ? lastMargin : subSettings.margin_percent;
+      subSettings = Object.assign({}, SUB_PRESETS[el.dataset.subStyle], { margin_percent: margin });
       refreshSubtitles();
     });
   });
@@ -1154,9 +1246,24 @@
 
   document.querySelectorAll("[data-pos]").forEach(el => {
     el.addEventListener("click", () => {
-      subSettings.position = Number(el.dataset.pos);
+      const pos = Number(el.dataset.pos);
+      if (pos === 5) {
+        if (subSettings.margin_percent !== 50) lastMargin = subSettings.margin_percent;
+        subSettings.margin_percent = 50;
+      } else {
+        subSettings.margin_percent = lastMargin;
+      }
+      subSettings.position = pos;
       refreshSubtitles();
     });
+  });
+
+  document.getElementById("marginRange").addEventListener("input", e => {
+    const value = Number(e.target.value);
+    subSettings.margin_percent = value;
+    lastMargin = value;
+    document.getElementById("marginValue").textContent = value + "%";
+    renderPreview();
   });
 
   document.getElementById("subUppercase").addEventListener("change", e => {
