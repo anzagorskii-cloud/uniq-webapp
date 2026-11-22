@@ -1,10 +1,41 @@
 {
-  "status": "idle",
-  "percent": 0,
-  "current_step": "Ожидание задачи",
-  "detail": "",
-  "clip_progress": "",
-  "steps": [],
+  "status": "running",
+  "percent": 35,
+  "current_step": "Тест",
+  "detail": "проверка",
+  "clip_progress": "2/5",
+  "steps": [
+    {
+      "id": "download",
+      "title": "1. Скачивание исходника (yt-dlp)",
+      "state": "done"
+    },
+    {
+      "id": "analyze",
+      "title": "2. Поиск ярких моментов и камер (OpenCV/LLM)",
+      "state": "done"
+    },
+    {
+      "id": "whisper",
+      "title": "3. Распознавание речи (Whisper)",
+      "state": "active"
+    },
+    {
+      "id": "gfx",
+      "title": "4. Генерация хука и субтитров (.ass / PNG)",
+      "state": "pending"
+    },
+    {
+      "id": "render",
+      "title": "5. Склейка и рендер (FFmpeg)",
+      "state": "pending"
+    },
+    {
+      "id": "uniq",
+      "title": "6. Уникализация и отправка в Telegram",
+      "state": "pending"
+    }
+  ],
   "error_log": "",
-  "updated_at": ""
+  "updated_at": "16:02:29"
 }
