@@ -3,82 +3,323 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Уникализация</title>
+  <title>Клиппер 50/50</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0D0F0E;
-      --card: #171A18;
-      --green: #22C55E;
-      --text: #F3F4F6;
-      --muted: #9CA3AF;
+      --bg: #0B0A10;
+      --card: #15131E;
+      --card-2: #1B1827;
+      --accent: #8B5CF6;
+      --accent-2: #A855F7;
+      --text: #F5F3FF;
+      --muted: #A09CB8;
+      --green: #34D399;
+      --glow: 0 0 18px rgba(139, 92, 246, .35);
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      padding: 16px 16px 100px;
+      padding: 16px 16px 96px;
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
 
-    h1 {
-      margin: 4px 0 4px;
-      font-size: 22px;
-      font-weight: 700;
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
 
-    .subtitle {
-      margin: 0 0 18px;
-      color: var(--muted);
+    .brand {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .status-card {
+      background: linear-gradient(135deg, var(--card), #201A32);
+      border: 1px solid rgba(139,92,246,.28);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--glow);
+      margin-bottom: 22px;
+    }
+
+    .status-title {
       font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .8px;
     }
 
-    .card {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
+    .status-name {
+      margin-top: 6px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .status-hello {
+      margin-top: 4px;
+      font-size: 14px;
+      color: #D8D2EC;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .6px;
+      color: #fff;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
+    }
+
+    .progress-track {
+      margin-top: 14px;
+      height: 6px;
+      border-radius: 999px;
+      background: #2A2438;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 78%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
+    }
+
+    .section-title {
+      margin: 22px 2px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      color: var(--muted);
+    }
+
+    .hero-card {
+      position: relative;
+      border-radius: 18px;
+      padding: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(139,92,246,.35);
+      background: linear-gradient(120deg, #1B1830 0%, #132A26 100%);
+      box-shadow: var(--glow);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
+      cursor: pointer;
+      margin-bottom: 12px;
     }
 
-    .label {
-      font-size: 15px;
-      font-weight: 600;
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,85,247,.35), transparent 70%);
+    }
+
+    .hero-title {
+      font-size: 17px;
+      font-weight: 800;
       line-height: 1.25;
+      max-width: 230px;
+    }
+
+    .hero-sub {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #B9B3D0;
+      max-width: 230px;
+    }
+
+    .arrow {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      font-weight: 800;
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 0 22px rgba(139,92,246,.6);
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tile {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.16);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 96px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .tile:active {
+      transform: scale(.98);
+      border-color: rgba(139,92,246,.6);
+      box-shadow: var(--glow);
+    }
+
+    .tile-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #7C3AED, #A855F7);
+      margin-bottom: 10px;
+    }
+
+    .tile-title {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .wide-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.16);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .wide-card:active { box-shadow: var(--glow); }
+
+    .history-item {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .history-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .history-meta {
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .history-status {
+      flex: 0 0 auto;
+      font-size: 11px;
+      font-weight: 800;
+      color: #C4B5FD;
+      background: rgba(139,92,246,.16);
+      border: 1px solid rgba(139,92,246,.4);
+      border-radius: 999px;
+      padding: 5px 9px;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 14px 2px;
+    }
+
+    .back-btn {
+      background: transparent;
+      color: #C4B5FD;
+      border: 1px solid rgba(139,92,246,.45);
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .screen-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 16px 0 4px;
+    }
+
+    .screen-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
     }
 
     .desc {
       margin-top: 3px;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1.3;
     }
 
-    .switch {
-      position: relative;
-      flex: 0 0 auto;
-      width: 51px;
-      height: 31px;
+    .toggle-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 13px 14px;
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid transparent;
     }
 
-    .switch input {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
+    .toggle-card.on {
+      border-color: rgba(139,92,246,.45);
+      box-shadow: 0 0 12px rgba(139,92,246,.18);
     }
+
+    .switch { position: relative; flex: 0 0 auto; width: 51px; height: 31px; }
+    .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
 
     .slider {
       position: absolute;
       inset: 0;
-      background: #3A3F3B;
+      background: #393247;
       border-radius: 31px;
       cursor: pointer;
       transition: background .25s ease;
@@ -91,168 +332,337 @@
       height: 27px;
       left: 2px;
       top: 2px;
-      background: #FFFFFF;
+      background: #fff;
       border-radius: 50%;
-      box-shadow: 0 2px 5px rgba(0,0,0,.35);
+      box-shadow: 0 2px 5px rgba(0,0,0,.4);
       transition: transform .25s ease;
     }
 
     .switch input:checked + .slider {
-      background: var(--green);
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
     }
 
-    .switch input:checked + .slider::before {
-      transform: translateX(20px);
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    .primary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 16px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: 0 0 24px rgba(139,92,246,.5);
+      margin-top: 10px;
     }
 
-    .footer {
+    .secondary-btn {
+      width: 100%;
+      border: 1px solid rgba(139,92,246,.5);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #C4B5FD;
+      background: transparent;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .bottom-nav {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
-      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-      background: linear-gradient(to top, var(--bg) 70%, rgba(13,15,14,0));
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(11,10,16,.92);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(139,92,246,.18);
     }
 
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 16px;
+    .nav-item {
+      text-align: center;
+      font-size: 11px;
       font-weight: 700;
+      color: var(--muted);
+      padding: 8px 4px;
+      border-radius: 12px;
       cursor: pointer;
     }
 
-    #saveBtn {
-      background: transparent;
-      color: var(--green);
-      border: 1px solid var(--green);
-    }
-
-    #doneBtn {
-      background: var(--green);
-      color: #06150C;
+    .nav-item.active {
+      color: #C4B5FD;
+      background: rgba(139,92,246,.16);
+      box-shadow: inset 0 0 0 1px rgba(139,92,246,.35), var(--glow);
     }
 
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 120px;
+      bottom: 100px;
       transform: translateX(-50%);
-      background: #2A2F2B;
+      background: var(--card-2);
+      border: 1px solid rgba(139,92,246,.5);
       color: var(--text);
-      padding: 8px 14px;
+      padding: 9px 14px;
       border-radius: 20px;
       font-size: 13px;
       opacity: 0;
       pointer-events: none;
       transition: opacity .2s ease;
+      box-shadow: var(--glow);
     }
 
     .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
-  <h1>Уникализация</h1>
-  <p class="subtitle">Выбери, что применять к клипам 50/50</p>
 
-  <div id="list"></div>
-
-  <div class="footer">
-    <button id="saveBtn">Сохранить как пресет</button>
-    <button id="doneBtn">Готово</button>
+<div id="screen-home" class="screen active">
+  <div class="topbar">
+    <div class="brand">КЛИППЕР 50/50</div>
   </div>
 
-  <div class="toast" id="toast">Пресет сохранён</div>
+  <div class="status-card">
+    <div class="status-title">Статус комбайна</div>
+    <div class="status-name">Клиппер 50/50</div>
+    <div class="status-hello" id="hello">Привет, друг!</div>
+    <span class="badge">БЕЗЛИМИТ • GPU/LOCAL</span>
+    <div class="progress-track"><div class="progress-fill"></div></div>
+  </div>
 
-  <script>
-    const ITEMS = [
-      { key: "zoom",     name: "Зум",     desc: "Увеличение 1–5% и сдвиг кадра",        def: true },
-      { key: "mirror",   name: "Зеркало", desc: "Отражение по горизонтали",             def: false },
-      { key: "speed",    name: "Скорость", desc: "Темп 0.97–1.03x",                     def: true },
-      { key: "color",    name: "Цвет",    desc: "Яркость, контраст, оттенок",           def: true },
-      { key: "noise",    name: "Зерно",   desc: "Лёгкое зерно поверх кадра",            def: true },
-      { key: "border",   name: "Рамка",   desc: "Рамка 1–2 px по краю",                 def: true },
-      { key: "trim",     name: "Обрезка", desc: "0.1–0.5 с в начале и в конце",         def: true },
-      { key: "reencode", name: "Перекодирование", desc: "Новые битрейт, CRF и GOP",     def: true },
-      { key: "pitch",    name: "Тон аудио", desc: "Тон звука ±1–2%",                    def: true },
-      { key: "metadata", name: "Метаданные", desc: "Удаление метаданных и даты съёмки", def: true }
-    ];
+  <div class="section-title">ИНСТРУМЕНТЫ</div>
 
-    const STORAGE_KEY = "clipper_uniq_settings";
+  <div class="hero-card" data-mode="split_50_50">
+    <div>
+      <div class="hero-title">Стримеры 50/50<br>(Умная сетка 1–4 вебки)</div>
+      <div class="hero-sub">Автоопределение камер, игра снизу, субтитры на стыке</div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
 
-    function defaultSettings() {
-      const s = {};
-      ITEMS.forEach(i => { s[i.key] = i.def; });
+  <div class="grid2">
+    <div class="tile" data-mode="ai_cut">
+      <div class="tile-icon">AI</div>
+      <div class="tile-title">Нарезка ИИ<br>Игры / Фильмы / Аниме</div>
+    </div>
+    <div class="tile" data-mode="subs_only">
+      <div class="tile-icon">S</div>
+      <div class="tile-title">Субтитры + Хук</div>
+    </div>
+    <div class="tile" data-mode="banner">
+      <div class="tile-icon">B</div>
+      <div class="tile-title">Вставить баннер<br>(Хромакей)</div>
+    </div>
+    <div class="tile" id="openUniqTile">
+      <div class="tile-icon">10</div>
+      <div class="tile-title">Уникализация<br>(10 методов)</div>
+    </div>
+  </div>
+
+  <div class="wide-card" data-mode="download">
+    <div>
+      <div class="tile-title">Скачать видео (TikTok и YouTube)</div>
+      <div class="hero-sub">До 1080p, без водяных знаков</div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <div class="section-title">ПОСЛЕДНИЕ ЗАДАЧИ</div>
+  <div id="history"></div>
+</div>
+
+<div id="screen-uniq" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="backBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Уникализация</div>
+  <div class="screen-sub">10 методов, применяются только включенные</div>
+
+  <div id="uniqList"></div>
+
+  <button class="secondary-btn" id="saveBtn">Сохранить как пресет</button>
+  <button class="primary-btn" id="doneBtn">Готово</button>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active" data-tab="home" data-screen="home">Главная</div>
+  <div class="nav-item" data-tab="uniq" data-screen="uniq">Уникализация</div>
+  <div class="nav-item" data-tab="history">История</div>
+</div>
+
+<div class="toast" id="toast">Сохранено</div>
+
+<script>
+  const ITEMS = [
+    { key: "zoom",     name: "Зум и сдвиг",       desc: "Увеличение 1–5% и сдвиг кадра",        def: true },
+    { key: "mirror",   name: "Зеркало",           desc: "Отражение по горизонтали",             def: false },
+    { key: "speed",    name: "Скорость",          desc: "Темп 0.97–1.03x",                     def: true },
+    { key: "color",    name: "Цвет",              desc: "Яркость, контраст, оттенок",           def: true },
+    { key: "noise",    name: "Зерно",             desc: "Лёгкое зерно поверх кадра",            def: true },
+    { key: "border",   name: "Рамка",             desc: "Рамка 1–2 px по краю",                 def: true },
+    { key: "trim",     name: "Обрезка",           desc: "0.1–0.5 с в начале и в конце",         def: true },
+    { key: "reencode", name: "Перекодирование",   desc: "Новые битрейт, CRF и GOP",             def: true },
+    { key: "pitch",    name: "Тон аудио",         desc: "Тон звука ±1–2%",                     def: true },
+    { key: "metadata", name: "Метаданные",        desc: "Удаление метаданных и даты съёмки",    def: true }
+  ];
+
+  const PRESET_KEY = "clipper_uniq_settings";
+  const HISTORY_KEY = "clipper_history";
+  const MODE_NAMES = {
+    split_50_50: "Стримеры 50/50",
+    ai_cut: "Нарезка ИИ",
+    subs_only: "Субтитры + Хук",
+    banner: "Вставить баннер",
+    download: "Скачать видео",
+    uniq_settings: "Уникализация"
+  };
+
+  const tg = window.Telegram && window.Telegram.WebApp;
+  const first = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name;
+  document.getElementById("hello").textContent = "Привет, " + (first || "друг") + "!";
+
+  function defaults() {
+    const s = {};
+    ITEMS.forEach(i => { s[i.key] = i.def; });
+    return s;
+  }
+
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem(PRESET_KEY);
+      if (!raw) return defaults();
+      const saved = JSON.parse(raw);
+      const s = defaults();
+      ITEMS.forEach(i => { if (typeof saved[i.key] === "boolean") s[i.key] = saved[i.key]; });
       return s;
+    } catch (e) {
+      return defaults();
     }
+  }
 
-    function loadSettings() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return defaultSettings();
-        const saved = JSON.parse(raw);
-        const s = defaultSettings();
-        ITEMS.forEach(i => {
-          if (typeof saved[i.key] === "boolean") s[i.key] = saved[i.key];
-        });
-        return s;
-      } catch (e) {
-        return defaultSettings();
-      }
-    }
+  let settings = loadSettings();
 
-    let settings = loadSettings();
+  function toast(text) {
+    const el = document.getElementById("toast");
+    el.textContent = text;
+    el.classList.add("show");
+    setTimeout(() => el.classList.remove("show"), 1400);
+  }
 
-    const list = document.getElementById("list");
-    ITEMS.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <div>
-          <div class="label">${item.name}</div>
-          <div class="desc">${item.desc}</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="sw_${item.key}" ${settings[item.key] ? "checked" : ""}>
-          <span class="slider"></span>
-        </label>
-      `;
-      list.appendChild(card);
-
-      document.getElementById("sw_" + item.key).addEventListener("change", e => {
-        settings[item.key] = e.target.checked;
+  function addHistory(name) {
+    try {
+      const list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      list.unshift({
+        name: name,
+        status: "Готово",
+        date: new Date().toLocaleString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
       });
-    });
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 10)));
+    } catch (e) {}
+    renderHistory();
+  }
 
-    function toast(text) {
-      const el = document.getElementById("toast");
-      el.textContent = text;
-      el.classList.add("show");
-      setTimeout(() => el.classList.remove("show"), 1400);
+  function renderHistory() {
+    const box = document.getElementById("history");
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); } catch (e) {}
+    if (!list.length) {
+      box.innerHTML = '<div class="empty">Пока нет задач</div>';
+      return;
     }
+    box.innerHTML = list.map(item => (
+      '<div class="history-item">' +
+        '<div><div class="history-name">' + item.name + '</div>' +
+        '<div class="history-meta">' + (item.date || "") + '</div></div>' +
+        '<div class="history-status">' + item.status + '</div>' +
+      '</div>'
+    )).join("");
+  }
 
-    document.getElementById("saveBtn").addEventListener("click", () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      toast("Пресет сохранён");
+  function sendData(payload, label) {
+    if (tg) {
+      tg.sendData(JSON.stringify(payload));
+      addHistory(label);
+      tg.close();
+    }
+  }
+
+  function setActiveTab(tab) {
+    document.querySelectorAll(".nav-item").forEach(el => {
+      el.classList.toggle("active", el.dataset.tab === tab);
     });
+  }
 
-    document.getElementById("doneBtn").addEventListener("click", () => {
-      const tg = window.Telegram && window.Telegram.WebApp;
-      if (tg) {
-        tg.sendData(JSON.stringify({ action: "uniq_settings", settings }));
-        tg.close();
+  function showScreen(name) {
+    document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
+    document.getElementById("screen-" + name).classList.add("active");
+    setActiveTab(name === "uniq" ? "uniq" : "home");
+    window.scrollTo(0, 0);
+  }
+
+  document.querySelectorAll("[data-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      const mode = el.dataset.mode;
+      sendData({ action: "select_mode", mode: mode }, MODE_NAMES[mode] || mode);
+    });
+  });
+
+  document.getElementById("openUniqTile").addEventListener("click", () => showScreen("uniq"));
+  document.getElementById("backBtn").addEventListener("click", () => showScreen("home"));
+
+  document.querySelectorAll(".nav-item").forEach(el => {
+    el.addEventListener("click", () => {
+      const tab = el.dataset.tab;
+      if (tab === "history") {
+        showScreen("home");
+        setActiveTab("history");
+        document.querySelector(".section-title:last-of-type").scrollIntoView({ behavior: "smooth" });
+      } else {
+        showScreen(tab);
       }
     });
+  });
 
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.ready();
-      window.Telegram.WebApp.expand();
-    }
-  </script>
+  const listBox = document.getElementById("uniqList");
+  ITEMS.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "toggle-card" + (settings[item.key] ? " on" : "");
+    card.innerHTML =
+      '<div><div class="tile-title">' + item.name + '</div>' +
+      '<div class="desc">' + item.desc + '</div></div>' +
+      '<label class="switch"><input type="checkbox" id="sw_' + item.key + '"' +
+      (settings[item.key] ? " checked" : "") + '><span class="slider"></span></label>';
+    listBox.appendChild(card);
+
+    const input = document.getElementById("sw_" + item.key);
+    input.addEventListener("change", e => {
+      settings[item.key] = e.target.checked;
+      card.classList.toggle("on", e.target.checked);
+    });
+  });
+
+  document.getElementById("saveBtn").addEventListener("click", () => {
+    localStorage.setItem(PRESET_KEY, JSON.stringify(settings));
+    toast("Пресет сохранён");
+  });
+
+  document.getElementById("doneBtn").addEventListener("click", () => {
+    sendData({ action: "uniq_settings", settings: settings }, MODE_NAMES.uniq_settings);
+  });
+
+  renderHistory();
+
+  if (tg) {
+    tg.ready();
+    tg.expand();
+  }
+</script>
 </body>
 </html>
