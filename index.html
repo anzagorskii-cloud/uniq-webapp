@@ -1262,9 +1262,9 @@
 
   <div class="color-label">РАЗМЕР ХУКА</div>
   <div class="chip-row" id="hookSizeRow">
-    <div class="chip" data-hook-size="34">S</div>
-    <div class="chip active" data-hook-size="42">M</div>
-    <div class="chip" data-hook-size="50">L</div>
+    <div class="chip" data-hook-size="S">S</div>
+    <div class="chip active" data-hook-size="M">M</div>
+    <div class="chip" data-hook-size="L">L</div>
   </div>
 
   <button class="secondary-btn" id="saveSubStyleBtn">⭐ Сохранить как мой стиль</button>
@@ -1712,7 +1712,9 @@
   let selectedCount = loadClipCount();
 
   function loadSubStyle() {
-    const base = Object.assign({}, SUB_PRESETS.tiktok);
+    const base = Object.assign({}, SUB_PRESETS.tiktok, {
+      hook: { enabled: true, position: "top", style: "gradient", size: "M", duration: 4 }
+    });
     try {
       const raw = localStorage.getItem(SUB_STYLE_KEY);
       if (raw) {
@@ -1727,8 +1729,11 @@
 
     let subSettings = loadSubStyle();
   if (!subSettings.grid) subSettings.grid = "50";
-  if (!subSettings.hook) subSettings.hook = { enabled: true, position: "top", style: "gradient", size: 42, duration: 4 };
+  if (!subSettings.hook) subSettings.hook = { enabled: true, position: "top", style: "gradient", size: "M", duration: 4 };
   if (subSettings.hook.duration === undefined) subSettings.hook.duration = 4;
+  const legacyHookSizes = { 34: "S", 42: "M", 50: "L" };
+  if (legacyHookSizes[subSettings.hook.size]) subSettings.hook.size = legacyHookSizes[subSettings.hook.size];
+  if (!["S", "M", "L"].includes(subSettings.hook.size)) subSettings.hook.size = "M";
   let lastMargin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
   const PREVIEW_WORDS =
  "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
@@ -1852,6 +1857,15 @@
     mini.style.display = "";
     mini.className = "hook-mini " + hook.position + " " + hook.style;
 
+    const hookTypeSizes = {
+      S: { fontSize: "7.5px", padding: "2px 5px" },
+      M: { fontSize: "9.5px", padding: "3px 7px" },
+      L: { fontSize: "12px", padding: "4px 9px" }
+    };
+    const typeSize = hookTypeSizes[hook.size] || hookTypeSizes.M;
+    mini.style.fontSize = typeSize.fontSize;
+    mini.style.padding = typeSize.padding;
+
     document.querySelectorAll("[data-hook-pos]").forEach(el => {
       el.classList.toggle("active", el.dataset.hookPos === hook.position);
     });
@@ -1859,7 +1873,7 @@
       el.classList.toggle("active", el.dataset.hookStyle === hook.style);
     });
     document.querySelectorAll("[data-hook-size]").forEach(el => {
-      el.classList.toggle("active", Number(el.dataset.hookSize) === hook.size);
+      el.classList.toggle("active", el.dataset.hookSize === hook.size);
     });
     document.getElementById("hookEnabled").checked = hook.enabled;
   }
@@ -2232,7 +2246,8 @@
   document.querySelectorAll("[data-sub-style]").forEach(el => {
     el.addEventListener("click", () => {
       const margin = subSettings.margin_percent === 50 ? lastMargin : subSettings.margin_percent;
-      subSettings = Object.assign({}, SUB_PRESETS[el.dataset.subStyle], { margin_percent: margin });
+      const hook = subSettings.hook;
+      subSettings = Object.assign({}, SUB_PRESETS[el.dataset.subStyle], { margin_percent: margin, hook: hook });
       refreshSubtitles();
     });
   });
@@ -2324,7 +2339,7 @@
 
   document.querySelectorAll("[data-hook-size]").forEach(el => {
     el.addEventListener("click", () => {
-      subSettings.hook.size = Number(el.dataset.hookSize);
+      subSettings.hook.size = el.dataset.hookSize;
       renderHookMini();
     });
   });
