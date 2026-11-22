@@ -1,8 +1,8 @@
 {
   "status": "running",
-  "percent": 70,
-  "current_step": "Хук и субтитры готовы",
-  "detail": "Клип 1 из 3",
+  "percent": 85,
+  "current_step": "Рендер завершён",
+  "detail": "Клип 1 из 3 • уникализация и отправка",
   "clip_progress": "1/3",
   "steps": [
     {
@@ -28,16 +28,16 @@
     {
       "id": "render",
       "title": "5. Склейка и рендер (FFmpeg)",
-      "state": "active"
+      "state": "done"
     },
     {
       "id": "uniq",
       "title": "6. Уникализация и отправка в Telegram",
-      "state": "pending"
+      "state": "active"
     }
   ],
   "error_log": "",
-  "updated_at": "19:29:39",
+  "updated_at": "19:30:38",
   "active_tasks": [
     {
       "task_id": "chat_718716596_1795364850",
@@ -45,9 +45,9 @@
       "mode": "split_50_50",
       "clip_count": 3,
       "status": "running",
-      "percent": 55,
-      "current_step": "Моменты найдены",
-      "updated_at": "19:29:10"
+      "percent": 70,
+      "current_step": "Хук и субтитры готовы",
+      "updated_at": "19:29:39"
     }
   ],
   "history_tasks": []
