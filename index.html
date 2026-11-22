@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Клиппер — настройки</title>
+  <title>Клиппер</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&amp;family=Dela+Gothic+One&amp;family=Manrope:wght@700;800&amp;family=Unbounded:wght@700;900&amp;display=swap" rel="stylesheet">
@@ -18,10 +18,24 @@
       --text: #F5F3FF;
       --muted: #A09CB8;
       --green: #34D399;
-      --glow: 0 0 18px rgba(139,92,246,.35);
+      --glow: 0 0 18px rgba(139, 92, 246, .35);
     }
 
     * { box-sizing: border-box; }
+
+    .card, .btn {
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hero-card, .tile, .wide-card, .style-card, .chip, .pill,
+    .ai-type-card, button, .nav-item, .count-selector {
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       margin: 0;
       padding: 16px 16px 110px;
@@ -34,7 +48,13 @@
     .screen { display: none; padding-bottom: 110px; }
     .screen.active { display: block; }
 
-    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
     .brand {
       font-size: 18px;
       font-weight: 800;
@@ -45,200 +65,1137 @@
       color: transparent;
     }
 
-    .screen-title { font-size: 24px; font-weight: 800; line-height: 1.2; }
-    .screen-sub { margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.4; }
-
-    .section-title {
-      font-size: 11px; font-weight: 800; letter-spacing: 1.4px;
-      color: var(--muted); margin: 20px 0 10px;
-    }
-
     .status-card {
       background: linear-gradient(135deg, var(--card), #201A32);
       border: 1px solid rgba(139,92,246,.28);
       border-radius: 18px;
       padding: 18px;
       box-shadow: var(--glow);
-      margin-bottom: 16px;
+      margin-bottom: 22px;
     }
-    .status-title { font-size: 12px; color: var(--muted); font-weight: 800; letter-spacing: 1px; }
-    .status-name { font-size: 22px; font-weight: 800; margin-top: 4px; }
+
+    .status-title {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .status-name {
+      margin-top: 6px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .status-hello {
+      margin-top: 4px;
+      font-size: 14px;
+      color: #D8D2EC;
+    }
+
     .badge {
-      display: inline-block; margin-top: 10px; padding: 5px 10px;
-      font-size: 10px; font-weight: 800; letter-spacing: .8px;
-      color: #DDD6FE; background: rgba(139,92,246,.18);
-      border: 1px solid rgba(139,92,246,.45); border-radius: 999px;
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .6px;
+      color: #fff;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
+    }
+
+    .progress-track {
+      margin-top: 14px;
+      height: 6px;
+      border-radius: 999px;
+      background: #2A2438;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 78%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
     }
 
     .count-selector {
-      background: var(--card); border: 1px solid rgba(139,92,246,.16);
-      border-radius: 16px; padding: 14px; margin-bottom: 10px;
-    }
-    .count-label { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
-    .pills { display: flex; gap: 8px; }
-    .pill {
-      flex: 1; padding: 10px; border-radius: 12px; cursor: pointer;
-      border: 1px solid rgba(139,92,246,.3); background: #211C30;
-      color: var(--muted); font-size: 14px; font-weight: 800;
-    }
-    .pill.active {
-      color: #fff; border-color: transparent;
-      background: linear-gradient(90deg, #7C3AED, #A855F7); box-shadow: var(--glow);
+      margin: -8px 0 6px;
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.22);
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 0 12px rgba(139,92,246,.12);
     }
 
-    .mode-card, .tile, .wide-card, .card {
-      user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+    .count-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #C4B5FD;
+      margin-bottom: 10px;
     }
-    .mode-card {
-      background: var(--card); border: 1px solid rgba(139,92,246,.2);
-      border-radius: 16px; padding: 15px; margin-bottom: 9px; cursor: pointer;
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+
+    .pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+    .pill {
+      border-radius: 999px;
+      padding: 9px 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--muted);
+      background: #211C30;
+      border: 1px solid rgba(139,92,246,.25);
+      cursor: pointer;
     }
-    .mode-card.active { border-color: var(--accent); box-shadow: var(--glow); background: #1D1730; }
-    .mode-title { font-size: 15px; font-weight: 800; }
-    .mode-desc { margin-top: 5px; font-size: 12px; color: var(--muted); line-height: 1.4; }
-    .mode-icon {
-      flex: 0 0 auto; width: 38px; height: 38px; border-radius: 11px;
-      display: grid; place-items: center; font-size: 16px; font-weight: 800; color: #fff;
+
+    .pill.active {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
+    }
+
+    .section-title {
+      margin: 22px 2px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      color: var(--muted);
+    }
+
+    .hero-card {
+      position: relative;
+      border-radius: 18px;
+      padding: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(139,92,246,.35);
+      background: linear-gradient(120deg, #1B1830 0%, #2A1B40 100%);
+      box-shadow: var(--glow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,85,247,.35), transparent 70%);
+    }
+
+    .hero-title {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.25;
+      max-width: 230px;
+    }
+
+    .hero-sub {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #B9B3D0;
+      max-width: 230px;
+    }
+
+    .arrow {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      font-weight: 800;
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 0 22px rgba(139,92,246,.6);
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tile {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.16);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 96px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .tile:active {
+      transform: scale(.98);
+      border-color: rgba(139,92,246,.6);
+      box-shadow: var(--glow);
+    }
+
+    .tile-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
       background: linear-gradient(135deg, #7C3AED, #A855F7);
+      margin-bottom: 10px;
+    }
+
+    .tile-title {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .wide-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.16);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .wide-card:active { box-shadow: var(--glow); }
+
+    #tab-aicut { padding-bottom: 110px; }
+
+    .ai-type-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.16);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .ai-type-card.active {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, var(--card), #241B38);
+      box-shadow: var(--glow);
+    }
+
+    .ai-type-card:active { transform: scale(.99); }
+
+    .ai-type-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      background: linear-gradient(135deg, #7C3AED, #A855F7);
+      margin-bottom: 10px;
+    }
+
+    .ai-type-title { font-size: 15px; font-weight: 800; line-height: 1.25; }
+
+    .ai-type-desc {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .history-item {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .history-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .history-meta {
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .history-status {
+      flex: 0 0 auto;
+      font-size: 11px;
+      font-weight: 800;
+      color: #C4B5FD;
+      background: rgba(139,92,246,.16);
+      border: 1px solid rgba(139,92,246,.4);
+      border-radius: 999px;
+      padding: 5px 9px;
+    }
+
+    .task-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.18);
+      border-radius: 14px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
+    }
+
+    .task-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .task-title { font-size: 13px; font-weight: 700; word-break: break-all; }
+    .task-sub { margin-top: 3px; font-size: 11px; color: var(--muted); }
+
+    .task-badge { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+    .task-badge.running { color: #C4B5FD; background: rgba(139,92,246,.16); border: 1px solid rgba(139,92,246,.4); }
+    .task-badge.paused { color: #FDE68A; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.4); }
+    .task-badge.done { color: #86EFAC; background: rgba(52,211,153,.14); border: 1px solid rgba(52,211,153,.4); }
+    .task-badge.cancelled, .task-badge.error { color: #FCA5A5; background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.4); }
+
+    .task-progress { height: 6px; border-radius: 6px; background: #2A2538; margin-top: 10px; overflow: hidden; }
+    .task-progress > span { display: block; height: 100%; background: linear-gradient(90deg, #7C3AED, #A855F7); border-radius: 6px; }
+
+    .task-actions { display: flex; gap: 8px; margin-top: 11px; }
+    .task-btn {
+      flex: 1;
+      border: 1px solid rgba(139,92,246,.35);
+      background: #211C30;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .task-btn.danger { border-color: rgba(239,68,68,.45); color: #FCA5A5; }
+
+    .empty {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 14px 2px;
+    }
+
+    .history-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 70px 24px;
+      background: var(--card);
+      border: 1px dashed rgba(139,92,246,.35);
+      border-radius: 18px;
+      box-shadow: 0 0 16px rgba(139,92,246,.1);
+      margin-top: 16px;
+    }
+
+    .history-clips {
+      margin-top: 5px;
+      color: #C4B5FD;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .back-btn {
+      background: transparent;
+      color: #C4B5FD;
+      border: 1px solid rgba(139,92,246,.45);
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .screen-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 16px 0 4px;
+    }
+
+    .screen-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .desc {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .toggle-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 13px 14px;
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid transparent;
+    }
+
+    .toggle-card.on {
+      border-color: rgba(139,92,246,.45);
+      box-shadow: 0 0 12px rgba(139,92,246,.18);
+    }
+
+    .switch { position: relative; flex: 0 0 auto; width: 51px; height: 31px; }
+    .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #393247;
+      border-radius: 31px;
+      cursor: pointer;
+      transition: background .25s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 27px;
+      height: 27px;
+      left: 2px;
+      top: 2px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,.4);
+      transition: transform .25s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
+    }
+
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    .primary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 16px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: 0 0 24px rgba(139,92,246,.5);
+      margin-top: 10px;
+    }
+
+    .primary-btn:disabled {
+      opacity: .45;
+      filter: grayscale(.4);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      border: 1px solid rgba(139,92,246,.5);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #C4B5FD;
+      background: transparent;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
     .preview-block {
-      position: sticky; top: 0; z-index: 40; background: #0B0A10;
-      padding: 10px 0 14px; margin-bottom: 14px;
-      border-bottom: 1px solid rgba(139,92,246,.18);
-      display: flex; gap: 14px; align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: #0B0A10;
+      padding: 12px 0 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(139, 92, 246, .18);
+      display: flex;
+      gap: 14px;
+      align-items: center;
     }
-    .preview {
-      width: 110px; height: 195px; border-radius: 14px; flex: 0 0 auto;
-      background: linear-gradient(160deg, #1A1330 0%, #0B0A10 70%);
-      border: 1px solid rgba(139,92,246,.55); box-shadow: 0 0 22px rgba(139,92,246,.32);
-      overflow: hidden; position: relative;
+
+    #tab-autopilot { padding-bottom: 130px; }
+
+    .ap-hook {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 86%;
+      text-align: center;
+      font-weight: 900;
+      font-size: 10px;
+      line-height: 1.15;
+      border-radius: 6px;
+      padding: 3px 6px;
+      transition: all .18s ease;
     }
-    .preview-grid { position: absolute; inset: 6px; z-index: 1; display: grid; gap: 2px; }
-    .grid-zone {
-      border-radius: 5px; display: grid; place-items: center; text-align: center;
-      background: rgba(139,92,246,.16); border: 1px solid rgba(139,92,246,.35);
-      color: #C4B5FD; font-size: 7px; font-weight: 800; padding: 2px;
-    }
-    .hook-mini {
-      position: absolute; z-index: 3; left: 50%; transform: translateX(-50%);
-      width: 86%; text-align: center; font-size: 9px; line-height: 1.15;
-      font-weight: 900; border-radius: 6px; padding: 3px 6px;
-    }
-    .hook-mini.top { top: 8px; }
-    .hook-mini.joint { top: 50%; transform: translate(-50%, -50%); }
-    .hook-mini.bottom { bottom: 16px; }
-    .hook-mini.gradient .title {
+    .ap-hook.top { top: 8px; }
+    .ap-hook.joint { top: 50%; transform: translate(-50%, -50%); }
+    .ap-hook.bottom { bottom: 16px; }
+    .ap-hook.gradient .title {
       background: linear-gradient(180deg, #FFF200 0%, #4ADE80 100%);
-      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 1px 2px #000);
     }
-    .hook-mini.white { background: #fff; color: #0D0D0D; }
-    .hook-mini.dark { background: rgba(15,15,20,.85); color: #fff; border: 1px solid rgba(255,255,255,.2); }
-    .hook-mini.none { background: transparent; color: #fff; text-shadow: 0 1px 3px #000; }
-    .subs-mini {
-      position: absolute; z-index: 4; left: 50%; transform: translateX(-50%);
-      width: 88%; text-align: center; font-weight: 800; font-size: 10px; line-height: 1.2;
-      text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 6px rgba(0,0,0,.5);
-    }
-    .subs-mini.top { top: 16%; }
-    .subs-mini.joint { top: 62%; transform: translate(-50%, -50%); }
-    .subs-mini.bottom { bottom: 12%; }
+    .ap-hook.white { background: #FFFFFF; color: #0D0D0D; }
+    .ap-hook.dark { background: rgba(15,15,20,.85); color: #FFFFFF; border: 1px solid rgba(255,255,255,.2); }
+    .ap-hook.none { background: transparent; color: #FFFFFF; text-shadow: 0 1px 3px #000; }
 
-    .color-row { margin-bottom: 14px; }
-    .color-label { font-size: 12px; color: var(--muted); margin-bottom: 7px; font-weight: 700; }
-    .chip-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 10px; }
-    .chip {
-      padding: 8px 12px; border-radius: 999px; cursor: pointer;
-      border: 1px solid rgba(139,92,246,.3); background: #211C30;
-      color: var(--muted); font-size: 13px; font-weight: 800;
+    .ap-subs {
+      position: absolute;
+      z-index: 5;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 88%;
+      text-align: center;
+      font-weight: 800;
+      font-size: 11px;
+      line-height: 1.2;
     }
-    .chip.active {
-      color: #fff; border-color: transparent;
-      background: linear-gradient(90deg, #7C3AED, #A855F7); box-shadow: var(--glow);
+    .ap-subs.top { top: 16%; }
+    .ap-subs.joint { top: 50%; transform: translate(-50%, -50%); }
+    .ap-subs.bottom { bottom: 14%; }
+    .ap-subs .word { transition: transform .18s ease; }
+    .ap-subs .word.active { transform: scale(1.22); }
+
+    .ap-input {
+      width: 100%;
+      border: 1px solid rgba(139,92,246,.35);
+      border-radius: 12px;
+      background: #12101B;
+      color: var(--text);
+      padding: 12px 13px;
+      font-size: 14px;
+      outline: none;
     }
+    .ap-input:focus { border-color: var(--accent); box-shadow: var(--glow); }
+
+    .ap-field { margin-bottom: 12px; }
+
+    .preview-wrap { flex: 0 0 auto; }
+
+    .preview {
+      width: 110px;
+      height: 195px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #1A1330 0%, #0B0A10 70%);
+      border: 1px solid rgba(139, 92, 246, .55);
+      box-shadow: 0 0 22px rgba(139, 92, 246, .32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(139,92,246,.18), transparent 62%);
+      pointer-events: none;
+    }
+
+    .preview-phrase {
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      max-width: 90%;
+      padding: 4px 6px;
+      box-sizing: border-box;
+      margin: 0 auto;
+      text-align: center;
+      line-height: 1.2;
+      overflow: hidden;
+      word-break: normal;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+
+    .preview-word {
+      display: inline-block;
+      white-space: nowrap;
+      padding: 1px 2px;
+      border-radius: 5px;
+      transition: color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .preview-word.active { transform: scale(1.09); }
+
+    .hook-mini {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      width: 90%;
+      text-align: center;
+      font-size: 9px;
+      line-height: 1.15;
+      font-weight: 800;
+      border-radius: 6px;
+      pointer-events: none;
+      transition: all .18s ease;
+    }
+
+    .hook-mini .title { display: block; }
+
+    .hook-mini.top { top: 6px; transform: translateX(-50%); }
+    .hook-mini.joint { top: 50%; transform: translate(-50%, -50%); }
+    .hook-mini.bottom { bottom: 20px; transform: translateX(-50%); }
+
+    .hook-mini.white {
+      background: #FFFFFF;
+      color: #0D0D0D;
+      padding: 3px 6px;
+      border-radius: 6px;
+      font-weight: 800;
+    }
+
+    .hook-mini.gradient {
+      background: transparent;
+      padding: 2px 4px;
+      font-weight: 900;
+    }
+    .hook-mini.gradient .title {
+      background: linear-gradient(180deg, #FFF200 0%, #4ADE80 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter: drop-shadow(0 1px 2px #000000);
+      font-weight: 900;
+    }
+
+    .hook-mini.dark {
+      background: rgba(15, 15, 20, 0.85);
+      color: #FFFFFF;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 3px 6px;
+      border-radius: 6px;
+    }
+
+    .hook-mini.none {
+      background: transparent;
+      color: #FFFFFF;
+      text-shadow: 0 1px 3px #000000;
+      padding: 2px 4px;
+    }
+
+    .preview-grid {
+      position: absolute;
+      inset: 6px;
+      z-index: 1;
+      display: grid;
+      gap: 2px;
+      padding: 2px;
+      border-radius: 12px;
+      background: var(--accent);
+      pointer-events: none;
+    }
+
+    .grid-zone {
+      border: 1px dashed rgba(139, 92, 246, .55);
+      border-radius: 5px;
+      background: rgba(21, 19, 30, .92);
+      display: grid;
+      place-items: center;
+      font-size: 8px;
+      font-weight: 800;
+      color: #A78BFA;
+      letter-spacing: .4px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .grid-safe {
+      border: 1px dashed rgba(139, 92, 246, .7);
+      border-top: 2px solid var(--accent);
+      border-radius: 5px;
+      background: rgba(21, 19, 30, .75);
+      display: grid;
+      place-items: center;
+      font-size: 7px;
+      font-weight: 700;
+      color: #C4B5FD;
+      letter-spacing: .3px;
+    }
+
+    .preview-side { flex: 1 1 auto; min-width: 0; }
+
+    .preview-side-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      color: #C4B5FD;
+      margin-bottom: 8px;
+    }
+
+    .preview-side-text {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .style-grid {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .style-card {
+      flex: 0 0 132px;
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.2);
+      border-radius: 14px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #D8D2EC;
+      text-align: center;
+    }
+
+    .style-card.active {
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      background: #1D1730;
+    }
+
+    .style-sample {
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #0F0D16;
+      margin-bottom: 8px;
+      font-size: 17px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .color-row { margin-bottom: 13px; }
+
+    .color-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
     .swatches { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+
     .swatch {
-      width: 29px; height: 29px; border-radius: 50%; border: 2px solid transparent;
-      cursor: pointer; box-shadow: 0 0 0 1px rgba(255,255,255,.08);
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.08);
     }
+
     .swatch.active { border-color: #fff; box-shadow: var(--glow); }
+
     .swatch.none {
-      background: #211C30; color: #C4B5FD; display: grid; place-items: center;
-      font-size: 14px; font-weight: 800;
+      background: #211C30;
+      color: #C4B5FD;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .custom-color {
+      width: 33px;
+      height: 33px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .chip-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 10px; }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(139,92,246,.3);
+      background: #211C30;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      box-shadow: var(--glow);
     }
 
     .toggle-row {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      background: var(--card); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
     }
-    .toggle-title { font-size: 13px; font-weight: 700; }
-    .toggle-desc { margin-top: 3px; font-size: 11px; color: var(--muted); }
-    .switch { position: relative; flex: 0 0 auto; width: 51px; height: 31px; }
-    .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; inset: 0; background: #393247; border-radius: 31px;
-      cursor: pointer; transition: background .25s ease;
-    }
-    .slider::before {
-      content: ""; position: absolute; width: 27px; height: 27px; left: 2px; top: 2px;
-      background: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,.4);
-      transition: transform .25s ease;
-    }
-    .switch input:checked + .slider { background: linear-gradient(90deg, #7C3AED, #A855F7); box-shadow: var(--glow); }
-    .switch input:checked + .slider::before { transform: translateX(20px); }
 
-    .input {
-      width: 100%; border: 1px solid rgba(139,92,246,.35); border-radius: 12px;
-      background: #12101B; color: var(--text); padding: 12px 13px; font-size: 14px; outline: none;
+    .sub-done {
+      position: sticky;
+      bottom: 16px;
+      z-index: 5;
+      margin-top: 16px;
     }
-    .input:focus { border-color: var(--accent); box-shadow: var(--glow); }
-    input[type=range] { width: 100%; accent-color: #8B5CF6; }
 
-    .primary-btn {
-      width: 100%; border: none; border-radius: 14px; padding: 15px 16px;
-      font-size: 16px; font-weight: 800; color: #fff; cursor: pointer; margin-top: 12px;
+    #tab-banner { overflow: visible; }
+
+    .banner-scheme-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: #0B0A10;
+      padding-top: 8px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.25);
+    }
+
+    .banner-scheme-sticky .overlay-scheme {
+      margin-bottom: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .overlay-scheme {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.22);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+
+    .overlay-phone {
+      position: relative;
+      width: 96px;
+      height: 170px;
+      border-radius: 12px;
+      background: #1E1C2A;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      flex-shrink: 0;
+      border: 1px solid rgba(139, 92, 246, 0.35);
+    }
+
+    .overlay-zone {
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      transition: height .2s ease;
+      overflow: hidden;
+    }
+
+    .overlay-zone.second {
+      background: rgba(139, 92, 246, 0.35);
+      border: 2px solid #8B5CF6;
+      color: #DDD6FE;
+    }
+
+    .overlay-zone.main {
+      background: #252334;
+      color: #A09CB8;
+    }
+
+    .scheme-side { flex: 1 1 auto; min-width: 0; }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+
+    .banner-strip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      max-height: 100%;
+      box-sizing: border-box;
+      z-index: 2;
+      pointer-events: none;
+      background: rgba(139, 92, 246, 0.35);
+      border: 2px solid #8B5CF6;
+      display: grid;
+      place-items: center;
+      font-size: 8px;
+      font-weight: 800;
+      color: #DDD6FE;
+      letter-spacing: .4px;
+      transition: all .2s ease;
+    }
+
+    .home-progress {
+      display: none;
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(139,92,246,.14);
+      border: 1px solid rgba(139,92,246,.45);
+      color: #C4B5FD;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--glow);
+    }
+
+    .proc-card {
+      background: var(--card);
+      border: 1px solid rgba(139,92,246,.25);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .proc-percent {
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1;
       background: linear-gradient(90deg, #7C3AED, #A855F7);
-      box-shadow: 0 0 24px rgba(139,92,246,.5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .secondary-btn {
-      width: 100%; border: 1px solid rgba(139,92,246,.5); border-radius: 14px;
-      padding: 13px 16px; font-size: 14px; font-weight: 700; color: #C4B5FD;
-      background: transparent; cursor: pointer; margin-top: 10px;
+
+    .proc-caption { color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+    .proc-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #2A2438;
+      overflow: hidden;
+      margin-top: 14px;
     }
-    .hint { font-size: 12px; color: var(--muted); line-height: 1.45; margin-top: 8px; }
+
+    .proc-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #8B5CF6, #A855F7);
+      box-shadow: var(--glow);
+      transition: width .4s ease;
+    }
+
+    .proc-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      background: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .proc-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--card);
+      border: 1px solid transparent;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .proc-step.active {
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      background: #1D1730;
+    }
+
+    .proc-step.done { color: #86EFAC; }
+    .proc-step.error { color: #FCA5A5; border-color: #EF4444; }
+
+    .proc-error {
+      display: none;
+      background: #2A1116;
+      border: 1px solid #EF4444;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .proc-error pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #FECACA;
+      font-size: 11px;
+      line-height: 1.4;
+      margin: 8px 0 12px;
+    }
+
+    .pulse-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 1.1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .35; transform: scale(1.5); }
+    }
+
+    .launch-input-row { display: flex; gap: 8px; align-items: stretch; }
+
+    .launch-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      background: #211C30;
+      border: 1px solid rgba(139,92,246,.35);
+      border-radius: 12px;
+      padding: 13px 14px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .launch-input:focus { border-color: var(--accent); box-shadow: var(--glow); }
+    .launch-input.error { border-color: #EF4444; box-shadow: 0 0 12px rgba(239,68,68,.4); }
+
+    .launch-paste {
+      flex: 0 0 auto;
+      border: none;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(90deg, #7C3AED, #A855F7);
+      cursor: pointer;
+    }
+
+    .launch-summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(139,92,246,.12);
+    }
+
+    .launch-summary-row span:last-child { color: #C4B5FD; text-align: right; }
 
     .bottom-nav {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
-      display: flex; background: rgba(11,10,16,.96); backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(139,92,246,.22); padding: 10px 6px 12px;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(11,10,16,.92);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(139,92,246,.18);
     }
+
     .nav-item {
-      flex: 1; text-align: center; font-size: 10px; font-weight: 800;
-      color: var(--muted); cursor: pointer;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 8px 4px;
+      border-radius: 12px;
+      cursor: pointer;
     }
-    .nav-item.active { color: #C4B5FD; }
-    .nav-item span { display: block; font-size: 17px; margin-bottom: 3px; }
+
+    .nav-item.active {
+      color: #C4B5FD;
+      background: rgba(139,92,246,.16);
+      box-shadow: inset 0 0 0 1px rgba(139,92,246,.35), var(--glow);
+    }
 
     .toast {
-      position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(12px);
-      background: #1B1827; border: 1px solid rgba(139,92,246,.45); color: #fff;
-      padding: 11px 17px; border-radius: 12px; font-size: 13px; font-weight: 700;
-      opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; z-index: 80;
+      position: fixed;
+      left: 50%;
+      bottom: 100px;
+      transform: translateX(-50%);
+      background: var(--card-2);
+      border: 1px solid rgba(139,92,246,.5);
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      box-shadow: var(--glow);
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
 
 <div id="tab-home" class="screen active">
-  <div class="topbar"><div class="brand">КЛИППЕР</div></div>
+  <div class="topbar">
+    <div class="brand">КЛИППЕР</div>
+  </div>
+
+  <div class="home-progress" id="homeProgress" data-action="open-process">⚡ Идёт сборка: 0% (Открыть процесс)</div>
+
   <div class="status-card">
-    <div class="status-title">ПУЛЬТ НАСТРОЕК</div>
-    <div class="status-name">✨ Режим и клипы</div>
-    <div class="screen-sub">Настройте всё здесь, затем просто отправьте ссылку в чат боту.</div>
-    <span class="badge">LOCAL PRESETS • NO CLOUD</span>
+    <div class="status-title">Статус комбайна</div>
+    <div class="status-name">Клиппер</div>
+    <div class="status-hello" id="hello">Привет, друг!</div>
+    <span class="badge">БЕЗЛИМИТ • GPU/LOCAL</span>
+    <div class="progress-track"><div class="progress-fill"></div></div>
   </div>
 
   <div class="count-selector">
@@ -250,519 +1207,2363 @@
     </div>
   </div>
 
-  <div class="section-title">РЕЖИМ ОБРАБОТКИ</div>
-  <div class="mode-card active" data-mode="split_50_50">
-    <div><div class="mode-title">🎬 Стримеры 50/50</div><div class="mode-desc">Умная сетка 1–4 камеры, субтитры на стыке</div></div>
-    <div class="mode-icon">50</div>
-  </div>
-  <div class="mode-card" data-mode="ai_cut">
-    <div><div class="mode-title">✨ Нарезка ИИ</div><div class="mode-desc">Фильмы, аниме и игры — схема монтажа выбирается в чате</div></div>
-    <div class="mode-icon">AI</div>
-  </div>
-  <div class="mode-card" data-mode="banner">
-    <div><div class="mode-title">🖼 Вставить баннер</div><div class="mode-desc">Хромакей, сжатие и пауза по длительности</div></div>
-    <div class="mode-icon">B</div>
-  </div>
-  <div class="mode-card" data-mode="uniq_settings">
-    <div><div class="mode-title">🔁 Уникализация</div><div class="mode-desc">10 методов, FPS и пакет копий</div></div>
-    <div class="mode-icon">10</div>
-  </div>
-  <div class="mode-card" data-mode="download">
-    <div><div class="mode-title">⬇️ Скачать видео</div><div class="mode-desc">1080p, 720p или только звук MP3</div></div>
-    <div class="mode-icon">↓</div>
+  <div class="section-title">ИНСТРУМЕНТЫ</div>
+
+  <div class="wide-card card" id="openAutopilotTile" style="margin-bottom:10px">
+    <div>
+      <div class="tile-title">✨ Автопилот ИИ</div>
+      <div class="hero-sub">Анализ ссылки и вся правка текста, шрифтов и сетки на одном экране</div>
+    </div>
+    <div class="arrow">→</div>
   </div>
 
-  <button class="primary-btn" id="homeSaveBtn">💾 СОХРАНИТЬ И ЗАКРЫТЬ</button>
-  <div class="hint">После сохранения отправьте ссылку на видео прямо в чат — бот покажет пульт управления с кнопкой запуска.</div>
+  <div class="hero-card card" id="openSubtitlesTile">
+    <div>
+      <div class="hero-title">Стримеры 50/50 • Субтитры и Хук</div>
+      <div class="hero-sub">Умная сетка 1–4 камеры, живой стиль текста и тайминг хука</div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <div class="grid2">
+    <div class="tile card" id="openAiCutTile">
+      <div class="tile-icon">AI</div>
+      <div class="tile-title">Нарезка ИИ<br>Игры / Фильмы / Аниме</div>
+    </div>
+    <div class="tile" id="openBannerTile">
+      <div class="tile-icon">B</div>
+      <div class="tile-title">Вставить баннер<br>(Хромакей)</div>
+    </div>
+    <div class="tile" id="openUniqTile">
+      <div class="tile-icon">10</div>
+      <div class="tile-title">Уникализация<br>(10 методов)</div>
+    </div>
+  </div>
+
+  <div class="wide-card card" id="openDownloadTile">
+    <div>
+      <div class="tile-title">Скачать видео (TikTok и YouTube)</div>
+      <div class="hero-sub">До 1080p, без водяных знаков</div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <div class="wide-card" id="openOverlayTile" style="margin-top:10px">
+    <div>
+      <div class="tile-title">Наложить видео</div>
+      <div class="hero-sub">Второе видео поверх основного, звук от основного</div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <div class="section-title" style="margin-top:16px">СИНХРОНИЗАЦИЯ</div>
+  <div class="proc-card">
+    <div class="color-label">🔑 Токен синхронизации GitHub (для запуска без закрытия окна)</div>
+    <input class="ap-input" id="githubPatInput" type="password" placeholder="github_pat_... или ghp_..." autocomplete="off">
+    <div class="hint">Токен сохраняется только в этом браузере (localStorage) и никуда не отправляется, кроме GitHub API. Без токена задача уйдёт через Telegram — окно закроется, но рендер запустится гарантированно.</div>
+    <button class="secondary-btn" id="saveGithubPatBtn">💾 Сохранить токен</button>
+  </div>
+
+</div>
+
+<div id="tab-autopilot" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="apBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">✨ Автопилот ИИ</div>
+  <div class="screen-sub" id="apStepLabel">Шаг 1 из 2 — ссылка на видео</div>
+
+  <div id="apStepOne">
+    <div class="section-title">ШАГ 1 — ССЫЛКА</div>
+    <div class="launch-input-row">
+      <input class="launch-input" id="apUrl" placeholder="Вставьте ссылку на YouTube, TikTok, Reels или Shorts...">
+      <button class="launch-paste" id="apPasteBtn">📋 Вставить</button>
+    </div>
+    <div class="hint" id="apUrlStatus" style="display:none;color:#86EFAC"></div>
+    <button class="primary-btn" id="apAnalyzeBtn" disabled>🔍 Проанализировать ссылку</button>
+  </div>
+
+  <div id="apResult" style="display:none">
+    <div class="section-title">ШАГ 2 — 🤖 РЕКОМЕНДАЦИЯ ИИ</div>
+
+    <div class="preview-block">
+      <div class="preview-wrap">
+        <div class="preview" id="apPreview">
+          <div class="preview-grid" id="apGrid"></div>
+          <div class="ap-hook joint gradient" id="apHook"><span class="title">ХУК</span></div>
+          <div class="ap-subs joint" id="apSubs"></div>
+        </div>
+      </div>
+      <div class="scheme-side">
+        <div class="preview-side-title">ЖИВОЕ ПРЕВЬЮ</div>
+        <div class="preview-side-text">Сетка, хук и субтитры меняются мгновенно — вся правка здесь, без перехода в другие вкладки.</div>
+      </div>
+    </div>
+
+    <div class="section-title">ТЕКСТ ХУКА</div>
+    <div class="ap-field"><input class="ap-input" id="apHookText" placeholder="Фраза хука, которую предложил ИИ"></div>
+
+    <div class="color-label">Стиль хука</div>
+    <div class="chip-row">
+      <div class="chip active" data-ap-hook-style="gradient">Градиент</div>
+      <div class="chip" data-ap-hook-style="white">Белая карточка</div>
+      <div class="chip" data-ap-hook-style="dark">Тёмная капсула</div>
+      <div class="chip" data-ap-hook-style="none">Без плашки</div>
+    </div>
+
+    <div class="color-label">Время показа хука</div>
+    <div class="chip-row">
+      <div class="chip active" data-ap-hook-dur="3">3с</div>
+      <div class="chip" data-ap-hook-dur="5">5с</div>
+      <div class="chip" data-ap-hook-dur="-1">Всё видео</div>
+    </div>
+
+    <div class="section-title">ШРИФТ И ЦВЕТ СУБТИТРОВ</div>
+    <div class="color-label">Шрифт</div>
+    <div class="chip-row">
+      <div class="chip active" data-ap-font="Manrope">Manrope</div>
+      <div class="chip" data-ap-font="Unbounded">Unbounded</div>
+      <div class="chip" data-ap-font="Dela Gothic One">Dela Gothic One</div>
+      <div class="chip" data-ap-font="Caveat">Caveat</div>
+    </div>
+
+    <div class="color-label">Основной цвет текста</div>
+    <div class="swatches" id="apTextColors">
+      <div class="swatch active" data-ap-color="#FFFFFF" style="background:#FFFFFF"></div>
+      <div class="swatch" data-ap-color="#FFE600" style="background:#FFE600"></div>
+      <div class="swatch" data-ap-color="#8B5CF6" style="background:#8B5CF6"></div>
+      <div class="swatch" data-ap-color="#22C55E" style="background:#22C55E"></div>
+      <div class="swatch" data-ap-color="#38BDF8" style="background:#38BDF8"></div>
+      <div class="swatch" data-ap-color="#F472B6" style="background:#F472B6"></div>
+      <div class="swatch" data-ap-color="#EF4444" style="background:#EF4444"></div>
+    </div>
+
+    <div class="color-label">Цвет подсветки слова</div>
+    <div class="swatches" id="apHighlightColors">
+      <div class="swatch none active" data-ap-highlight="none">∅</div>
+      <div class="swatch" data-ap-highlight="#FFFFFF" style="background:#FFFFFF"></div>
+      <div class="swatch" data-ap-highlight="#FFE600" style="background:#FFE600"></div>
+      <div class="swatch" data-ap-highlight="#8B5CF6" style="background:#8B5CF6"></div>
+      <div class="swatch" data-ap-highlight="#22C55E" style="background:#22C55E"></div>
+      <div class="swatch" data-ap-highlight="#38BDF8" style="background:#38BDF8"></div>
+      <div class="swatch" data-ap-highlight="#F472B6" style="background:#F472B6"></div>
+    </div>
+
+    <div class="color-label">Размер субтитров</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-size="44">S</div>
+      <div class="chip active" data-ap-size="54">M</div>
+      <div class="chip" data-ap-size="64">L</div>
+      <div class="chip" data-ap-size="76">XL</div>
+    </div>
+
+    <div class="section-title">РАСПОЛОЖЕНИЕ В КАДРЕ</div>
+    <div class="color-label">Сетка кадра</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-grid="1">1 экран</div>
+      <div class="chip active" data-ap-grid="50">50/50</div>
+      <div class="chip" data-ap-grid="3">3 кам</div>
+      <div class="chip" data-ap-grid="4">4 кам</div>
+    </div>
+
+    <div class="color-label">Позиция субтитров</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-sub-pos="8">Сверху</div>
+      <div class="chip active" data-ap-sub-pos="5">На стыке</div>
+      <div class="chip" data-ap-sub-pos="2">Снизу</div>
+    </div>
+
+    <div class="color-label">Позиция хука</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-hook-pos="top">Сверху</div>
+      <div class="chip active" data-ap-hook-pos="joint">На стыке</div>
+      <div class="chip" data-ap-hook-pos="bottom">Снизу</div>
+      <div class="chip" data-ap-hook-pos="off">Выкл</div>
+    </div>
+
+    <div class="section-title">КОЛИЧЕСТВО КЛИПОВ</div>
+    <div class="chip-row">
+      <div class="chip" data-ap-count="3">3</div>
+      <div class="chip active" data-ap-count="5">5</div>
+      <div class="chip" data-ap-count="10">10</div>
+    </div>
+
+    <button class="primary-btn sub-done" id="apLaunchBtn">🚀 ПОДТВЕРДИТЬ И ЗАПУСТИТЬ РЕНДЕР</button>
+  </div>
+</div>
+
+<div id="tab-aicut" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="aiCutBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Нарезка ИИ</div>
+  <div class="screen-sub">Схема монтажа под ваш контент</div>
+
+  <div class="section-title">ЧТО РЕДАКТИРУЕМ? (СХЕМА МОНТАЖА)</div>
+
+  <div class="ai-type-card card active" data-content-type="movies">
+    <div class="ai-type-icon">🎬</div>
+    <div class="ai-type-title">Фильмы и сериалы</div>
+    <div class="ai-type-desc">Поиск напряжённых диалогов и кульминаций, умный кроп 9:16 по лицам героев, киношные субтитры и сюжетный хук.</div>
+  </div>
+
+  <div class="ai-type-card card" data-content-type="anime">
+    <div class="ai-type-icon">⛩</div>
+    <div class="ai-type-title">Аниме</div>
+    <div class="ai-type-desc">Детектор экшен-сцен, сочная цветокоррекция, динамичный кроп 9:16 без обрезки персонажей и яркий хук.</div>
+  </div>
+
+  <div class="ai-type-card card" data-content-type="games">
+    <div class="ai-type-icon">🎮</div>
+    <div class="ai-type-title">Игры и хайлайты</div>
+    <div class="ai-type-desc">Поиск лучших моментов по пикам звука и экшена, фокус на центре экрана, быстрые субтитры и хук.</div>
+  </div>
+
+  <div class="toggle-row">
+    <div>
+      <div class="tile-title">Добавить субтитры и хук из моего пресета</div>
+      <div class="desc">Стиль текста и тайминг хука из конструктора</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="aiUseSubPreset" checked><span class="slider"></span></label>
+  </div>
+
+  <button class="secondary-btn" id="aiOpenStyleBtn">⚙️ Настроить стиль текста</button>
+  <button class="primary-btn sub-done" id="aiNextBtn">Далее — к ссылке</button>
+</div>
+
+<div id="tab-uniq" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="backBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Уникализация</div>
+  <div class="screen-sub">10 методов, применяются только включенные</div>
+
+  <div class="section-title">РЕЖИМ</div>
+  <div class="chip-row" id="uniqModeRow">
+    <div class="chip active" data-uniq-mode="быстрый">Быстрый</div>
+    <div class="chip" data-uniq-mode="ручной">Ручной</div>
+    <div class="chip" data-uniq-mode="пакет">Пакет</div>
+  </div>
+
+  <div class="section-title" id="copiesBlock" style="display:none">КОЛИЧЕСТВО КОПИЙ</div>
+  <div class="chip-row" id="copiesRow" style="display:none">
+    <div class="chip" data-copies="2">2</div>
+    <div class="chip active" data-copies="3">3</div>
+    <div class="chip" data-copies="5">5</div>
+    <div class="chip" data-copies="10">10</div>
+  </div>
+  <div class="hint" id="copiesHint" style="display:none">Каждая копия получит уникальные случайные параметры и хеш</div>
+
+  <div class="section-title">ЧАСТОТА КАДРОВ</div>
+  <div class="chip-row" id="fpsRow">
+    <div class="chip active" data-fps="original">Исходный</div>
+    <div class="chip" data-fps="30">30 FPS</div>
+    <div class="chip" data-fps="60">60 FPS</div>
+  </div>
+  <div class="hint" id="fpsHint">Исходный — частота кадров не меняется.</div>
+
+  <div class="section-title" id="methodsTitle">МЕТОДЫ, ВКЛЮЧЕНО 9 ИЗ 10</div>
+  <div id="uniqList"></div>
+
+  <button class="secondary-btn" id="saveBtn">Сохранить как пресет</button>
+  <button class="primary-btn" id="doneBtn">Готово</button>
+</div>
+
+<div id="tab-history" class="screen">
+  <div class="topbar">
+    <div class="brand">КЛИППЕР</div>
+  </div>
+
+  <div class="screen-title">История задач</div>
+  <div class="screen-sub" id="historyCount">Выполнено запусков: 0</div>
+
+  <button class="secondary-btn" id="clearHistoryBtn">🗑 Очистить историю</button>
+
+  <div id="history" style="margin-top:16px"></div>
 </div>
 
 <div id="tab-subtitles" class="screen">
-  <div class="topbar"><div class="brand">СУБТИТРЫ + ХУК</div></div>
-  <div class="screen-title">Текст и сетка</div>
-  <div class="screen-sub">Все изменения видны в превью сразу.</div>
+  <div class="topbar">
+    <button class="back-btn" id="subBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Субтитры + Хук</div>
+  <div class="screen-sub">Конструктор стиля с живым превью</div>
 
   <div class="preview-block">
-    <div class="preview">
-      <div class="preview-grid" id="previewGrid"></div>
-      <div class="hook-mini joint gradient" id="hookMini"><span class="title">ХУК</span></div>
-      <div class="subs-mini joint" id="subsMini">ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ</div>
+    <div class="preview-wrap">
+      <div class="preview">
+        <div class="preview-grid" id="previewGrid"></div>
+        <div class="hook-mini top white" id="hookMini">
+          <span class="title">ОН РЕАЛЬНО ЭТО СДЕЛАЛ?!</span>
+        </div>
+        <div class="preview-phrase" id="previewPhrase"></div>
+      </div>
     </div>
-    <div>
-      <div class="color-label" style="font-size:13px;color:#fff">ЖИВОЕ ПРЕВЬЮ</div>
-      <div class="hint">Шрифт, цвет и позиции применяются мгновенно.</div>
+    <div class="preview-side">
+      <div class="preview-side-title">ПРЕВЬЮ</div>
+      <div class="preview-side-text">Так будут выглядеть субтитры в ролике. Изменения применяются мгновенно.</div>
+      <div class="color-label" style="margin-top:9px">СЕТКА КАДРА</div>
+      <div class="chip-row" id="gridRow">
+        <div class="chip" data-grid="1">1</div>
+        <div class="chip active" data-grid="50">50/50</div>
+        <div class="chip" data-grid="3">3 кам</div>
+        <div class="chip" data-grid="4">4 кам</div>
+      </div>
     </div>
   </div>
 
-  <div class="section-title">СЕТКА КАДРА</div>
-  <div class="chip-row">
-    <div class="chip" data-grid="1">1 экран</div>
-    <div class="chip active" data-grid="50">50/50</div>
-    <div class="chip" data-grid="3">3 кам</div>
-    <div class="chip" data-grid="4">4 кам</div>
+  <div class="section-title">СТИЛЬ</div>
+  <div class="style-grid" id="styleGrid">
+    <div class="style-card active" data-sub-style="tiktok">
+      <div class="style-sample"><span style="color:#FFFFFF">АА</span> <span style="color:#8B5CF6">ББ</span></div>
+      <div>TikTok</div>
+    </div>
+    <div class="style-card" data-sub-style="classic">
+      <div class="style-sample" style="text-shadow:0 2px 6px #000"><span style="color:#FFFFFF">Аа</span> <span style="color:#FFFFFF">Бб</span></div>
+      <div>Классика</div>
+    </div>
+    <div class="style-card" data-sub-style="plate">
+      <div class="style-sample" style="background:#1E1B2E;border-radius:8px"><span style="color:#FFFFFF">Аа</span> <span style="color:#FFFFFF">Бб</span></div>
+      <div>Плашка</div>
+    </div>
+    <div class="style-card" data-sub-style="bold">
+      <div class="style-sample" style="font-size:20px"><span style="color:#FFFFFF">АА</span> <span style="color:#FFE600">ББ</span></div>
+      <div>Жирный</div>
+    </div>
+    <div class="style-card" data-sub-style="minimal">
+      <div class="style-sample"><span style="color:#FFFFFF">Аа</span> <span style="color:#FFFFFF">Бб</span></div>
+      <div>Минимал</div>
+    </div>
   </div>
 
-  <div class="section-title">ШРИФТ И РАЗМЕР</div>
-  <div class="chip-row">
-    <div class="chip active" data-font="Manrope">Manrope</div>
-    <div class="chip" data-font="Unbounded">Unbounded</div>
-    <div class="chip" data-font="Dela Gothic One">Dela Gothic One</div>
-    <div class="chip" data-font="Caveat">Caveat</div>
-  </div>
-  <div class="chip-row">
+  <div class="section-title">ЦВЕТА</div>
+  <div id="colorRows"></div>
+
+  <div class="section-title">ТЕКСТ</div>
+  <div class="color-label">Размер</div>
+  <div class="chip-row" id="sizeRow">
     <div class="chip" data-size="44">S</div>
     <div class="chip active" data-size="54">M</div>
     <div class="chip" data-size="64">L</div>
     <div class="chip" data-size="76">XL</div>
   </div>
 
-  <div class="section-title">ЦВЕТА</div>
-  <div class="color-row">
-    <div class="color-label">Текст субтитров</div>
-    <div class="swatches" id="textColors">
-      <div class="swatch active" data-color="#FFFFFF" style="background:#FFFFFF"></div>
-      <div class="swatch" data-color="#FFE600" style="background:#FFE600"></div>
-      <div class="swatch" data-color="#8B5CF6" style="background:#8B5CF6"></div>
-      <div class="swatch" data-color="#22C55E" style="background:#22C55E"></div>
-      <div class="swatch" data-color="#38BDF8" style="background:#38BDF8"></div>
-      <div class="swatch" data-color="#F472B6" style="background:#F472B6"></div>
-      <div class="swatch" data-color="#EF4444" style="background:#EF4444"></div>
-    </div>
-  </div>
-  <div class="color-row">
-    <div class="color-label">Подсветка слова</div>
-    <div class="swatches" id="highlightColors">
-      <div class="swatch none active" data-highlight="none">∅</div>
-      <div class="swatch" data-highlight="#FFFFFF" style="background:#FFFFFF"></div>
-      <div class="swatch" data-highlight="#FFE600" style="background:#FFE600"></div>
-      <div class="swatch" data-highlight="#8B5CF6" style="background:#8B5CF6"></div>
-      <div class="swatch" data-highlight="#22C55E" style="background:#22C55E"></div>
-      <div class="swatch" data-highlight="#38BDF8" style="background:#38BDF8"></div>
-      <div class="swatch" data-highlight="#F472B6" style="background:#F472B6"></div>
-    </div>
+  <div class="color-label">Шрифт</div>
+  <div class="chip-row" id="fontRow">
+    <div class="chip active" data-font="Manrope">Manrope</div>
+    <div class="chip" data-font="Unbounded">Unbounded</div>
+    <div class="chip" data-font="Dela Gothic One">Dela Gothic One</div>
+    <div class="chip" data-font="Caveat">Caveat</div>
   </div>
 
-  <div class="section-title">РАСПОЛОЖЕНИЕ</div>
-  <div class="color-label">Субтитры</div>
-  <div class="chip-row">
-    <div class="chip" data-sub-pos="8">Сверху</div>
-    <div class="chip active" data-sub-pos="5">На стыке</div>
-    <div class="chip" data-sub-pos="2">Снизу</div>
-  </div>
-  <div class="color-label">Хук</div>
-  <div class="chip-row">
-    <div class="chip" data-hook-pos="top">Сверху</div>
-    <div class="chip active" data-hook-pos="joint">На стыке</div>
-    <div class="chip" data-hook-pos="bottom">Снизу</div>
-    <div class="chip" data-hook-pos="off">Выкл</div>
-  </div>
-
-  <div class="section-title">ХУК</div>
-  <div class="color-label">Стиль плашки</div>
-  <div class="chip-row">
-    <div class="chip active" data-hook-style="gradient">Градиент</div>
-    <div class="chip" data-hook-style="white">Белая карточка</div>
-    <div class="chip" data-hook-style="dark">Тёмная капсула</div>
-    <div class="chip" data-hook-style="none">Без плашки</div>
-  </div>
-  <div class="color-label">Время показа</div>
-  <div class="chip-row">
-    <div class="chip active" data-hook-duration="3">3 сек</div>
-    <div class="chip" data-hook-duration="5">5 сек</div>
-    <div class="chip" data-hook-duration="-1">Всё видео</div>
-  </div>
   <div class="toggle-row">
-    <div><div class="toggle-title">Включить хук</div><div class="toggle-desc">Градиентный PNG без жёлтой коробки</div></div>
+    <div class="tile-title">Заглавные буквы</div>
+    <label class="switch"><input type="checkbox" id="subUppercase" checked><span class="slider"></span></label>
+  </div>
+
+  <div class="color-label">Слов на экране</div>
+  <div class="chip-row" id="wordsRow">
+    <div class="chip" data-words="1">1</div>
+    <div class="chip" data-words="2">2</div>
+    <div class="chip active" data-words="3">3</div>
+    <div class="chip" data-words="5">Фраза</div>
+  </div>
+
+  <div class="section-title">ПОЛОЖЕНИЕ</div>
+  <div class="chip-row" id="positionRow">
+    <div class="chip" data-pos="8">Сверху</div>
+    <div class="chip active" data-pos="5">По центру (стык 50/50)</div>
+    <div class="chip" data-pos="2">Снизу</div>
+  </div>
+
+  <div class="color-row">
+    <div class="color-label">Отступ от края — <span id="marginValue">50% (стык)</span></div>
+    <input type="range" id="marginRange" min="5" max="45" value="18" disabled style="width:100%;accent-color:#8B5CF6">
+  </div>
+
+  <div class="section-title">НАСТРОЙКА ХУКА</div>
+  <div class="toggle-row">
+    <div class="tile-title">Показывать хук всё видео</div>
     <label class="switch"><input type="checkbox" id="hookEnabled" checked><span class="slider"></span></label>
   </div>
 
-  <button class="primary-btn save-btn">✅ ГОТОВО</button>
+  <div class="color-row">
+    <div class="color-label">Время показа хука — <span id="hookDurationValue">4 сек</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <input type="range" id="hookDurationRange" min="2" max="15" step="1" value="4" style="flex:1;accent-color:#8B5CF6">
+      <div class="chip" id="hookAllVideoBtn" style="flex:0 0 auto">На всё видео</div>
+    </div>
+  </div>
+
+  <div class="color-label">ПОЛОЖЕНИЕ ХУКА</div>
+  <div class="chip-row" id="hookPositionRow">
+    <div class="chip active" data-hook-pos="top">Сверху</div>
+    <div class="chip" data-hook-pos="joint">На стыке (50/50)</div>
+    <div class="chip" data-hook-pos="bottom">Снизу</div>
+  </div>
+
+  <div class="color-label">СТИЛЬ ПЛАШКИ</div>
+  <div class="chip-row" id="hookStyleRow">
+    <div class="chip active" data-hook-style="gradient">Градиент (как в топе)</div>
+    <div class="chip" data-hook-style="white">Белая карточка</div>
+    <div class="chip" data-hook-style="dark">Темная капсула</div>
+    <div class="chip" data-hook-style="none">Без плашки</div>
+  </div>
+
+  <div class="color-label">РАЗМЕР ХУКА</div>
+  <div class="chip-row" id="hookSizeRow">
+    <div class="chip" data-hook-size="S">S</div>
+    <div class="chip active" data-hook-size="M">M</div>
+    <div class="chip" data-hook-size="L">L</div>
+  </div>
+
+  <button class="secondary-btn" id="saveSubStyleBtn">⭐ Сохранить как мой стиль</button>
+  <button class="primary-btn sub-done" id="subDoneBtn">Готово</button>
+</div>
+
+<div id="tab-overlay" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="overlayBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Наложить видео</div>
+  <div class="screen-sub">Второе видео поверх основного</div>
+
+  <div class="section-title">СХЕМА</div>
+  <div class="overlay-scheme">
+    <div class="overlay-phone">
+      <div class="overlay-zone second" id="overlayZoneSecond">▶</div>
+      <div class="overlay-zone main" id="overlayZoneMain">▶</div>
+    </div>
+    <div class="scheme-side">
+      <div class="preview-side-title">СХЕМА</div>
+      <div class="preview-side-text" id="overlaySchemeText"></div>
+    </div>
+  </div>
+
+  <div class="section-title">ПОЛОЖЕНИЕ ВТОРОГО ВИДЕО</div>
+  <div class="chip-row" id="overlayPositionRow">
+    <div class="chip active" data-overlay-pos="top">Сверху</div>
+    <div class="chip" data-overlay-pos="bottom">Снизу</div>
+  </div>
+
+  <div class="section-title">РАЗМЕР</div>
+  <div class="color-row">
+    <div class="color-label">Высота второго видео — <span id="overlayHeightValue">35%</span></div>
+    <input type="range" id="overlayHeightRange" min="15" max="65" value="35" style="width:100%;accent-color:#8B5CF6">
+    <div class="hint">По умолчанию — треть экрана (33%).</div>
+  </div>
+
+  <button class="primary-btn sub-done" id="overlayDoneBtn">Готово</button>
 </div>
 
 <div id="tab-banner" class="screen">
-  <div class="topbar"><div class="brand">ВСТАВКА БАННЕРА</div></div>
-  <div class="screen-title">Баннер</div>
+  <div class="topbar">
+    <button class="back-btn" id="bannerBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Вставка баннера</div>
   <div class="screen-sub">Хромакей, сжатие и паузы</div>
 
+  <div class="banner-scheme-sticky">
+    <div class="section-title">СХЕМА</div>
+    <div class="overlay-scheme">
+      <div class="overlay-phone" id="bannerPhone">
+        <div class="banner-strip" id="bannerStrip">БАННЕР</div>
+      </div>
+      <div class="scheme-side">
+        <div class="preview-side-title">СХЕМА</div>
+        <div class="preview-side-text" id="bannerSchemeText"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">БАННЕР</div>
+  <div class="style-grid" id="bannerLibrary">
+    <div class="style-card active" data-banner-id="new">
+      <div class="style-sample">✈️</div>
+      <div>Новый — в чат</div>
+    </div>
+  </div>
+  <div class="hint" id="addBannerLibrary" style="cursor:pointer;color:#C4B5FD">+ Добавить баннер в библиотеку →</div>
+
   <div class="section-title">РЕЖИМ</div>
-  <div class="chip-row">
+  <div class="chip-row" id="bannerModeRow">
     <div class="chip active" data-banner-mode="squeeze">Сжатие</div>
     <div class="chip" data-banner-mode="overlay">Поверх</div>
     <div class="chip" data-banner-mode="pause">Пауза</div>
   </div>
 
   <div class="section-title">РАЗМЕЩЕНИЕ</div>
-  <div class="chip-row">
+  <div class="chip-row" id="bannerPositionRow">
     <div class="chip" data-banner-pos="top">Сверху</div>
+    <div class="chip" data-banner-pos="center" style="display:none">По центру</div>
     <div class="chip active" data-banner-pos="bottom">Снизу</div>
   </div>
-  <div class="color-row">
+
+  <div class="color-row" id="bannerHeightRow" style="display:none">
     <div class="color-label">Высота баннера — <span id="bannerHeightValue">33%</span></div>
-    <input type="range" id="bannerHeight" min="10" max="100" value="33">
+    <input type="range" id="bannerHeightRange" min="10" max="100" value="33" style="width:100%;accent-color:#8B5CF6">
   </div>
 
   <div class="section-title">УДАЛЕНИЕ ФОНА (ХРОМАКЕЙ)</div>
-  <div class="chip-row">
-    <div class="chip" data-chroma="none">Нет</div>
-    <div class="chip active" data-chroma="green">Зелёный</div>
-    <div class="chip" data-chroma="black">Чёрный</div>
+  <div class="chip-row" id="bannerChromaRow">
+    <div class="chip" data-chroma-mode="none">Нет</div>
+    <div class="chip active" data-chroma-mode="green">Зелёный</div>
+    <div class="chip" data-chroma-mode="black">Чёрный</div>
   </div>
+  <div class="hint">Зелёный вырезает хромакей, чёрный — тёмный фон у футажей и эффектов перед наложением.</div>
 
-  <div class="section-title">ПАУЗА</div>
-  <div class="chip-row">
-    <div class="chip" data-pause-when="start">Начало</div>
-    <div class="chip active" data-pause-when="middle">Середина</div>
-    <div class="chip" data-pause-when="end">Конец</div>
-    <div class="chip" data-pause-when="custom">Своя</div>
-  </div>
-  <div class="color-row">
-    <div class="color-label">Длительность паузы — <span id="pauseDurationValue">3 с</span></div>
-    <input type="range" id="pauseDuration" min="0.5" max="10" step="0.5" value="3">
-  </div>
-  <div class="toggle-row">
-    <div><div class="toggle-title">По длительности баннера</div><div class="toggle-desc">Для видео и GIF — точная длительность через ffprobe</div></div>
-    <label class="switch"><input type="checkbox" id="autoBannerDuration" checked><span class="slider"></span></label>
+  <div id="bannerPauseBlock" style="display:none">
+    <div class="section-title">КОГДА ПОСТАВИТЬ ПАУЗУ</div>
+    <div class="chip-row" id="pauseWhenRow">
+      <div class="chip" data-pause-when="start">Начало</div>
+      <div class="chip active" data-pause-when="middle">Середина</div>
+      <div class="chip" data-pause-when="end">Конец</div>
+      <div class="chip" data-pause-when="custom">Своё</div>
+    </div>
+    <div class="color-row" id="pauseSecondRow" style="display:none">
+      <div class="color-label">Секунда — <span id="pauseSecondValue">10 с</span></div>
+      <input type="range" id="pauseSecondRange" min="1" max="60" value="10" style="width:100%;accent-color:#8B5CF6">
+    </div>
+    <div class="color-row">
+      <div class="color-label">Длительность — <span id="pauseDurationValue">Авто (по видео баннера)</span></div>
+      <input type="range" id="pauseDurationRange" min="0.5" max="10" step="0.5" value="3" disabled style="width:100%;accent-color:#8B5CF6">
+    </div>
+    <div class="toggle-row" style="margin-bottom:0">
+      <div>
+        <div class="tile-title">По длительности баннера</div>
+        <div class="desc">Пауза равна длительности видео или GIF баннера</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="autoBannerDuration" checked><span class="slider"></span></label>
+    </div>
   </div>
 
   <div class="section-title">СУБТИТРЫ</div>
   <div class="toggle-row">
-    <div><div class="toggle-title">Добавить субтитры</div></div>
+    <div class="tile-title">Добавить субтитры</div>
     <label class="switch"><input type="checkbox" id="bannerAddSubs"><span class="slider"></span></label>
   </div>
 
-  <button class="primary-btn save-btn">✅ ГОТОВО</button>
+  <button class="primary-btn sub-done" id="bannerDoneBtn">Готово</button>
 </div>
 
-<div id="tab-uniq" class="screen">
-  <div class="topbar"><div class="brand">УНИКАЛИЗАЦИЯ</div></div>
-  <div class="screen-title">10 методов</div>
-  <div class="screen-sub">Включите только нужные.</div>
-
-  <div class="section-title">МЕТОДЫ</div>
-  <div id="uniqMethods"></div>
-
-  <div class="section-title">РЕЖИМ</div>
-  <div class="chip-row">
-    <div class="chip active" data-uniq-mode="быстрый">Быстрый</div>
-    <div class="chip" data-uniq-mode="ручной">Ручной</div>
-    <div class="chip" data-uniq-mode="пакет">Пакет</div>
+<div id="tab-process" class="screen">
+  <div class="topbar">
+    <div class="brand">КЛИППЕР</div>
   </div>
 
-  <div class="section-title">FPS</div>
-  <div class="chip-row">
-    <div class="chip active" data-fps="original">Original</div>
-    <div class="chip" data-fps="24">24</div>
-    <div class="chip" data-fps="30">30</div>
+  <div class="screen-title">⚡ Процесс</div>
+  <div class="screen-sub" id="processSubtitle">Живой мониторинг сборки видео</div>
+
+  <div class="proc-card">
+    <div class="proc-percent" id="procPercent">0%</div>
+    <div class="proc-caption" id="procStep">Ожидание задачи</div>
+    <div class="proc-track"><div class="proc-fill" id="procFill"></div></div>
+    <div><span class="proc-badge" id="procClip">Клип —</span></div>
+    <div class="proc-caption" id="procTime">Обновлено: —</div>
   </div>
 
-  <div class="section-title">КОПИИ</div>
-  <div class="chip-row">
-    <div class="chip active" data-copies="1">1</div>
-    <div class="chip" data-copies="2">2</div>
-    <div class="chip" data-copies="3">3</div>
+  <div class="section-title">ЭТАПЫ</div>
+  <div id="procSteps"></div>
+
+  <div class="proc-error" id="procError">
+    <div class="tile-title" style="color:#FCA5A5">ДЕТАЛИ ОШИБКИ</div>
+    <pre id="procErrorText"></pre>
+    <button class="secondary-btn" id="copyErrorBtn">📋 Скопировать ошибку</button>
+  </div>
+</div>
+
+<div id="tab-download" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="downloadBackBtn">← Назад</button>
   </div>
 
-  <button class="primary-btn save-btn">✅ ГОТОВО</button>
+  <div class="screen-title">Скачать видео</div>
+  <div class="screen-sub">YouTube, TikTok, Reels и Shorts</div>
+
+  <div class="section-title">ССЫЛКА</div>
+  <div class="launch-input-row">
+    <input class="launch-input" id="downloadUrl" placeholder="Вставьте ссылку на YouTube, TikTok, Reels или Shorts...">
+    <button class="launch-paste" id="downloadPasteBtn">📋 Вставить</button>
+  </div>
+  <div class="hint" id="downloadHint" style="display:none;color:#FCA5A5">Вставьте ссылку на видео</div>
+  <div class="hint" id="downloadUrlStatus" style="display:none;color:#86EFAC"></div>
+
+  <div class="section-title">ФОРМАТ И КАЧЕСТВО</div>
+  <div class="chip-row" id="downloadQualityRow">
+    <div class="chip active" data-download-quality="1080">🎬 1080p FullHD</div>
+    <div class="chip" data-download-quality="720">📱 720p HD</div>
+    <div class="chip" data-download-quality="mp3">🎵 Только звук (MP3)</div>
+  </div>
+
+  <div class="toggle-row">
+    <div>
+      <div class="tile-title">Убрать водяной знак и метаданные</div>
+      <div class="desc">Лёгкая обрезка краёв и очистка метаданных</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="downloadClean" checked><span class="slider"></span></label>
+  </div>
+
+  <button class="primary-btn sub-done" id="downloadStartBtn" disabled>⬇️ СКАЧАТЬ ВИДЕО</button>
+</div>
+
+<div id="tab-launch" class="screen">
+  <div class="topbar">
+    <button class="back-btn" id="launchBackBtn">← Назад</button>
+  </div>
+
+  <div class="screen-title">Запуск задачи</div>
+  <div class="screen-sub">Проверьте настройки и укажите источник</div>
+
+  <div class="section-title">СВОДКА НАСТРОЕК</div>
+  <div class="proc-card">
+    <div id="launchSummary"></div>
+    <button class="secondary-btn" id="launchEditBtn">✏️ Изменить</button>
+  </div>
+
+  <div class="section-title">ССЫЛКА НА ВИДЕО</div>
+  <div class="launch-input-row">
+    <input class="launch-input" id="launchUrl" placeholder="Вставьте ссылку на YouTube, Twitch, TikTok или Reels...">
+    <button class="launch-paste" id="launchPasteBtn">📋 Вставить</button>
+  </div>
+
+  <div class="hint" id="launchHint" style="display:none;color:#FCA5A5">Вставьте ссылку на видео</div>
+  <div class="hint" id="launchUrlStatus" style="display:none;color:#86EFAC"></div>
+
+  <div class="section-title">ИЛИ ФАЙЛ</div>
+  <div class="proc-card">
+    <div class="preview-side-text">Или отправьте готовый видеофайл из галереи прямо в чат бота</div>
+    <button class="secondary-btn" id="launchFileBtn">📎 Отправить файл в чат</button>
+  </div>
+
+  <button class="primary-btn sub-done" id="launchStartBtn" disabled>🚀 ЗАПУСТИТЬ НАРЕЗКУ</button>
 </div>
 
 <div class="bottom-nav">
-  <div class="nav-item active" data-tab="home"><span>🏠</span>Главная</div>
-  <div class="nav-item" data-tab="subtitles"><span>💬</span>Субтитры</div>
-  <div class="nav-item" data-tab="banner"><span>🖼</span>Баннер</div>
-  <div class="nav-item" data-tab="uniq"><span>🔁</span>Уникализация</div>
+  <div class="nav-item active" data-tab="home" data-screen="home">Главная</div>
+  <div class="nav-item" data-tab="uniq" data-screen="uniq">Уникализация</div>
+  <div class="nav-item" data-tab="history">История</div>
+  <div class="nav-item" data-tab="process">⚡ Процесс <span id="navPulse" class="pulse-dot" style="display:none"></span></div>
 </div>
 
 <div class="toast" id="toast">Сохранено</div>
 
 <script>
-  const tg = window.Telegram && window.Telegram.WebApp;
-  const STORE_KEY = "clipper_all_settings";
   const ITEMS = [
-    { key: "zoom", name: "Зум и сдвиг", def: true },
-    { key: "mirror", name: "Зеркало", def: false },
-    { key: "speed", name: "Скорость", def: true },
-    { key: "color", name: "Цвет", def: true },
-    { key: "noise", name: "Зерно", def: true },
-    { key: "border", name: "Рамка", def: true },
-    { key: "trim", name: "Обрезка", def: true },
-    { key: "reencode", name: "Перекодирование", def: true },
-    { key: "pitch", name: "Тон аудио", def: true },
-    { key: "metadata", name: "Метаданные", def: true }
+    { key: "zoom",     name: "Зум и сдвиг",       desc: "Увеличение 1–5% и сдвиг кадра",        def: true },
+    { key: "mirror",   name: "Зеркало",           desc: "Отражение по горизонтали",             def: false },
+    { key: "speed",    name: "Скорость",          desc: "Темп 0.97–1.03x",                     def: true },
+    { key: "color",    name: "Цвет",              desc: "Яркость, контраст, оттенок",           def: true },
+    { key: "noise",    name: "Зерно",             desc: "Лёгкое зерно поверх кадра",            def: true },
+    { key: "border",   name: "Рамка",             desc: "Рамка 1–2 px по краю",                 def: true },
+    { key: "trim",     name: "Обрезка",           desc: "0.1–0.5 с в начале и в конце",         def: true },
+    { key: "reencode", name: "Перекодирование",   desc: "Новые битрейт, CRF и GOP",             def: true },
+    { key: "pitch",    name: "Тон аудио",         desc: "Тон звука ±1–2%",                     def: true },
+    { key: "metadata", name: "Метаданные",        desc: "Удаление метаданных и даты съёмки",    def: true }
   ];
 
-  const settings = {
-    mode: "split_50_50",
-    clip_count: 5,
-    grid: "50",
-    font: "Manrope",
-    font_size: 54,
-    text_color: "#FFFFFF",
-    highlight_color: "none",
-    sub_position: 5,
-    hook_style: "gradient",
-    hook_duration: 3,
-    hook_position: "joint",
-    hook_enabled: true,
-    banner: {
-      mode: "squeeze",
-      position: "bottom",
-      height_percent: 33,
-      chroma_mode: "green",
-      pause_when: "middle",
-      pause_duration: 3,
-      auto_banner_duration: true,
-      add_subs: false
-    },
-    uniq: {
-      mode: "быстрый",
-      fps: "original",
-      copies: 1,
-      settings: {}
-    }
+  const PRESET_KEY = "clipper_uniq_settings";
+  const HISTORY_KEY = "clipper_history";
+  const CLIP_COUNT_KEY = "clipper_clip_count";
+  const MODE_NAMES = {
+    split_50_50: "Стримеры 50/50",
+    ai_cut: "Нарезка ИИ",
+    subs_only: "Субтитры + Хук",
+    banner: "Вставить баннер",
+    download: "Скачать видео",
+    uniq_settings: "Уникализация"
   };
-  ITEMS.forEach(item => { settings.uniq.settings[item.key] = item.def; });
+
+  const SUB_STYLE_KEY = "clipper_sub_style";
+  const LAUNCH_ACTIVE_KEY = "clipper_launch_active_mode";
+  const LAUNCH_MODE_KEY = "clipper_launch_mode";
+  const TASK_ENDPOINT_KEY = "clipper_task_endpoint";
+  const GITHUB_PAT_KEY = "github_pat";
+  const GITHUB_REPO = "anzagorskii-cloud/uniq-webapp";
+  // Локальный FastAPI через бесплатный HTTPS-туннель Cloudflare.
+  const API_BASE = "https://vertical-pharmaceuticals-publishing-prayers.trycloudflare.com";
+  const START_TASK_URL = API_BASE + "/api/start_task";
+  const CONTROL_URL = API_BASE + "/api/control";
+  const TASK_QUEUE_KEY = "clipper_pending_tasks";
+  const AI_CONTENT_KEY = "clipper_ai_content_type";
+  const UNIQ_FULL_KEY = "clipper_uniq_full";
+  const BANNER_SETTINGS_KEY = "clipper_banner_settings";
+  const OVERLAY_SETTINGS_KEY = "clipper_overlay_settings";
+  const SUB_PRESETS = {
+    tiktok:  { style: "tiktok",  text_color: "#FFFFFF", highlight_color: "#8B5CF6", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: true,  words: 3, position: 5, margin_percent: 18 },
+    classic: { style: "classic", text_color: "#FFFFFF", highlight_color: "#FFFFFF", outline_color: "#000000", plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5, margin_percent: 18 },
+    plate:   { style: "plate",   text_color: "#FFFFFF", highlight_color: "none",    outline_color: "none",    plate_color: "#000000", font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5, margin_percent: 18 },
+    bold:    { style: "bold",    text_color: "#FFE600", highlight_color: "#FFE600", outline_color: "#000000", plate_color: "none",     font_size: 76, font: "Unbounded",      uppercase: true,  words: 1, position: 5, margin_percent: 18 },
+    minimal: { style: "minimal", text_color: "#FFFFFF", highlight_color: "none",    outline_color: "none",    plate_color: "none",     font_size: 54, font: "Manrope",        uppercase: false, words: 3, position: 5 }
+  };
+
+  const COLOR_SECTIONS = [
+    { key: "text_color", label: "Текст", none: false, colors: ["#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444", "#1E1B2E"] },
+    { key: "highlight_color", label: "Подсветка слова", none: true, colors: ["#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444"] },
+    { key: "outline_color", label: "Обводка", none: true, colors: ["#000000", "#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444"] },
+    { key: "plate_color", label: "Плашка под текстом", none: true, colors: ["#000000", "#FFFFFF", "#FFE600", "#8B5CF6", "#22C55E", "#38BDF8", "#F472B6", "#EF4444"] }
+  ];
+
+  const tg = window.Telegram && window.Telegram.WebApp;
+  const first = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name;
+  document.getElementById("hello").textContent = "Привет, " + (first || "друг") + "!";
+
+  function defaults() {
+    const s = {};
+    ITEMS.forEach(i => { s[i.key] = i.def; });
+    return s;
+  }
 
   function loadSettings() {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
-      if (!saved || typeof saved !== "object") return;
-      Object.keys(settings).forEach(key => {
-        if (key === "banner" || key === "uniq") {
-          if (saved[key] && typeof saved[key] === "object") {
-            Object.keys(settings[key]).forEach(sub => {
-              if (sub in saved[key]) settings[key][sub] = saved[key][sub];
-            });
-          }
-        } else if (key in saved) {
-          settings[key] = saved[key];
-        }
-      });
-    } catch (e) {}
+      const raw = localStorage.getItem(PRESET_KEY);
+      if (!raw) return defaults();
+      const saved = JSON.parse(raw);
+      const s = defaults();
+      ITEMS.forEach(i => { if (typeof saved[i.key] === "boolean") s[i.key] = saved[i.key]; });
+      return s;
+    } catch (e) {
+      return defaults();
+    }
   }
 
-  function persist() {
-    localStorage.setItem(STORE_KEY, JSON.stringify(settings));
+  let settings = loadSettings();
+  let uniqMode = "быстрый";
+  let uniqFps = "original";
+  let uniqCopies = 3;
+  let overlayPosition = "top";
+  let overlayHeight = 35;
+  let bannerMode = "squeeze";
+  let bannerPosition = "bottom";
+  let bannerHeight = 33;
+  let bannerId = "new";
+  let chromaMode = "green";
+  let aiContentType = "movies";
+  let aiUseSubPreset = true;
+  let downloadQuality = "1080";
+  let subReturnTab = "launch";
+  let pauseWhen = "middle";
+  let pauseSecond = 10;
+  let pauseDuration = 3;
+
+  function safePreset() {
+    const s = {};
+    ITEMS.forEach(i => { s[i.key] = i.key !== "mirror"; });
+    return s;
+  }
+
+  function updateMethodsTitle() {
+    const count = ITEMS.filter(i => settings[i.key]).length;
+    document.getElementById("methodsTitle").textContent =
+      "МЕТОДЫ, ВКЛЮЧЕНО " + count + " ИЗ 10";
+  }
+
+  function applyUniqMode() {
+    if (uniqMode === "быстрый") {
+      settings = safePreset();
+      renderUniqList();
+    }
+
+    document.querySelectorAll("[data-uniq-mode]").forEach(el => {
+      el.classList.toggle("active", el.dataset.uniqMode === uniqMode);
+    });
+    document.querySelectorAll("[data-fps]").forEach(el => {
+      el.classList.toggle("active", el.dataset.fps === uniqFps);
+    });
+    document.querySelectorAll("[data-copies]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.copies) === uniqCopies);
+    });
+
+    const isPackage = uniqMode === "пакет";
+    document.getElementById("copiesBlock").style.display = isPackage ? "" : "none";
+    document.getElementById("copiesRow").style.display = isPackage ? "" : "none";
+    document.getElementById("copiesHint").style.display = isPackage ? "" : "none";
+
+    const hints = {
+      original: "Исходный — частота кадров не меняется.",
+      "30": "30 FPS — стандарт для Reels и Shorts.",
+      "60": "60 FPS — повышенная плавность движения."
+    };
+    document.getElementById("fpsHint").textContent = hints[uniqFps] || hints.original;
+    updateMethodsTitle();
+  }
+
+  function renderUniqList() {
+    const listBox = document.getElementById("uniqList");
+    listBox.innerHTML = "";
+    ITEMS.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "toggle-card" + (settings[item.key] ? " on" : "");
+      card.innerHTML =
+        '<div><div class="tile-title">' + item.name + '</div>' +
+        '<div class="desc">' + item.desc + '</div></div>' +
+        '<label class="switch"><input type="checkbox" id="sw_' + item.key + '"' +
+        (settings[item.key] ? " checked" : "") + '><span class="slider"></span></label>';
+      listBox.appendChild(card);
+
+      const input = document.getElementById("sw_" + item.key);
+      input.addEventListener("change", e => {
+        settings[item.key] = e.target.checked;
+        card.classList.toggle("on", e.target.checked);
+        updateMethodsTitle();
+      });
+    });
+  }
+
+  function renderOverlayScheme() {
+    const second = document.getElementById("overlayZoneSecond");
+    const main = document.getElementById("overlayZoneMain");
+    second.style.height = overlayHeight + "%";
+    main.style.height = (100 - overlayHeight) + "%";
+
+    if (overlayPosition === "top") {
+      second.style.order = "0";
+      main.style.order = "1";
+    } else {
+      main.style.order = "0";
+      second.style.order = "1";
+    }
+
+    const word = overlayPosition === "top" ? "сверху" : "снизу";
+    document.getElementById("overlaySchemeText").textContent =
+      "Второе видео занимает " + overlayHeight + "% экрана " + word +
+      ". Если оно короче — повторяется по кругу. Звук остаётся от основного видео.";
+    document.getElementById("overlayHeightValue").textContent = overlayHeight + "%";
+    document.querySelectorAll("[data-overlay-pos]").forEach(el => {
+      el.classList.toggle("active", el.dataset.overlayPos === overlayPosition);
+    });
+  }
+
+  function renderBannerLibrary() {
+    const box = document.getElementById("bannerLibrary");
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem("clipper_banner_library") || "[]"); } catch (e) {}
+    if (!Array.isArray(saved)) saved = [];
+
+    let html =
+      '<div class="style-card' + (bannerId === "new" ? " active" : "") + '" data-banner-id="new">' +
+      '<div class="style-sample">✈️</div><div>Новый — в чат</div></div>';
+
+    saved.forEach(item => {
+      html +=
+        '<div class="style-card' + (bannerId === item.id ? " active" : "") + '" data-banner-id="' + item.id + '">' +
+        '<div class="style-sample">▣</div><div>' + item.name + '</div></div>';
+    });
+
+    box.innerHTML = html;
+    box.querySelectorAll("[data-banner-id]").forEach(el => {
+      el.addEventListener("click", () => {
+        bannerId = el.dataset.bannerId;
+        renderBannerLibrary();
+      });
+    });
+  }
+
+  function renderBannerControls() {
+    const isPause = bannerMode === "pause";
+    const center = document.querySelector('[data-banner-pos="center"]');
+    center.style.display = isPause ? "" : "none";
+    if (isPause && bannerPosition === "top") bannerPosition = "top";
+    if (!isPause && bannerPosition === "center") bannerPosition = "bottom";
+
+    document.getElementById("bannerHeightRow").style.display = isPause ? "" : "none";
+    document.getElementById("bannerPauseBlock").style.display = isPause ? "" : "none";
+    document.getElementById("pauseSecondRow").style.display =
+      pauseWhen === "custom" ? "" : "none";
+
+    document.querySelectorAll("[data-banner-mode]").forEach(el => {
+      el.classList.toggle("active", el.dataset.bannerMode === bannerMode);
+    });
+    document.querySelectorAll("[data-banner-pos]").forEach(el => {
+      el.classList.toggle("active", el.dataset.bannerPos === bannerPosition);
+    });
+    document.querySelectorAll("[data-chroma-mode]").forEach(el => {
+      el.classList.toggle("active", el.dataset.chromaMode === chromaMode);
+    });
+    document.querySelectorAll("[data-pause-when]").forEach(el => {
+      el.classList.toggle("active", el.dataset.pauseWhen === pauseWhen);
+    });
+
+    const autoDuration = document.getElementById("autoBannerDuration").checked;
+    document.getElementById("pauseDurationRange").disabled = autoDuration;
+
+    document.getElementById("bannerHeightValue").textContent = bannerHeight + "%";
+    document.getElementById("pauseSecondValue").textContent = pauseSecond + " с";
+    document.getElementById("pauseDurationValue").textContent =
+      autoDuration ? "Авто (по видео баннера)" : pauseDuration + " с";
+
+    const strip = document.getElementById("bannerStrip");
+    strip.style.height = bannerHeight + "%";
+    strip.style.top = "";
+    strip.style.bottom = "";
+    if (bannerPosition === "top") {
+      strip.style.top = "0";
+    } else if (bannerPosition === "bottom") {
+      strip.style.bottom = "0";
+    } else {
+      strip.style.top = Math.round((100 - bannerHeight) / 2) + "%";
+    }
+
+    const texts = {
+      squeeze: "Видео уменьшается, баннер занимает освободившуюся полосу. Ничего не перекрыто.",
+      overlay: "Баннер ложится поверх видео на всю длительность.",
+      pause: "Видео встаёт на паузу, и несколько секунд показывается баннер. Место паузы — любое."
+    };
+    document.getElementById("bannerSchemeText").textContent = texts[bannerMode] || texts.squeeze;
+  }
+
+  const autopilotConfig = {
+    url: "",
+    hookText: "ЭТО НУЖНО УВИДЕТЬ САМОМУ",
+    hookStyle: "gradient",
+    hookDuration: 3,
+    font: "Manrope",
+    textColor: "#FFFFFF",
+    highlightColor: "none",
+    fontSize: 54,
+    grid: "50",
+    subPosition: 5,
+    hookPosition: "joint",
+    clipCount: 5
+  };
+
+  function renderAutopilotPreview() {
+    const cfg = autopilotConfig;
+    const grid = document.getElementById("apGrid");
+    const zone = (label, style) =>
+      '<div class="grid-zone" style="' + style + '">' + label + "</div>";
+
+    if (cfg.grid === "1") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr";
+      grid.innerHTML = zone("КАДР", "grid-column:1;grid-row:1");
+    } else if (cfg.grid === "50") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.innerHTML = zone("КАМЕРА", "") + zone("ИГРА", "");
+    } else if (cfg.grid === "3") {
+      grid.style.gridTemplateColumns = "1fr 1fr";
+      grid.style.gridTemplateRows = "1fr 1fr 2fr";
+      grid.innerHTML =
+        zone("1", "grid-column:1;grid-row:1") +
+        zone("2", "grid-column:2;grid-row:1") +
+        zone("3", "grid-column:1 / span 2;grid-row:2") +
+        zone("ВИДЕО / ИГРА", "grid-column:1 / span 2;grid-row:3");
+    } else {
+      grid.style.gridTemplateColumns = "1fr 1fr";
+      grid.style.gridTemplateRows = "1fr 1fr 2fr";
+      grid.innerHTML =
+        zone("1", "grid-column:1;grid-row:1") +
+        zone("2", "grid-column:2;grid-row:1") +
+        zone("3", "grid-column:1;grid-row:2") +
+        zone("4", "grid-column:2;grid-row:2") +
+        zone("ВИДЕО / ИГРА", "grid-column:1 / span 2;grid-row:3");
+    }
+
+    const hook = document.getElementById("apHook");
+    hook.className = "ap-hook " +
+      (cfg.hookPosition === "off" ? "top" : cfg.hookPosition) + " " + cfg.hookStyle;
+    hook.style.display = cfg.hookPosition === "off" ? "none" : "";
+    hook.querySelector(".title").textContent = cfg.hookText || "ХУК";
+
+    const subs = document.getElementById("apSubs");
+    let positionClass = cfg.subPosition === 8 ? "top" : cfg.subPosition === 2 ? "bottom" : "joint";
+    if (cfg.hookPosition !== "off" && cfg.hookPosition === positionClass) {
+      positionClass = "bottom";
+    }
+    subs.className = "ap-subs " + positionClass;
+    const words = "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(/\s+/).slice(0, 3);
+    subs.innerHTML = words.map((word, index) =>
+      '<span class="word' + (index === 0 ? " active" : "") + '">' + escapeHtml(word) + "</span>"
+    ).join(" ");
+    subs.style.fontFamily = "'" + cfg.font + "', sans-serif";
+    subs.style.color = cfg.textColor;
+    subs.style.textShadow = "-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 6px rgba(0,0,0,.5)";
+    const previewSize = { 44: 9, 54: 11, 64: 13, 76: 15 }[cfg.fontSize] || 11;
+    subs.style.fontSize = previewSize + "px";
+    if (cfg.highlightColor !== "none") {
+      subs.querySelector(".word.active").style.color = cfg.highlightColor;
+    }
+  }
+
+  function renderAutopilot() {
+    document.querySelectorAll("[data-ap-hook-style]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apHookStyle === autopilotConfig.hookStyle));
+    document.querySelectorAll("[data-ap-hook-dur]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apHookDur) === autopilotConfig.hookDuration));
+    document.querySelectorAll("[data-ap-font]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apFont === autopilotConfig.font));
+    document.querySelectorAll("[data-ap-size]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apSize) === autopilotConfig.fontSize));
+    document.querySelectorAll("[data-ap-grid]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apGrid === autopilotConfig.grid));
+    document.querySelectorAll("[data-ap-sub-pos]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apSubPos) === autopilotConfig.subPosition));
+    document.querySelectorAll("[data-ap-hook-pos]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apHookPos === autopilotConfig.hookPosition));
+    document.querySelectorAll("[data-ap-count]").forEach(el =>
+      el.classList.toggle("active", Number(el.dataset.apCount) === autopilotConfig.clipCount));
+    document.querySelectorAll("[data-ap-color]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apColor === autopilotConfig.textColor));
+    document.querySelectorAll("[data-ap-highlight]").forEach(el =>
+      el.classList.toggle("active", el.dataset.apHighlight === autopilotConfig.highlightColor));
+    renderAutopilotPreview();
+  }
+
+  let autopilotAnalysisId = null;
+
+  function analyzeAutopilotUrl() {
+    const input = document.getElementById("apUrl");
+    const url = input.value.trim();
+    if (!isValidUrl(url)) {
+      input.classList.add("error");
+      updateUrlState("apUrl", "apUrlStatus", "apAnalyzeBtn");
+      toast("Вставьте корректную ссылку http:// или https://");
+      return;
+    }
+    input.classList.remove("error");
+    autopilotConfig.url = url;
+    autopilotConfig.hookText = "АНАЛИЗИРУЮ ВИДЕО...";
+    document.getElementById("apHookText").value = autopilotConfig.hookText;
+    document.getElementById("apStepOne").style.display = "none";
+    document.getElementById("apResult").style.display = "";
+    document.getElementById("apStepLabel").textContent = "Шаг 2 из 2 — ИИ анализирует видео";
+    renderAutopilot();
+
+    autopilotAnalysisId = "analyze_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+    const init = (tg && tg.initDataUnsafe) || {};
+    submitTask({
+      action: "analyze_video",
+      task_id: autopilotAnalysisId,
+      video_url: url,
+      chat_id: (init.chat && init.chat.id) || (init.user && init.user.id) || null,
+      created_at: new Date().toISOString()
+    });
+    toast("🤖 ИИ анализирует видео...");
+  }
+
+  function applyAutopilotRecommendation(recommendation) {
+    if (!recommendation || !autopilotAnalysisId ||
+        recommendation.task_id !== autopilotAnalysisId) return;
+    if (recommendation.hook_text) {
+      autopilotConfig.hookText = recommendation.hook_text;
+      document.getElementById("apHookText").value = recommendation.hook_text;
+    }
+    if (["1", "50", "3", "4"].includes(recommendation.grid)) {
+      autopilotConfig.grid = recommendation.grid;
+    }
+    if (recommendation.title) {
+      document.getElementById("apStepLabel").textContent =
+        "Шаг 2 из 2 — " + recommendation.title.slice(0, 70);
+    } else {
+      document.getElementById("apStepLabel").textContent = "Шаг 2 из 2 — рекомендация ИИ и правка";
+    }
+    autopilotAnalysisId = null;
+    renderAutopilot();
+    toast("🤖 Рекомендация ИИ готова");
+  }
+
+  async function launchAutopilot() {
+    const cfg = autopilotConfig;
+    if (!cfg.url) {
+      toast("Сначала проанализируйте ссылку");
+      return;
+    }
+    const hook = {
+      enabled: cfg.hookPosition !== "off",
+      position: cfg.hookPosition === "off" ? "top" : cfg.hookPosition,
+      style: cfg.hookStyle,
+      size: "M",
+      duration: cfg.hookDuration
+    };
+    const subSettings = {
+      style: "tiktok",
+      text_color: cfg.textColor,
+      highlight_color: cfg.highlightColor,
+      outline_color: "#000000",
+      plate_color: "none",
+      font_size: cfg.fontSize,
+      font: cfg.font,
+      uppercase: true,
+      words: 3,
+      position: cfg.subPosition,
+      margin_percent: 18,
+      grid: cfg.grid,
+      hook: hook
+    };
+    const init = (tg && tg.initDataUnsafe) || {};
+    const chatId = (init.chat && init.chat.id) || (init.user && init.user.id) || null;
+    const task = Object.assign({
+      task_id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10),
+      chat_id: chatId,
+      created_at: new Date().toISOString()
+    }, {
+      action: "start_pipeline",
+      mode: "Стримеры 50/50",
+      mode_key: "split_50_50",
+      active_mode: "split_50_50",
+      autopilot: true,
+      video_url: cfg.url,
+      clip_count: cfg.clipCount,
+      ai_content_type: aiContentType,
+      ai_use_subs: true,
+      sub_settings: subSettings,
+      hook_settings: hook
+    });
+    const delivered = await submitTask(task);
+    addHistory("Стримеры 50/50", cfg.clipCount, "В очереди");
+    document.getElementById("apUrl").value = "";
+    showTab("process");
+    toast(delivered === "local"
+      ? "🚀 Задача отправлена на локальный сервер — окно не закроется"
+      : "⏳ Задача сохранена локально — сервер недоступен");
+  }
+
+  function renderDownloadControls() {
+    document.querySelectorAll("[data-download-quality]").forEach(el => {
+      el.classList.toggle("active", el.dataset.downloadQuality === downloadQuality);
+    });
+    document.getElementById("downloadUrl").value = "";
+    document.getElementById("downloadHint").style.display = "none";
+    document.getElementById("downloadUrl").classList.remove("error");
+  }
+
+  function renderAiCutControls() {
+    document.querySelectorAll("[data-content-type]").forEach(el => {
+      el.classList.toggle("active", el.dataset.contentType === aiContentType);
+    });
+    document.getElementById("aiUseSubPreset").checked = aiUseSubPreset;
+  }
+
+  function loadClipCount() {
+    try {
+      const value = parseInt(localStorage.getItem(CLIP_COUNT_KEY), 10);
+      return [3, 5, 10].includes(value) ? value : 5;
+    } catch (e) {
+      return 5;
+    }
+  }
+
+  let selectedCount = loadClipCount();
+  try {
+    const savedAiType = localStorage.getItem(AI_CONTENT_KEY);
+    if (["movies", "anime", "games"].includes(savedAiType)) aiContentType = savedAiType;
+  } catch (e) {}
+
+  function loadSubStyle() {
+    const base = Object.assign({}, SUB_PRESETS.tiktok, {
+      hook: { enabled: true, position: "top", style: "gradient", size: "M", duration: 4 }
+    });
+    try {
+      const raw = localStorage.getItem(SUB_STYLE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        Object.keys(base).forEach(key => {
+          if (key in saved) base[key] = saved[key];
+        });
+      }
+    } catch (e) {}
+    return base;
+  }
+
+    let subSettings = loadSubStyle();
+  if (!subSettings.grid) subSettings.grid = "50";
+  if (!subSettings.hook) subSettings.hook = { enabled: true, position: "top", style: "gradient", size: "M", duration: 4 };
+  if (subSettings.hook.duration === undefined) subSettings.hook.duration = 4;
+  const legacyHookSizes = { 34: "S", 42: "M", 50: "L" };
+  if (legacyHookSizes[subSettings.hook.size]) subSettings.hook.size = legacyHookSizes[subSettings.hook.size];
+  if (!["S", "M", "L"].includes(subSettings.hook.size)) subSettings.hook.size = "M";
+  let lastMargin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
+  const PREVIEW_WORDS =
+ "ТАК БУДУТ ВЫГЛЯДЕТЬ СУБТИТРЫ".split(" ");
+  let previewChunk = 0;
+  let previewActive = 0;
+
+  function renderGrid() {
+    const grid = document.getElementById("previewGrid");
+    const mode = subSettings.grid;
+    const zone = (label, style) =>
+      '<div class="grid-zone" style="' + style + '">' + label + "</div>";
+
+    if (mode === "1") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr auto";
+      grid.innerHTML =
+        zone("КАДР", "grid-column:1;grid-row:1") +
+        '<div class="grid-safe" style="grid-column:1;grid-row:2;height:22px">БЕЗОПАСНАЯ ЗОНА</div>';
+      return;
+    }
+
+    if (mode === "50") {
+      grid.style.gridTemplateColumns = "1fr";
+      grid.style.gridTemplateRows = "1fr 1fr";
+      grid.innerHTML = zone("КАМЕРА", "") + zone("ИГРА", "");
+      return;
+    }
+
+    grid.style.gridTemplateColumns = "1fr 1fr";
+    grid.style.gridTemplateRows = "1fr 1fr 2fr";
+
+    if (mode === "3") {
+      grid.innerHTML =
+        zone("1", "grid-column:1;grid-row:1") +
+        zone("2", "grid-column:2;grid-row:1") +
+        zone("3", "grid-column:1 / span 2;grid-row:2") +
+        zone("ИГРА", "grid-column:1 / span 2;grid-row:3");
+      return;
+    }
+
+    grid.innerHTML =
+      zone("1", "grid-column:1;grid-row:1") +
+      zone("2", "grid-column:2;grid-row:1") +
+      zone("3", "grid-column:1;grid-row:2") +
+      zone("4", "grid-column:2;grid-row:2") +
+      zone("ИГРА", "grid-column:1 / span 2;grid-row:3");
+  }
+
+  function renderColorRows() {
+    const box = document.getElementById("colorRows");
+    box.innerHTML = "";
+
+    COLOR_SECTIONS.forEach(section => {
+      const row = document.createElement("div");
+      row.className = "color-row";
+
+      const label = document.createElement("div");
+      label.className = "color-label";
+      label.textContent = section.label;
+      row.appendChild(label);
+
+      const swatches = document.createElement("div");
+      swatches.className = "swatches";
+
+      if (section.none) {
+        const none = document.createElement("div");
+        none.className = "swatch none" + (subSettings[section.key] === "none" ? " active" : "");
+        none.textContent = "✕";
+        none.addEventListener("click", () => {
+          subSettings[section.key] = "none";
+          refreshSubtitles();
+        });
+        swatches.appendChild(none);
+      }
+
+      section.colors.forEach(color => {
+        const sw = document.createElement("div");
+        sw.className = "swatch" + (subSettings[section.key] === color ? " active" : "");
+        sw.style.background = color;
+        sw.addEventListener("click", () => {
+          subSettings[section.key] = color;
+          refreshSubtitles();
+        });
+        swatches.appendChild(sw);
+      });
+
+      const custom = document.createElement("input");
+      custom.type = "color";
+      custom.className = "custom-color";
+      custom.value = /^#[0-9A-Fa-f]{6}$/.test(subSettings[section.key])
+        ? subSettings[section.key]
+        : "#FFFFFF";
+      custom.addEventListener("input", () => {
+        subSettings[section.key] = custom.value.toUpperCase();
+        refreshSubtitles();
+      });
+      swatches.appendChild(custom);
+
+      row.appendChild(swatches);
+      box.appendChild(row);
+    });
+  }
+
+  function renderHookMini() {
+    const mini = document.getElementById("hookMini");
+    const hook = subSettings.hook;
+    const allVideo = hook.duration === -1;
+
+    const range = document.getElementById("hookDurationRange");
+    range.disabled = allVideo;
+    range.value = allVideo ? 4 : hook.duration;
+    document.getElementById("hookDurationValue").textContent =
+      allVideo ? "Всё видео" : hook.duration + " сек";
+    document.getElementById("hookAllVideoBtn").classList.toggle("active", allVideo);
+
+    if (!hook.enabled) {
+      mini.style.display = "none";
+      return;
+    }
+
+    mini.style.display = "";
+    mini.className = "hook-mini " + hook.position + " " + hook.style;
+
+    const hookTypeSizes = {
+      S: { fontSize: "7.5px", padding: "2px 5px" },
+      M: { fontSize: "9.5px", padding: "3px 7px" },
+      L: { fontSize: "12px", padding: "4px 9px" }
+    };
+    const typeSize = hookTypeSizes[hook.size] || hookTypeSizes.M;
+    mini.style.fontSize = typeSize.fontSize;
+    mini.style.padding = typeSize.padding;
+
+    document.querySelectorAll("[data-hook-pos]").forEach(el => {
+      el.classList.toggle("active", el.dataset.hookPos === hook.position);
+    });
+    document.querySelectorAll("[data-hook-style]").forEach(el => {
+      el.classList.toggle("active", el.dataset.hookStyle === hook.style);
+    });
+    document.querySelectorAll("[data-hook-size]").forEach(el => {
+      el.classList.toggle("active", el.dataset.hookSize === hook.size);
+    });
+    document.getElementById("hookEnabled").checked = hook.enabled;
+  }
+
+  function updateSubPreview() {
+    const phrase = document.getElementById("previewPhrase");
+    const count = subSettings.words;
+    const chunk = [];
+    for (let i = 0; i < count; i++) {
+      chunk.push(PREVIEW_WORDS[(previewChunk + i) % PREVIEW_WORDS.length]);
+    }
+    if (previewActive >= count) previewActive = 0;
+
+    const preview = phrase.parentElement;
+    preview.style.alignItems = subSettings.position === 8
+      ? "flex-start"
+      : subSettings.position === 2 ? "flex-end" : "center";
+
+    const margin = subSettings.position === 5 ? 0 : (subSettings.margin_percent || 18);
+    const marginPx = Math.round(195 * margin / 100);
+    preview.style.paddingTop = subSettings.position === 8 ? marginPx + "px" : "8px";
+    preview.style.paddingBottom = subSettings.position === 2 ? marginPx + "px" : "8px";
+
+    const previewSizes = { 44: 10, 54: 12, 64: 14, 76: 16 };
+    let previewFontSize = previewSizes[subSettings.font_size] || 12;
+
+    if (subSettings.words === 3 || subSettings.words === 5) {
+      previewFontSize = Math.min(previewFontSize, 12);
+    }
+
+    if (subSettings.font === "Unbounded" || subSettings.font === "Dela Gothic One") {
+      previewFontSize = Math.min(previewFontSize * 0.85, 12);
+    }
+
+    phrase.style.fontFamily = "'" + subSettings.font + "', sans-serif";
+    phrase.style.fontSize = Math.round(previewFontSize * 10) / 10 + "px";
+    phrase.style.fontWeight = subSettings.font === "Caveat" ? "700" : "800";
+    phrase.style.color = subSettings.text_color;
+    phrase.style.textTransform = subSettings.uppercase ? "uppercase" : "none";
+
+    phrase.innerHTML = "";
+    chunk.forEach((word, index) => {
+      const span = document.createElement("span");
+      span.className = "preview-word" + (index === previewActive ? " active" : "");
+      span.textContent = word;
+
+      if (index === previewActive) {
+        if (subSettings.highlight_color !== "none") {
+          span.style.color = subSettings.highlight_color;
+          span.style.transform = "scale(1.09)";
+        }
+        if (subSettings.plate_color !== "none") {
+          span.style.background = subSettings.plate_color;
+          span.style.padding = "1px 6px";
+        }
+      }
+
+      if (subSettings.outline_color !== "none") {
+        const c = subSettings.outline_color;
+        span.style.textShadow = [
+          "-1px -1px 0 " + c, "1px -1px 0 " + c,
+          "-1px 1px 0 " + c, "1px 1px 0 " + c,
+          "0 2px 6px rgba(0,0,0,.5)"
+        ].join(",");
+      }
+
+      phrase.appendChild(span);
+      if (index < chunk.length - 1) phrase.appendChild(document.createTextNode(" "));
+    });
+  }
+
+  function syncSubControls() {
+    document.querySelectorAll("[data-sub-style]").forEach(el => {
+      el.classList.toggle("active", el.dataset.subStyle === subSettings.style);
+    });
+    document.querySelectorAll("[data-size]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.size) === subSettings.font_size);
+    });
+    document.querySelectorAll("[data-font]").forEach(el => {
+      el.classList.toggle("active", el.dataset.font === subSettings.font);
+    });
+    document.querySelectorAll("[data-words]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.words) === subSettings.words);
+    });
+    document.querySelectorAll("[data-pos]").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.pos) === subSettings.position);
+    });
+    document.querySelectorAll("[data-grid]").forEach(el => {
+      el.classList.toggle("active", el.dataset.grid === subSettings.grid);
+    });
+    document.getElementById("subUppercase").checked = !!subSettings.uppercase;
+
+    const range = document.getElementById("marginRange");
+    const value = document.getElementById("marginValue");
+    if (subSettings.position === 5) {
+      range.disabled = true;
+      value.textContent = "50% (стык)";
+    } else {
+      range.disabled = false;
+      const margin = subSettings.margin_percent === 50 ? 18 : subSettings.margin_percent;
+      range.value = margin;
+      value.textContent = margin + "%";
+    }
+  }
+
+  function refreshSubtitles() {
+    syncSubControls();
+    renderColorRows();
+    renderGrid();
+    renderHookMini();
+    updateSubPreview();
+  }
+
+  function renderCount() {
+    document.querySelectorAll(".pill").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.count) === selectedCount);
+    });
   }
 
   function toast(text) {
     const el = document.getElementById("toast");
     el.textContent = text;
     el.classList.add("show");
-    setTimeout(() => el.classList.remove("show"), 1500);
+    setTimeout(() => el.classList.remove("show"), 1400);
+  }
+
+  function addHistory(name, clipCount, status) {
+    try {
+      const list = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      list.unshift({
+        name: name,
+        clip_count: clipCount || selectedCount,
+        status: status || "В очереди",
+        percent: 0,
+        date: new Date().toLocaleString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
+      });
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 20)));
+    } catch (e) {}
+    renderHistory();
+  }
+
+  function escapeHtml(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[ch]);
+  }
+
+  function taskStatusLabel(status) {
+    return {
+      running: "В работе",
+      paused: "На паузе",
+      done: "Готово",
+      cancelled: "Остановлено",
+      error: "Ошибка"
+    }[status] || "В работе";
+  }
+
+  function renderHistory() {
+    const box = document.getElementById("history");
+    const active = (lastStatus && Array.isArray(lastStatus.active_tasks)) ? lastStatus.active_tasks : [];
+    const finished = (lastStatus && Array.isArray(lastStatus.history_tasks)) ? lastStatus.history_tasks : [];
+    const hidden = readJson("clipper_hidden_tasks", []);
+    const hiddenIds = Array.isArray(hidden) ? hidden.map(String) : [];
+
+    let local = readJson(HISTORY_KEY, []);
+    if (!Array.isArray(local)) local = [];
+    const remote = active.concat(finished).filter(
+      item => !hiddenIds.includes(String(item.task_id || ""))
+    );
+    const remoteIds = new Set(remote.map(item => String(item.task_id || "")));
+    const fallback = local
+      .filter(item => !remoteIds.has(String(item.task_id || "")))
+      .map(item => ({
+        task_id: item.task_id || ("local_" + (item.date || "")),
+        title: item.name || "Задача",
+        mode: item.mode || "",
+        clip_count: item.clip_count || 0,
+        status: item.status === "Готово" ? "done" : "running",
+        percent: item.percent || 0,
+        current_step: item.status || "В очереди",
+        updated_at: item.date || ""
+      }))
+      .filter(item => !hiddenIds.includes(String(item.task_id)));
+    const all = remote.concat(fallback);
+
+    document.getElementById("historyCount").textContent =
+      "Задач: " + all.length + " • в работе: " + active.length;
+
+    if (!all.length) {
+      box.innerHTML = '<div class="history-empty">История пуста — выберите любой инструмент на Главной, чтобы начать</div>';
+      return;
+    }
+
+    box.innerHTML = all.map(item => {
+      const status = item.status || "running";
+      const percent = Math.max(0, Math.min(100, Number(item.percent) || 0));
+      const badgeClass = status === "done" ? "done"
+        : status === "paused" ? "paused"
+        : (status === "cancelled" || status === "error") ? "cancelled" : "running";
+      const id = escapeHtml(item.task_id || "");
+      const actions = [];
+      if (status === "running") {
+        actions.push('<button class="task-btn" data-task-action="pause" data-task-id="' + id + '">⏸ Пауза</button>');
+      }
+      if (status === "paused") {
+        actions.push('<button class="task-btn" data-task-action="resume" data-task-id="' + id + '">▶️ Возобновить</button>');
+      }
+      actions.push('<button class="task-btn danger" data-task-action="delete" data-task-id="' + id + '">🗑 Удалить</button>');
+
+      return '<div class="task-card">' +
+        '<div class="task-head">' +
+          '<div><div class="task-title">' + escapeHtml(item.title || "Задача") + '</div>' +
+          '<div class="task-sub">' + escapeHtml(item.mode || "Режим не указан") +
+            (item.clip_count ? " • клипов: " + escapeHtml(item.clip_count) : "") + '</div></div>' +
+          '<div class="task-badge ' + badgeClass + '">' + taskStatusLabel(status) + '</div>' +
+        '</div>' +
+        '<div class="task-progress"><span style="width:' + percent + '%"></span></div>' +
+        '<div class="task-sub">' + percent + '% • ' + escapeHtml(item.current_step || "—") + '</div>' +
+        '<div class="task-actions">' + actions.join("") + '</div>' +
+      '</div>';
+    }).join("");
+  }
+
+  function sendData(payload, label, clipCount) {
+    if (tg) {
+      tg.sendData(JSON.stringify(payload));
+      addHistory(label, clipCount);
+      tg.close();
+    }
+  }
+
+  function setActiveTab(tab) {
+    document.querySelectorAll(".nav-item").forEach(el => {
+      el.classList.toggle("active", el.dataset.tab === tab);
+    });
+  }
+
+  const STATUS_URL = API_BASE + "/api/status";
+  const STATUS_RAW_URL = API_BASE + "/api/status";
+  let lastStatus = null;
+
+  function statusUrl(base) {
+    return base + "?t=" + Date.now();
+  }
+
+  function renderProcess(data) {
+    if (!data) return;
+    lastStatus = data;
+
+    document.getElementById("procPercent").textContent = (data.percent || 0) + "%";
+    document.getElementById("procFill").style.width = (data.percent || 0) + "%";
+    document.getElementById("procStep").textContent = data.current_step || "Ожидание задачи";
+    document.getElementById("procClip").textContent =
+      data.clip_progress ? "Клип " + data.clip_progress : "Клип —";
+    document.getElementById("procTime").textContent =
+      "Обновлено: " + (data.updated_at || "—");
+
+    const steps = Array.isArray(data.steps) ? data.steps : [];
+    const icons = { done: "✅", active: "⏳", error: "❌", pending: "○" };
+    document.getElementById("procSteps").innerHTML = steps.map(item =>
+      '<div class="proc-step ' + item.state + '">' +
+      '<span>' + (icons[item.state] || "○") + '</span>' +
+      '<span>' + item.title + '</span></div>'
+    ).join("");
+
+    const isError = data.status === "error";
+    document.getElementById("procError").style.display = isError ? "" : "none";
+    document.getElementById("procErrorText").textContent = data.error_log || "";
+
+    const isRunning = data.status === "running";
+    document.getElementById("navPulse").style.display = isRunning ? "" : "none";
+
+    const home = document.getElementById("homeProgress");
+    home.style.display = isRunning ? "" : "none";
+    home.textContent = "⚡ Идёт сборка: " + (data.percent || 0) + "% (Открыть процесс)";
+  }
+
+  function applyStatus(data, subtitle, sourceLabel) {
+    if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+    subtitle.textContent = sourceLabel;
+    renderProcess(data);
+    renderHistory();
+    if (data.autopilot_recommendation) {
+      applyAutopilotRecommendation(data.autopilot_recommendation);
+    }
+    return true;
+  }
+
+  async function fetchRawStatus(subtitle) {
+    try {
+      const response = await fetch(statusUrl(STATUS_RAW_URL), { cache: "no-store" });
+      if (!response.ok) return false;
+      return applyStatus(await response.json(), subtitle, "Живой мониторинг (локальный сервер)");
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function fetchStatus() {
+    const subtitle = document.getElementById("processSubtitle");
+    try {
+      const response = await fetch(statusUrl(STATUS_URL), { cache: "no-store" });
+      if (!response.ok) {
+        subtitle.textContent = "Синхронизация... HTTP " + response.status;
+        if (!await fetchRawStatus(subtitle)) {
+          subtitle.textContent = "Синхронизация... HTTP " + response.status;
+        }
+        return;
+      }
+      if (!await applyStatus(await response.json(), subtitle, "Живой мониторинг сборки видео")) {
+        subtitle.textContent = "Синхронизация... пустой ответ";
+        await fetchRawStatus(subtitle);
+      }
+    } catch (e) {
+      subtitle.textContent = "Синхронизация... нет соединения";
+      await fetchRawStatus(subtitle);
+    }
+  }
+
+  function readJson(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function renderLaunchSummary() {
+    const modeKey = localStorage.getItem(LAUNCH_MODE_KEY) || "split_50_50";
+    const mode = MODE_NAMES[modeKey] || "Стримеры 50/50";
+    const clips = localStorage.getItem(CLIP_COUNT_KEY) || "5";
+    const sub = readJson(SUB_STYLE_KEY, {});
+    const uniq = readJson(UNIQ_FULL_KEY, {});
+    const uniqSettings = uniq.settings || {};
+    const methods = Object.values(uniqSettings).filter(v => v === true).length;
+    const hookStyle = sub.hook && sub.hook.style ? sub.hook.style : "gradient";
+
+    const rows = [
+      ["Режим", mode],
+      ["Клипов за раз", clips],
+      ["Стиль субтитров", sub.style || "tiktok"],
+      ["Стиль хука", hookStyle],
+      ["Методов уникализации", String(methods)]
+    ];
+
+    document.getElementById("launchSummary").innerHTML = rows.map(r =>
+      '<div class="launch-summary-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>'
+    ).join("");
+  }
+
+  function goLaunch(modeLabel, modeKey) {
+    localStorage.setItem(LAUNCH_ACTIVE_KEY, modeLabel);
+    localStorage.setItem(LAUNCH_MODE_KEY, modeKey || "split_50_50");
+    document.getElementById("launchUrl").value = "";
+    document.getElementById("launchHint").style.display = "none";
+    document.getElementById("launchUrl").classList.remove("error");
+    renderLaunchSummary();
+    showTab("launch");
+    toast("✅ Настройки сохранены");
   }
 
   function showTab(tab) {
     document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
     const target = document.getElementById("tab-" + tab);
     if (target) target.classList.add("active");
-    document.querySelectorAll(".nav-item").forEach(el =>
-      el.classList.toggle("active", el.dataset.tab === tab));
+    if (tab === "launch") {
+      document.getElementById("launchUrl").value = "";
+      updateUrlState("launchUrl", "launchUrlStatus", "launchStartBtn");
+    }
+    if (tab === "download") {
+      document.getElementById("downloadUrl").value = "";
+      updateUrlState("downloadUrl", "downloadUrlStatus", "downloadStartBtn");
+    }
+    if (tab === "process") fetchStatus();
+    if (tab === "history") {
+      renderHistory();
+      fetchStatus();
+    }
+    setActiveTab(tab);
+    document.querySelector(".bottom-nav").style.display =
+      tab === "subtitles" || tab === "aicut" || tab === "autopilot" ||
+      tab === "overlay" || tab === "banner" || tab === "launch" ||
+      tab === "download" ? "none" : "";
     window.scrollTo(0, 0);
   }
 
-  function setActive(selector, attribute, value) {
-    document.querySelectorAll(selector).forEach(el =>
-      el.classList.toggle("active", el.getAttribute(attribute) === String(value)));
-  }
+  document.querySelectorAll("[data-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      const mode = el.dataset.mode;
+      sendData({ action: "select_mode", mode: mode, clip_count: selectedCount }, MODE_NAMES[mode] || mode, selectedCount);
+    });
+  });
 
-  function renderPreview() {
-    const grid = document.getElementById("previewGrid");
-    const zone = (label, style) => '<div class="grid-zone" style="' + style + '">' + label + "</div>";
+  document.getElementById("openUniqTile").addEventListener("click", () => showTab("uniq"));
+  document.getElementById("backBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("openSubtitlesTile").addEventListener("click", () => {
+    subReturnTab = "launch";
+    refreshSubtitles();
+    showTab("subtitles");
+  });
+  document.getElementById("openAutopilotTile").addEventListener("click", () => showTab("autopilot"));
+  document.getElementById("apBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("apAnalyzeBtn").addEventListener("click", analyzeAutopilotUrl);
+  document.getElementById("apLaunchBtn").addEventListener("click", launchAutopilot);
+  document.getElementById("apHookText").addEventListener("input", e => {
+    autopilotConfig.hookText = e.target.value;
+    renderAutopilotPreview();
+  });
 
-    if (settings.grid === "1") {
-      grid.style.gridTemplateColumns = "1fr";
-      grid.style.gridTemplateRows = "1fr";
-      grid.innerHTML = zone("КАДР", "grid-column:1;grid-row:1");
-    } else if (settings.grid === "50") {
-      grid.style.gridTemplateColumns = "1fr";
-      grid.style.gridTemplateRows = "1fr 1fr";
-      grid.innerHTML = zone("КАМЕРА", "") + zone("ИГРА", "");
-    } else {
-      grid.style.gridTemplateColumns = "1fr 1fr";
-      grid.style.gridTemplateRows = "1fr 1fr 2fr";
-      if (settings.grid === "3") {
-        grid.innerHTML =
-          zone("1", "grid-column:1;grid-row:1") +
-          zone("2", "grid-column:2;grid-row:1") +
-          zone("3", "grid-column:1 / span 2;grid-row:2") +
-          zone("ВИДЕО / ИГРА", "grid-column:1 / span 2;grid-row:3");
-      } else {
-        grid.innerHTML =
-          zone("1", "grid-column:1;grid-row:1") +
-          zone("2", "grid-column:2;grid-row:1") +
-          zone("3", "grid-column:1;grid-row:2") +
-          zone("4", "grid-column:2;grid-row:2") +
-          zone("ВИДЕО / ИГРА", "grid-column:1 / span 2;grid-row:3");
-      }
-    }
-
-    const hook = document.getElementById("hookMini");
-    hook.className = "hook-mini " +
-      (settings.hook_position === "off" ? "top" : settings.hook_position) + " " + settings.hook_style;
-    hook.style.display = settings.hook_enabled ? "" : "none";
-
-    const subs = document.getElementById("subsMini");
-    subs.className = "subs-mini " +
-      (settings.sub_position === 8 ? "top" : settings.sub_position === 2 ? "bottom" : "joint");
-    subs.style.fontFamily = "'" + settings.font + "', sans-serif";
-    subs.style.color = settings.text_color;
-    subs.style.fontSize = ({44:9, 54:11, 64:13, 76:15}[settings.font_size] || 11) + "px";
-  }
-
-  function renderUniq() {
-    const box = document.getElementById("uniqMethods");
-    box.innerHTML = ITEMS.map(item =>
-      '<div class="toggle-row">' +
-      '<div><div class="toggle-title">' + item.name + '</div></div>' +
-      '<label class="switch"><input type="checkbox" data-method="' + item.key + '"' +
-      (settings.uniq.settings[item.key] ? " checked" : "") + '><span class="slider"></span></label>' +
-      '</div>'
-    ).join("");
-  }
-
-  function renderAll() {
-    setActive("[data-count]", "data-count", settings.clip_count);
-    setActive("[data-mode]", "data-mode", settings.mode);
-    setActive("[data-grid]", "data-grid", settings.grid);
-    setActive("[data-font]", "data-font", settings.font);
-    setActive("[data-size]", "data-size", settings.font_size);
-    setActive("[data-sub-pos]", "data-sub-pos", settings.sub_position);
-    setActive("[data-hook-pos]", "data-hook-pos", settings.hook_position);
-    setActive("[data-hook-style]", "data-hook-style", settings.hook_style);
-    setActive("[data-hook-duration]", "data-hook-duration", settings.hook_duration);
-    setActive("[data-banner-mode]", "data-banner-mode", settings.banner.mode);
-    setActive("[data-banner-pos]", "data-banner-pos", settings.banner.position);
-    setActive("[data-chroma]", "data-chroma", settings.banner.chroma_mode);
-    setActive("[data-pause-when]", "data-pause-when", settings.banner.pause_when);
-    setActive("[data-uniq-mode]", "data-uniq-mode", settings.uniq.mode);
-    setActive("[data-fps]", "data-fps", settings.uniq.fps);
-    setActive("[data-copies]", "data-copies", settings.uniq.copies);
-    document.getElementById("hookEnabled").checked = settings.hook_enabled;
-    document.getElementById("bannerHeight").value = settings.banner.height_percent;
-    document.getElementById("bannerHeightValue").textContent = settings.banner.height_percent + "%";
-    document.getElementById("pauseDuration").value = settings.banner.pause_duration;
-    document.getElementById("pauseDurationValue").textContent = settings.banner.pause_duration + " с";
-    document.getElementById("autoBannerDuration").checked = settings.banner.auto_banner_duration;
-    document.getElementById("bannerAddSubs").checked = settings.banner.add_subs;
-    document.querySelectorAll("[data-color]").forEach(el =>
-      el.classList.toggle("active", el.getAttribute("data-color") === settings.text_color));
-    document.querySelectorAll("[data-highlight]").forEach(el =>
-      el.classList.toggle("active", el.getAttribute("data-highlight") === settings.highlight_color));
-    renderPreview();
-    renderUniq();
-  }
-
-  const handlerMap = [
-    ["[data-count]", "data-count", v => settings.clip_count = Number(v)],
-    ["[data-mode]", "data-mode", v => settings.mode = v],
-    ["[data-grid]", "data-grid", v => settings.grid = v],
-    ["[data-font]", "data-font", v => settings.font = v],
-    ["[data-size]", "data-size", v => settings.font_size = Number(v)],
-    ["[data-sub-pos]", "data-sub-pos", v => settings.sub_position = Number(v)],
-    ["[data-hook-pos]", "data-hook-pos", v => settings.hook_position = v],
-    ["[data-hook-style]", "data-hook-style", v => settings.hook_style = v],
-    ["[data-hook-duration]", "data-hook-duration", v => settings.hook_duration = Number(v)],
-    ["[data-banner-mode]", "data-banner-mode", v => settings.banner.mode = v],
-    ["[data-banner-pos]", "data-banner-pos", v => settings.banner.position = v],
-    ["[data-chroma]", "data-chroma", v => settings.banner.chroma_mode = v],
-    ["[data-pause-when]", "data-pause-when", v => settings.banner.pause_when = v],
-    ["[data-uniq-mode]", "data-uniq-mode", v => settings.uniq.mode = v],
-    ["[data-fps]", "data-fps", v => settings.uniq.fps = v],
-    ["[data-copies]", "data-copies", v => settings.uniq.copies = Number(v)],
-    ["[data-color]", "data-color", v => settings.text_color = v],
-    ["[data-highlight]", "data-highlight", v => settings.highlight_color = v]
+  const apBindings = [
+    ["data-ap-hook-style", "hookStyle", false],
+    ["data-ap-hook-dur", "hookDuration", true],
+    ["data-ap-font", "font", false],
+    ["data-ap-size", "fontSize", true],
+    ["data-ap-grid", "grid", false],
+    ["data-ap-sub-pos", "subPosition", true],
+    ["data-ap-hook-pos", "hookPosition", false],
+    ["data-ap-count", "clipCount", true],
+    ["data-ap-color", "textColor", false],
+    ["data-ap-highlight", "highlightColor", false]
   ];
-
-  handlerMap.forEach(([selector, attr, apply]) => {
-    document.querySelectorAll(selector).forEach(el => {
+  apBindings.forEach(([attr, key, numeric]) => {
+    document.querySelectorAll("#tab-autopilot [" + attr + "]").forEach(el => {
       el.addEventListener("click", () => {
-        apply(el.getAttribute(attr));
-        persist();
-        renderAll();
+        const value = el.getAttribute(attr);
+        autopilotConfig[key] = numeric ? Number(value) : value;
+        renderAutopilot();
       });
     });
   });
 
-  document.querySelectorAll(".nav-item").forEach(el =>
-    el.addEventListener("click", () => showTab(el.dataset.tab)));
+  document.getElementById("openAiCutTile").addEventListener("click", () => {
+    renderAiCutControls();
+    showTab("aicut");
+  });
+  document.getElementById("openDownloadTile").addEventListener("click", () => {
+    renderDownloadControls();
+    showTab("download");
+  });
+  document.getElementById("downloadBackBtn").addEventListener("click", () => showTab("home"));
+  document.querySelectorAll("[data-download-quality]").forEach(el => {
+    el.addEventListener("click", () => {
+      downloadQuality = el.dataset.downloadQuality;
+      renderDownloadControls();
+    });
+  });
+  document.getElementById("aiCutBackBtn").addEventListener("click", () => showTab("home"));
+  document.querySelectorAll("[data-content-type]").forEach(el => {
+    el.addEventListener("click", () => {
+      aiContentType = el.dataset.contentType;
+      renderAiCutControls();
+    });
+  });
+  document.getElementById("aiUseSubPreset").addEventListener("change", e => {
+    aiUseSubPreset = e.target.checked;
+  });
+  document.getElementById("aiOpenStyleBtn").addEventListener("click", () => {
+    subReturnTab = "aicut";
+    refreshSubtitles();
+    showTab("subtitles");
+  });
+  document.getElementById("aiNextBtn").addEventListener("click", () => {
+    localStorage.setItem(AI_CONTENT_KEY, aiContentType);
+    goLaunch("Нарезка ИИ", "ai_cut");
+  });
+  document.getElementById("subBackBtn").addEventListener("click", () => {
+    showTab(subReturnTab === "aicut" ? "aicut" : "home");
+  });
+  document.getElementById("openOverlayTile").addEventListener("click", () => {
+    renderOverlayScheme();
+    showTab("overlay");
+  });
+  document.getElementById("overlayBackBtn").addEventListener("click", () => showTab("home"));
+  document.querySelectorAll("[data-overlay-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      overlayPosition = el.dataset.overlayPos;
+      renderOverlayScheme();
+    });
+  });
+  document.getElementById("overlayHeightRange").addEventListener("input", e => {
+    overlayHeight = Number(e.target.value);
+    renderOverlayScheme();
+  });
+  document.getElementById("overlayDoneBtn").addEventListener("click", () => {
+    localStorage.setItem(OVERLAY_SETTINGS_KEY, JSON.stringify({
+      position: overlayPosition,
+      height_percent: overlayHeight
+    }));
+    goLaunch("Наложить видео");
+  });
+  document.getElementById("openBannerTile").addEventListener("click", () => {
+    renderBannerLibrary();
+    renderBannerControls();
+    showTab("banner");
+  });
+  document.getElementById("bannerBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("addBannerLibrary").addEventListener("click", () => {
+    if (tg) {
+      tg.sendData(JSON.stringify({ action: "banner_add_library" }));
+      tg.close();
+    }
+  });
+  document.querySelectorAll("[data-banner-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      bannerMode = el.dataset.bannerMode;
+      renderBannerControls();
+    });
+  });
+  document.querySelectorAll("[data-banner-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      bannerPosition = el.dataset.bannerPos;
+      renderBannerControls();
+    });
+  });
+  document.querySelectorAll("[data-chroma-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      chromaMode = el.dataset.chromaMode;
+      renderBannerControls();
+    });
+  });
+  document.querySelectorAll("[data-pause-when]").forEach(el => {
+    el.addEventListener("click", () => {
+      pauseWhen = el.dataset.pauseWhen;
+      renderBannerControls();
+    });
+  });
+  document.getElementById("bannerHeightRange").addEventListener("input", e => {
+    bannerHeight = Number(e.target.value);
+    renderBannerControls();
+  });
+  document.getElementById("pauseSecondRange").addEventListener("input", e => {
+    pauseSecond = Number(e.target.value);
+    renderBannerControls();
+  });
+  document.getElementById("pauseDurationRange").addEventListener("input", e => {
+    pauseDuration = Number(e.target.value);
+    renderBannerControls();
+  });
+  document.getElementById("autoBannerDuration").addEventListener("change", renderBannerControls);
+  document.getElementById("bannerDoneBtn").addEventListener("click", () => {
+    localStorage.setItem(BANNER_SETTINGS_KEY, JSON.stringify({
+      banner_id: bannerId,
+      mode: bannerMode,
+      position: bannerPosition,
+      height_percent: bannerHeight,
+      chroma_mode: chromaMode,
+      pause_when: pauseWhen,
+      pause_second: pauseSecond,
+      pause_duration: pauseDuration,
+      auto_banner_duration: document.getElementById("autoBannerDuration").checked,
+      add_subs: document.getElementById("bannerAddSubs").checked
+    }));
+    goLaunch("Вставить баннер");
+  });
+  async function sendControl(taskId, command) {
+    const payload = {
+      action: "control_task",
+      task_id: taskId,
+      command: command,
+      command_id: "cmd_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8)
+    };
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const response = await fetch(CONTROL_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store"
+        });
+        if (response.ok) return true;
+      } catch (e) {}
+      await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+    }
+    return false;
+  }
+
+  document.getElementById("history").addEventListener("click", async e => {
+    const btn = e.target.closest("[data-task-action]");
+    if (!btn) return;
+    const taskId = btn.dataset.taskId;
+    const action = btn.dataset.taskAction;
+    if (!taskId) return;
+
+    if (action === "pause") {
+      await sendControl(taskId, "pause");
+      toast("⏸ Пауза отправлена");
+    } else if (action === "resume") {
+      await sendControl(taskId, "resume");
+      toast("▶️ Возобновлено");
+    } else if (action === "delete") {
+      await sendControl(taskId, "cancel");
+      const hidden = readJson("clipper_hidden_tasks", []);
+      const list = Array.isArray(hidden) ? hidden : [];
+      if (!list.includes(taskId)) list.push(taskId);
+      localStorage.setItem("clipper_hidden_tasks", JSON.stringify(list.slice(-50)));
+      toast("🗑 Задача удалена");
+      renderHistory();
+    }
+    setTimeout(fetchStatus, 1500);
+  });
+
+  document.getElementById("clearHistoryBtn").addEventListener("click", () => {
+    localStorage.removeItem(HISTORY_KEY);
+    localStorage.removeItem("clipper_hidden_tasks");
+    renderHistory();
+    toast("История очищена");
+  });
+
+  document.querySelectorAll(".nav-item").forEach(el => {
+    el.addEventListener("click", () => showTab(el.dataset.tab));
+  });
+
+  document.querySelectorAll("[data-sub-style]").forEach(el => {
+    el.addEventListener("click", () => {
+      const margin = subSettings.margin_percent === 50 ? lastMargin : subSettings.margin_percent;
+      const hook = subSettings.hook;
+      subSettings = Object.assign({}, SUB_PRESETS[el.dataset.subStyle], { margin_percent: margin, hook: hook });
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-size]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.font_size = Number(el.dataset.size);
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-font]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.font = el.dataset.font;
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-words]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.words = Number(el.dataset.words);
+      previewActive = 0;
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      const pos = Number(el.dataset.pos);
+      if (pos === 5) {
+        if (subSettings.margin_percent !== 50) lastMargin = subSettings.margin_percent;
+        subSettings.margin_percent = 50;
+      } else {
+        subSettings.margin_percent = lastMargin;
+      }
+      subSettings.position = pos;
+      refreshSubtitles();
+    });
+  });
+
+  document.querySelectorAll("[data-grid]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.grid = el.dataset.grid;
+      refreshSubtitles();
+    });
+  });
+
+  document.getElementById("marginRange").addEventListener("input", e => {
+    const value = Number(e.target.value);
+    subSettings.margin_percent = value;
+    lastMargin = value;
+    document.getElementById("marginValue").textContent = value + "%";
+    updateSubPreview();
+  });
+
+  document.getElementById("subUppercase").addEventListener("change", e => {
+    subSettings.uppercase = e.target.checked;
+    refreshSubtitles();
+  });
 
   document.getElementById("hookEnabled").addEventListener("change", e => {
-    settings.hook_enabled = e.target.checked;
-    persist(); renderPreview();
-  });
-  document.getElementById("bannerHeight").addEventListener("input", e => {
-    settings.banner.height_percent = Number(e.target.value);
-    document.getElementById("bannerHeightValue").textContent = settings.banner.height_percent + "%";
-    persist();
-  });
-  document.getElementById("pauseDuration").addEventListener("input", e => {
-    settings.banner.pause_duration = Number(e.target.value);
-    document.getElementById("pauseDurationValue").textContent = settings.banner.pause_duration + " с";
-    persist();
-  });
-  document.getElementById("autoBannerDuration").addEventListener("change", e => {
-    settings.banner.auto_banner_duration = e.target.checked;
-    persist();
-  });
-  document.getElementById("bannerAddSubs").addEventListener("change", e => {
-    settings.banner.add_subs = e.target.checked;
-    persist();
+    subSettings.hook.enabled = e.target.checked;
+    renderHookMini();
   });
 
-  function payload() {
-    return {
-      action: "save_all_presets",
-      mode: settings.mode,
-      clip_count: settings.clip_count,
-      sub_settings: {
-        style: "tiktok",
-        font: settings.font,
-        font_size: settings.font_size,
-        text_color: settings.text_color,
-        highlight_color: settings.highlight_color,
-        outline_color: "#000000",
-        plate_color: "none",
-        uppercase: true,
-        words: 3,
-        position: settings.sub_position,
-        margin_percent: 18,
-        grid: settings.grid,
-        hook: {
-          enabled: settings.hook_enabled,
-          position: settings.hook_position === "off" ? "top" : settings.hook_position,
-          style: settings.hook_style,
-          size: "M",
-          duration: settings.hook_duration
-        }
-      },
-      hook_settings: {
-        enabled: settings.hook_enabled,
-        position: settings.hook_position === "off" ? "top" : settings.hook_position,
-        style: settings.hook_style,
-        size: "M",
-        duration: settings.hook_duration
-      },
-      banner_settings: Object.assign({}, settings.banner),
-      uniq_settings: Object.assign({}, settings.uniq)
-    };
-  }
+  document.getElementById("hookDurationRange").addEventListener("input", e => {
+    subSettings.hook.duration = Number(e.target.value);
+    renderHookMini();
+  });
 
-  function saveAndClose() {
-    persist();
-    if (tg) {
-      tg.sendData(JSON.stringify(payload()));
-      tg.close();
-    } else {
-      toast("✅ Настройки сохранены локально");
+  document.getElementById("hookAllVideoBtn").addEventListener("click", () => {
+    subSettings.hook.duration = subSettings.hook.duration === -1 ? 4 : -1;
+    renderHookMini();
+  });
+
+  document.querySelectorAll("[data-hook-pos]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.hook.position = el.dataset.hookPos;
+      renderHookMini();
+    });
+  });
+
+  document.querySelectorAll("[data-hook-style]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.hook.style = el.dataset.hookStyle;
+      renderHookMini();
+    });
+  });
+
+  document.querySelectorAll("[data-hook-size]").forEach(el => {
+    el.addEventListener("click", () => {
+      subSettings.hook.size = el.dataset.hookSize;
+      renderHookMini();
+    });
+  });
+
+  document.getElementById("saveSubStyleBtn").addEventListener("click", () => {
+    localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
+    toast("Мой стиль сохранён");
+  });
+
+  document.getElementById("subDoneBtn").addEventListener("click", () => {
+    localStorage.setItem(SUB_STYLE_KEY, JSON.stringify(subSettings));
+    if (subReturnTab === "aicut") {
+      showTab("aicut");
+      return;
     }
+    goLaunch("Стримеры 50/50 • Субтитры и Хук", "split_50_50");
+  });
+
+  setInterval(() => {
+    if (!document.getElementById("tab-subtitles").classList.contains("active")) return;
+    previewActive++;
+    updateSubPreview();
+    if (previewActive >= subSettings.words) {
+      previewActive = 0;
+      previewChunk = (previewChunk + 1) % PREVIEW_WORDS.length;
+    }
+  }, 900);
+
+  renderUniqList();
+  applyUniqMode();
+
+  document.getElementById("saveBtn").addEventListener("click", () => {
+    localStorage.setItem(PRESET_KEY, JSON.stringify(settings));
+    toast("Пресет сохранён");
+  });
+
+  document.getElementById("doneBtn").addEventListener("click", () => {
+    const full = {
+      mode: uniqMode,
+      fps: uniqFps,
+      copies: uniqMode === "пакет" ? uniqCopies : 1,
+      settings: settings
+    };
+    localStorage.setItem(UNIQ_FULL_KEY, JSON.stringify(full));
+    localStorage.setItem(PRESET_KEY, JSON.stringify(settings));
+    goLaunch("Уникализация");
+  });
+
+  document.querySelectorAll("[data-uniq-mode]").forEach(el => {
+    el.addEventListener("click", () => {
+      uniqMode = el.dataset.uniqMode;
+      applyUniqMode();
+    });
+  });
+
+  document.querySelectorAll("[data-fps]").forEach(el => {
+    el.addEventListener("click", () => {
+      uniqFps = el.dataset.fps;
+      applyUniqMode();
+    });
+  });
+
+  document.querySelectorAll("[data-copies]").forEach(el => {
+    el.addEventListener("click", () => {
+      uniqCopies = Number(el.dataset.copies);
+      applyUniqMode();
+    });
+  });
+
+  document.querySelectorAll(".pill").forEach(el => {
+    el.addEventListener("click", () => {
+      selectedCount = Number(el.dataset.count);
+      localStorage.setItem(CLIP_COUNT_KEY, String(selectedCount));
+      renderCount();
+      toast("Клипов за раз: " + selectedCount);
+    });
+  });
+  document.getElementById("homeProgress").addEventListener("click", () => showTab("process"));
+  document.getElementById("copyErrorBtn").addEventListener("click", () => {
+    const text = document.getElementById("procErrorText").textContent || "";
+    if (navigator.clipboard) navigator.clipboard.writeText(text);
+    toast("Ошибка скопирована");
+  });
+
+  refreshSubtitles();
+  renderAiCutControls();
+  renderAutopilot();
+  renderOverlayScheme();
+  renderBannerLibrary();
+  renderBannerControls();
+  renderCount();
+  renderHistory();
+  document.getElementById("launchBackBtn").addEventListener("click", () => showTab("home"));
+  document.getElementById("launchEditBtn").addEventListener("click", () => showTab("home"));
+
+  function isValidUrl(value) {
+    return /^https?:\/\/[^\s]+\.[^\s]+/i.test(String(value || "").trim());
   }
 
-  document.querySelectorAll(".save-btn").forEach(btn =>
-    btn.addEventListener("click", saveAndClose));
-  document.getElementById("homeSaveBtn").addEventListener("click", saveAndClose);
+  function updateUrlState(inputId, statusId, buttonId) {
+    const input = document.getElementById(inputId);
+    const status = document.getElementById(statusId);
+    const button = document.getElementById(buttonId);
+    const url = input ? input.value.trim() : "";
+    const valid = isValidUrl(url);
+    if (status) {
+      status.textContent = valid ? "✅ Ссылка готова к запуску" : "";
+      status.style.display = valid ? "" : "none";
+    }
+    if (button) button.disabled = !valid;
+    if (input && url) input.classList.remove("error");
+    return valid;
+  }
 
-  loadSettings();
-  renderAll();
-  if (tg) { tg.ready(); tg.expand(); }
+  function bindUrlField(inputId, statusId, buttonId, hintId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener("input", () => {
+      if (hintId) document.getElementById(hintId).style.display = "none";
+      updateUrlState(inputId, statusId, buttonId);
+    });
+    updateUrlState(inputId, statusId, buttonId);
+  }
+
+  bindUrlField("launchUrl", "launchUrlStatus", "launchStartBtn", "launchHint");
+  bindUrlField("downloadUrl", "downloadUrlStatus", "downloadStartBtn", "downloadHint");
+  bindUrlField("apUrl", "apUrlStatus", "apAnalyzeBtn");
+
+  function pasteInto(inputId, hintId, statusId, buttonId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.focus();
+
+    const applyText = text => {
+      const clean = String(text || "").trim();
+      if (!clean) return false;
+      input.value = clean;
+      input.classList.remove("error");
+      if (hintId) document.getElementById(hintId).style.display = "none";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      updateUrlState(inputId, statusId, buttonId);
+      toast("✅ Ссылка принята из буфера");
+      return true;
+    };
+
+    const fallback = () => {
+      if (navigator.clipboard && typeof navigator.clipboard.readText === "function") {
+        navigator.clipboard.readText().then(text => {
+          if (!applyText(text)) legacyPaste();
+        }).catch(() => legacyPaste());
+      } else {
+        legacyPaste();
+      }
+    };
+
+    const legacyPaste = () => {
+      input.focus();
+      try {
+        document.execCommand("paste");
+      } catch (e) {}
+      setTimeout(() => {
+        if (!isValidUrl(input.value)) toast("Нажмите на поле и выберите Вставить");
+      }, 150);
+    };
+
+    const webApp = window.Telegram && window.Telegram.WebApp;
+    if (webApp && typeof webApp.readTextFromClipboard === "function") {
+      let handled = false;
+      try {
+        webApp.readTextFromClipboard(text => {
+          handled = true;
+          if (!applyText(text)) fallback();
+        });
+      } catch (e) {}
+      setTimeout(() => { if (!handled) fallback(); }, 900);
+      return;
+    }
+    fallback();
+  }
+
+  document.getElementById("launchPasteBtn").addEventListener("click",
+    () => pasteInto("launchUrl", "launchHint", "launchUrlStatus", "launchStartBtn"));
+  document.getElementById("downloadPasteBtn").addEventListener("click",
+    () => pasteInto("downloadUrl", "downloadHint", "downloadUrlStatus", "downloadStartBtn"));
+  document.getElementById("apPasteBtn").addEventListener("click",
+    () => pasteInto("apUrl", null, "apUrlStatus", "apAnalyzeBtn"));
+
+  document.getElementById("launchFileBtn").addEventListener("click", () => {
+    if (tg) {
+      tg.sendData(JSON.stringify({ action: "request_file" }));
+      tg.close();
+    }
+  });
+
+  async function submitTask(task) {
+    const stored = readJson(TASK_QUEUE_KEY, []);
+    const queue = Array.isArray(stored) ? stored : [];
+    queue.push(Object.assign({}, task, { status: "queued" }));
+    localStorage.setItem(TASK_QUEUE_KEY, JSON.stringify(queue.slice(-20)));
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const response = await fetch(START_TASK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(task),
+          cache: "no-store"
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const data = await response.json();
+        if (data && data.task_id) task.task_id = data.task_id;
+        return "local";
+      } catch (e) {
+        await new Promise(resolve => setTimeout(resolve, 600 * (attempt + 1)));
+      }
+    }
+    toast("⚠️ Локальный сервер недоступен — задача сохранена в истории");
+    return "none";
+  }
+
+  document.getElementById("launchStartBtn").addEventListener("click", async () => {
+    const input = document.getElementById("launchUrl");
+    const url = input.value.trim();
+    if (!isValidUrl(url)) {
+      input.classList.add("error");
+      document.getElementById("launchHint").style.display = "";
+      updateUrlState("launchUrl", "launchUrlStatus", "launchStartBtn");
+      return;
+    }
+
+    const sub = readJson(SUB_STYLE_KEY, {});
+    const modeKey = localStorage.getItem(LAUNCH_MODE_KEY) || "split_50_50";
+    const modeLabel = MODE_NAMES[modeKey] || "Стримеры 50/50";
+    const packet = {
+      action: "start_pipeline",
+      mode: modeLabel,
+      mode_key: modeKey,
+      active_mode: modeKey,
+      clip_count: Number(localStorage.getItem(CLIP_COUNT_KEY) || 5),
+      video_url: url,
+      ai_content_type: aiContentType,
+      ai_use_subs: aiUseSubPreset,
+      sub_settings: sub,
+      hook_settings: sub.hook || {},
+      uniq_settings: readJson(UNIQ_FULL_KEY, {}),
+      banner_settings: readJson(BANNER_SETTINGS_KEY, {}),
+      overlay_settings: readJson(OVERLAY_SETTINGS_KEY, {})
+    };
+
+    const init = (tg && tg.initDataUnsafe) || {};
+    const chatId = (init.chat && init.chat.id) || (init.user && init.user.id) || null;
+    const task = Object.assign({
+      task_id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10),
+      chat_id: chatId,
+      created_at: new Date().toISOString()
+    }, packet);
+
+    input.value = "";
+    const delivered = await submitTask(task);
+    addHistory(modeLabel, packet.clip_count, "В очереди");
+    showTab("process");
+    toast(delivered === "local"
+      ? "🚀 Задача отправлена на локальный сервер — окно не закроется"
+      : "⏳ Задача сохранена локально — сервер недоступен");
+  });
+
+  document.getElementById("downloadStartBtn").addEventListener("click", async () => {
+    const input = document.getElementById("downloadUrl");
+    const url = input.value.trim();
+    if (!isValidUrl(url)) {
+      input.classList.add("error");
+      document.getElementById("downloadHint").style.display = "";
+      updateUrlState("downloadUrl", "downloadUrlStatus", "downloadStartBtn");
+      return;
+    }
+
+    const init = (tg && tg.initDataUnsafe) || {};
+    const chatId = (init.chat && init.chat.id) || (init.user && init.user.id) || null;
+    const packet = {
+      action: "start_pipeline",
+      mode: "Скачивание",
+      mode_key: "download",
+      active_mode: "download",
+      video_url: url,
+      quality: downloadQuality,
+      remove_watermark: document.getElementById("downloadClean").checked
+    };
+    const task = Object.assign({
+      task_id: "task_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10),
+      chat_id: chatId,
+      created_at: new Date().toISOString()
+    }, packet);
+
+    input.value = "";
+    const delivered = await submitTask(task);
+    addHistory("Скачивание", 0, "В очереди");
+    showTab("process");
+    toast(delivered === "local"
+      ? "⬇️ Задача отправлена на локальный сервер"
+      : "⏳ Задача сохранена локально — сервер недоступен");
+  });
+
+  document.getElementById("githubPatInput").value = localStorage.getItem(GITHUB_PAT_KEY) || "";
+  document.getElementById("saveGithubPatBtn").addEventListener("click", () => {
+    const value = document.getElementById("githubPatInput").value.trim();
+    if (value) {
+      localStorage.setItem(GITHUB_PAT_KEY, value);
+      toast("💾 Токен сохранён в этом браузере");
+    } else {
+      localStorage.removeItem(GITHUB_PAT_KEY);
+      toast("🗑 Токен удалён — запуск через Telegram");
+    }
+  });
+
+  function clearUrlInputs() {
+    document.getElementById("launchUrl").value = "";
+    document.getElementById("downloadUrl").value = "";
+    document.getElementById("apUrl").value = "";
+    document.getElementById("launchHint").style.display = "none";
+    document.getElementById("downloadHint").style.display = "none";
+    updateUrlState("launchUrl", "launchUrlStatus", "launchStartBtn");
+    updateUrlState("downloadUrl", "downloadUrlStatus", "downloadStartBtn");
+    updateUrlState("apUrl", "apUrlStatus", "apAnalyzeBtn");
+  }
+  window.addEventListener("DOMContentLoaded", clearUrlInputs);
+  window.addEventListener("load", clearUrlInputs);
+  clearUrlInputs();
+  renderDownloadControls();
+
+  fetchStatus();
+  setInterval(fetchStatus, 2000);
+
+  if (tg) {
+    tg.ready();
+    tg.expand();
+  }
 </script>
 </body>
 </html>
