@@ -1,8 +1,8 @@
 {
   "status": "running",
   "percent": 5,
-  "current_step": "Задача принята ботом...",
-  "detail": "Задача chat_718716596_1795364606 принята",
+  "current_step": "Старт",
+  "detail": "Задача принята",
   "clip_progress": "",
   "steps": [
     {
@@ -37,6 +37,7 @@
     }
   ],
   "error_log": "",
+  "updated_at": "19:23:29",
   "active_tasks": [
     {
       "task_id": "chat_718716596_1795364606",
@@ -49,6 +50,5 @@
       "updated_at": "19:23:28"
     }
   ],
-  "history_tasks": [],
-  "updated_at": "19:23:28"
+  "history_tasks": []
 }
